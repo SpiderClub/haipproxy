@@ -8,6 +8,7 @@ Schduler will parse response text according to the rules.
 
 # todo: consider incremental crawling and incremental parser
 # todo: consider filter transport ip
+# todo: consider use socks5 to crawl the website outsite the wall
 parser_rules = [
     {
         'name': 'xici',
