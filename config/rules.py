@@ -1,7 +1,5 @@
 """
 haipproxy parser's rules.
-~~~~~~~~~~~~~~
-
 Schduler will parse response text according to the rules.
 """
 

@@ -1,11 +1,20 @@
-# haipproxy
-本项目与其它同类项目主要的区别在于本项目致力于强化代理IP校验器，以期为大型爬虫项目提供一个
-高可用低延迟的高匿**HTTP/HTTPS**IP代理池。
+# HAipproxy
+本项目所有IP资源都来自互联网，由于网上免费IP资源的质量参差不齐，所以该项目应运而生了。该项目的愿景
+是为大型爬虫项目提供一个**高可用低延迟的高匿HTTP/HTTPSIP代理池**。
 
-# quick start
+# Features
+- 快速抓取代理IP。项目使用scrapy做高速网络请求，能快速填充IP代理池
+- IP来源丰富。本项目的IP来源参考了大量的同类开源项目，造这个轮子的原因是别的项目大多数都做
+得让人不满意，有一个比较好的，但是语言是Java。
+- 优良的IP校验器。使用复杂算法对IP进行建模及打分，在高度不可用的资源中力求做到高可用
+- 优雅的编码设计和实现。项目使用Python编码，笔者力求用最*Pythonic*的方式实现所有功能，鉴
+于笔者能力有限，希望用户能参与改进。
+- 支持高可用部署和抓取，无任何单点故障。爬虫任务调度器和Scrapy Worker都可以轻松进行水平扩展，
+无任何单点故障（消息和存储后端需要自己做高可用），代码不需要进行任何改动。
+- MIT授权协议。Just do whatever you want!
 
-# how to contribute
+# Quick Start
 
-# more docs for support
+# How To Contribute
 
-#
+# More Docs For Support
