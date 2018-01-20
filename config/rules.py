@@ -1,37 +1,40 @@
 """
-haipproxy parser's rules.
-Schduler will parse response text according to the rules.
+Spider rules.Scheduler will provide crawling tasks according to the rules and
+spiders will parse response content according to the rules.
 """
 
 
 # todo: consider incremental crawling and incremental parser
 # todo: consider filter transport ip
 # todo: consider use socks5 to crawl the website outsite the wall
-parser_rules = [
+URLS = [
     {
         'name': 'xici',
-        'url_list': ['http://www.xicidaili.com/nn/{}'.format(i) for i in range(1, 11)],
-        'parser_method': 'bs',
-        'paser_pattern': {
-            'ip': '',
-            'port': '',
-            'type': ''
-        },
-        'need_proxy': False,
-        'need_increment': True,
-        'enable': True
+        'url_format': 'http://www.xicidaili.com/nn/{}',
+        'start': 1,
+        'end': 2,
+        'enable': 0
     },
     {
         'name': 'kuaidaili',
-        'url_list': ['http://www.kuaidaili.com/free/inha/{}'.format(i) for i in range(1, 11)],
-        'parser_method': 'bs',
-        'parser_pattern': {
-            'ip': '',
-            'port': '',
-            'type': ''
-        },
-        'need_proxy': False,
-        'need_increment': True,
-        'enable': True
-    }
+        'url_format': 'https://www.kuaidaili.com/free/inha/{}',
+        'start': 1,
+        'end': 2,
+        'enable': 0
+    },
+    {
+        'name': 'goubanjia',
+        'url_format': 'http://www.goubanjia.com/free/gngn/index{}.shtml',
+        'start': 1,
+        'end': 11,
+        'enable': 1
+    },
+    {
+        'name': 'goubanjia',
+        'url_format': 'http://www.goubanjia.com/free/gngn/index{}.shtml',
+        'start': 1,
+        'end': 11,
+        'enable': 1
+    },
 ]
+
