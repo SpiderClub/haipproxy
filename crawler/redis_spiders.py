@@ -69,7 +69,7 @@ class RedisAjaxSpider(RedisSpider):
             if not data:
                 break
             url = data.decode()
-            req = SplashRequest(url, args={'await': 0.25})
+            req = SplashRequest(url, args={'await': 2})
             if req:
                 yield req
                 found += 1

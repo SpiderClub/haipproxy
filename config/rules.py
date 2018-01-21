@@ -50,10 +50,9 @@ URLS = [
     {
         'name': 'xdaili',
         'url_format': [
-            'http://www.xdaili.cn/freeproxy'
+            'http://www.xdaili.cn:80/ipagent/freeip/getFreeIps?page=1&rows=10'
         ],
-        'enable': 0,
-        'task_type': SPIDER_AJAX_TASK
+        'enable': 1,
     },
     {
         'name': 'goubanjia',
@@ -63,7 +62,7 @@ URLS = [
         ],
         'start': 1,
         'end': 2,
-        'enable': 1,
+        'enable': 0,
         'task_type': SPIDER_AJAX_TASK
     },
 ]

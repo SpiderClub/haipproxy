@@ -12,13 +12,16 @@ class AjaxSpider(BaseSpider, RedisAjaxSpider):
     task_type = SPIDER_AJAX_TASK
 
     def parse(self, response):
-        infos = response.xpath('//tr')[1:]
         if 'goubanjia' in response.url:
-            items = self.parse_goubanjia(infos)
-            for item in items:
-                yield item
+            items = self.parse_goubanjia(response)
+        else:
+            items = list()
 
-    def parse_goubanjia(self, infos):
+        for item in items:
+            yield item
+
+    def parse_goubanjia(self, response):
+        infos = response.xpath('//tr')[1:]
         items = list()
         for info in infos:
             ip_port = info.xpath('td[1]//*[name(.)!="p"]/text()').extract()
