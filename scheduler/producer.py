@@ -15,13 +15,16 @@ class TaskScheduler:
                 continue
             start = detail.get('start', None)
             end = detail.get('end', None)
-            url_format = detail.get('url_format')
             task_type = detail.get('task_type', SPIDER_COMMON_TASK)
+            url_format = detail.get('url_format')
             if not start and not end:
-                con.lpush(task_type, url_format)
+                print(*url_format)
+                con.lpush(task_type, *url_format)
             else:
-                seeds = [url_format.format(page) for page in range(start, end+1)]
-                con.lpush(task_type, *seeds)
+                for each in url_format:
+                    seeds = [each.format(page) for page in range(start, end+1)]
+                    print(*seeds)
+                    con.lpush(task_type, *seeds)
 
 
 if __name__ == '__main__':

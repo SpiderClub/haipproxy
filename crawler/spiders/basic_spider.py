@@ -1,15 +1,22 @@
 """
-Common ip proxy spider
+Common ip proxy spider.
+Here are common proxy website to crawl:
+https://www.kuaidaili.com/
+http://www.kxdaili.com/
+http://www.nianshao.me/
+http://www.goubanjia.com/
+http://www.xicidaili.com/
 """
+from config.settings import SPIDER_COMMON_TASK
 from ..redis_spiders import RedisSpider
-from ..items import (
-    ProxyIPItem, ProxyUrlItem)
+from ..items import ProxyUrlItem
 from .mixin import IPSourceMixin
 
 
 # notice multi inheritance order in python
 class CommonSpider(IPSourceMixin, RedisSpider):
     name = 'common'
+    task_type = SPIDER_COMMON_TASK
     # slow down each spider
     custom_settings = {
         'CONCURRENT_REQUESTS_PER_DOMAIN': 1,
@@ -26,11 +33,6 @@ class CommonSpider(IPSourceMixin, RedisSpider):
             protocols = self.procotol_extractor(detail)
 
             for protocol in protocols:
-                yield ProxyIPItem({
-                    'ip': ip,
-                    'port': port,
-                    'protocol': protocol,
-                })
                 yield ProxyUrlItem(url=self.construct_proxy_url(protocol, ip, port))
 
     def procotol_extractor(self, detail):
