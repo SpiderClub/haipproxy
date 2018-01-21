@@ -6,12 +6,11 @@ from scrapy.crawler import CrawlerRunner
 from scrapy.utils.log import configure_logging
 from scrapy.utils.project import get_project_settings
 
-from crawler.spiders import (
-    XiciSpider, KuaidailiSpider)
+from crawler.spiders import CommonSpider, AjaxSpider
 
 
 all_spiders = [
-    XiciSpider, KuaidailiSpider
+    CommonSpider, AjaxSpider
 ]
 
 
