@@ -17,7 +17,7 @@ class ProxyMiddleware(object):
     """This middleware provides http and https proxy for spiders"""
     def process_request(self, request, spider):
         # todo 完善所有情况，如翻墙和普通代理
-        if not spider.proxy_mode:
+        if not hasattr(spider, 'proxy_mode') or not spider.proxy_mode:
             return
 
         r = urlsplit(request.url)
