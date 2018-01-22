@@ -15,8 +15,10 @@ class CommonSpider(BaseSpider, RedisSpider):
     def parse(self, response):
         if 'xdaili' in response.url:
             items = self.parse_json(response, detail_rule=['RESULT', 'rows'])
+        elif '66ip' in response.url:
+            items = self.parse_common(response, 4)
         else:
-            items = self.parse_common(response, self.common_parse_rule)
+            items = self.parse_common(response)
 
         for item in items:
             yield item

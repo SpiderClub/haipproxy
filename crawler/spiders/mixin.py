@@ -7,30 +7,34 @@ from ..items import ProxyUrlItem
 
 
 class BaseSpider:
-    common_parse_rule = 'td::text'
     # slow down each spider
     custom_settings = {
         'CONCURRENT_REQUESTS_PER_DOMAIN': 1,
         'DOWNLOAD_DELAY': 3
     }
 
-    def parse_common(self, response, detail_rule, ip_pos=0, port_pos=1):
+    def parse_common(self, response, infos_pos=1, detail_rule='td::text', ip_pos=0, port_pos=1):
         """
         Common response parser
         :param response: scrapy response
+        :param infos_pos: pos for extracting infos
         :param detail_rule: rule for extracting ip and port block
         :param ip_pos: ip index
         :param port_pos: port index
         :return: ip infos
         """
-        infos = response.xpath('//tr')[1:]
+        infos = response.xpath('//tr')[infos_pos:]
         items = list()
 
         for info in infos:
+            info_str = info.extract()
+            if 'ip' in info_str:
+                continue
+
             proxy_detail = info.css(detail_rule).extract()
             ip = proxy_detail[ip_pos]
             port = proxy_detail[port_pos]
-            protocols = self.procotol_extractor(info.extract())
+            protocols = self.procotol_extractor(info_str)
             for protocol in protocols:
                 items.append(ProxyUrlItem(url=self.construct_proxy_url(protocol, ip, port)))
 
@@ -60,7 +64,7 @@ class BaseSpider:
         return items
 
     def procotol_extractor(self, detail):
-        """extract http protocol"""
+        """extract http protocol,default value is http and https"""
         detail = detail.lower()
         # TODO it might be socks4, fix this case
         if 'socks' in detail:
@@ -70,9 +74,10 @@ class BaseSpider:
             protocols = ['http', 'https']
         elif 'https' in detail:
             protocols = ['https']
-        else:
+        elif 'http' in detail:
             protocols = ['http']
-
+        else:
+            protocols = ['http', 'https']
         return protocols
 
     def construct_proxy_url(self, scheme, ip, port):

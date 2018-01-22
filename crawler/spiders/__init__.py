@@ -7,6 +7,7 @@ https://www.kuaidaili.com/
 http://www.kxdaili.com/
 http://www.nianshao.me/
 http://www.xicidaili.com/
+http://www.66ip.cn/
 
 website for ajax spider:
 http://www.goubanjia.com/

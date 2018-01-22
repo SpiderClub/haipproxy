@@ -65,6 +65,14 @@ URLS = [
         'enable': 0,
         'task_type': SPIDER_AJAX_TASK
     },
+    {
+        'name': '66ip',
+        'url_format': ['http://www.66ip.cn/{}.html'] + [
+            'http://www.66ip.cn/areaindex_%s/{}.html' % i for i in range(1, 35)],
+        'start': 1,
+        'end': 2,
+        'enable': 1
+    },
 ]
 
 # todo find a better way to extract ip infos
