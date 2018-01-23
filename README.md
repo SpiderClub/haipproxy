@@ -18,10 +18,20 @@ dirty，希望得到大神的指正。
 # Quick start
 
 # How to contribute
+- 欢迎给项目提新feature
+- 如果发现项目任何地方实现不合理，或者还可以改进，欢迎提issue或者pr
+- 如果你发现了比较好的代理网站，欢迎分享或者直接以PR的方式分享
+- 如果在使用过程中发现项目哪个环节有问题，欢迎提issue
+
+
+# Important things to notice
+- 本项目高度依赖redis，除了消息通信和数据存储之外，IP校验使用了Redis中的多种数据结构。
 
 # More docs for support
 
 # Reference
+本项目参考了Github上开源的各个爬虫代理的实现，感谢他们的付出，下面是笔者参考的所有项目，排名不分先后。
+
 [dungproxy](https://github.com/virjar/dungproxy)
 
 [proxyspider](https://github.com/zhangchenchen/proxyspider)
