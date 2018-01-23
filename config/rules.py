@@ -108,8 +108,34 @@ URLS = [
     },
     {
         'name': 'ip181',
+        'url_format': ['http://www.ip181.com/'] + ['http://www.ip181.com/daili/%s.html' % i for i in range(1, 5)],
+        'enable': 0,
+    },
+    {
+        'name': 'ip3366',
         'url_format': [
-            'http://www.ip181.com/',
+            'http://www.ip3366.net/free/?stype=1&page={}',
+            'http://www.ip3366.net/free/?stype=3&page={}'
+        ],
+        'start': 1,
+        'end': 3,
+        'enable': 0
+    },
+    {
+        'name': 'iphai',
+        'url_format': [
+            'http://www.iphai.com/free/ng',
+            'http://www.iphai.com/free/wg',
+            'http://www.iphai.com/free/np',
+            'http://www.iphai.com/free/wp',
+        ],
+        'enable': 0,
+    },
+    {
+        'name': 'yundaili',
+        'url_format': [
+            'http://www.yun-daili.com/free.asp?stype=1',
+            'http://www.yun-daili.com/free.asp?stype=3',
         ],
         'enable': 1,
     },

@@ -26,7 +26,7 @@ class CommonSpider(BaseSpider, RedisSpider):
         elif 'data5u' in response.url:
             items = self.parse_common(response, pre_extract='//ul[contains(@class, "l2")]', infos_pos=0,
                                       detail_rule='span li::text')
-        elif 'httpsdaili' in response.url:
+        elif 'httpsdaili' or 'yun-daili' in response.url:
             items = self.parse_common(response, pre_extract='//tr[contains(@class, "odd")]', infos_pos=0)
         else:
             items = self.parse_common(response)
