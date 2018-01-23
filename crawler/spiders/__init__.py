@@ -23,7 +23,11 @@ http://www.xdaili.cn/freeproxy
 website for crawl spider:
 https://proxy.coderbusy.com/
 
+website for gfw spider:
+http://cn-proxy.com/
+
 """
 from .basic_spider import CommonSpider
 from .ajax_spider import AjaxSpider
 from .crawl_spider import CrawlSpider
+from .gfw_spider import GFWSpider

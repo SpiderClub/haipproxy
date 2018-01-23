@@ -54,6 +54,7 @@ SPIDER_FEED_SIZE = 10
 SPIDER_COMMON_TASK = 'haipproxy:common_task'
 SPIDER_AJAX_TASK = 'haipproxy:ajax_task'
 SPIDER_CRAWL_TASK = 'haipproxy:crawl_task'
+SPIDER_GFW_TASK = 'haipproxy:gfw_task'
 
 # redis args
 REDIS_HOST = '127.0.0.1'

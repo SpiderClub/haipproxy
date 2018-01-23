@@ -32,7 +32,7 @@ class BaseSpider:
 
         for info in infos:
             info_str = info.extract()
-            if 'ip' in info_str or '透明' in info_str:
+            if 'ip' in info_str or '透明' in info_str or 'transparent' in info_str.lower():
                 continue
 
             proxy_detail = info.css(detail_rule).extract()
