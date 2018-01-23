@@ -32,6 +32,9 @@ class BaseSpider:
                 continue
 
             proxy_detail = info.css(detail_rule).extract()
+            if not proxy_detail:
+                continue
+
             ip = proxy_detail[ip_pos]
             port = proxy_detail[port_pos]
             protocols = self.procotol_extractor(info_str)
