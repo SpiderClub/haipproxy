@@ -11,6 +11,8 @@ NEWSPIDER_MODULE = 'crawler.spiders'
 ROBOTSTXT_OBEY = False
 COOKIES_ENABLED = False
 DOWNLOAD_TIMEOUT = 30
+# to aviod infinite recursion
+DEPTH_LIMIT = 3
 # don't filter anything, also can set dont_filter=True in Request objects
 DUPEFILTER_CLASS = 'scrapy.dupefilters.BaseDupeFilter'
 
@@ -51,6 +53,7 @@ LOG_LEVEL = 'DEBUG'
 SPIDER_FEED_SIZE = 10
 SPIDER_COMMON_TASK = 'haipproxy:common_task'
 SPIDER_AJAX_TASK = 'haipproxy:ajax_task'
+SPIDER_CRAWL_TASK = 'haipproxy:crawl_task'
 
 # redis args
 REDIS_HOST = '127.0.0.1'
