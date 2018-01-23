@@ -4,13 +4,14 @@ This module provide basic distributed spider, inspired by scrapy-redis
 from scrapy import signals
 from scrapy.http import Request
 from scrapy.exceptions import DontCloseSpider
-from scrapy.spiders import Spider
+from scrapy.spiders import (
+    Spider, CrawlSpider)
 from scrapy_splash import SplashRequest
 
 from utils.connetion import get_redis_con
 
 
-__all__ = ['RedisSpider', 'RedisAjaxSpider']
+__all__ = ['RedisSpider', 'RedisAjaxSpider', 'RedisCrawlSpider']
 
 
 class RedisMixin(object):
@@ -53,6 +54,14 @@ class RedisMixin(object):
 
 
 class RedisSpider(RedisMixin, Spider):
+    @classmethod
+    def from_crawler(cls, crawler, *args, **kwargs):
+        obj = super().from_crawler(crawler, *args, **kwargs)
+        obj.setup_redis(crawler)
+        return obj
+
+
+class RedisCrawlSpider(RedisMixin, CrawlSpider):
     @classmethod
     def from_crawler(cls, crawler, *args, **kwargs):
         obj = super().from_crawler(crawler, *args, **kwargs)

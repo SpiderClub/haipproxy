@@ -2,7 +2,8 @@
 Spider rules.Scheduler will provide crawling tasks according to the rules and
 spiders will parse response content according to the rules.
 """
-from config.settings import SPIDER_AJAX_TASK
+from config.settings import (
+    SPIDER_AJAX_TASK, SPIDER_CRAWL_TASK)
 
 # todo: consider incremental crawling and incremental parser
 # todo: consider filter transport ip
@@ -78,7 +79,39 @@ URLS = [
         'url_format': [
             'http://ip.baizhongsou.com/'
         ],
-        'enable': 1
+        'enable': 0
+    },
+    {
+        'name': 'coderbusy',
+        'url_format': [
+            'https://proxy.coderbusy.com/',
+        ],
+        'enable': 0,
+        'task_type': SPIDER_CRAWL_TASK
+    },
+    {
+        'name': 'data5u',
+        'url_format': [
+            'http://www.data5u.com/free/index.shtml',
+            'http://www.data5u.com/free/gngn/index.shtml',
+            'http://www.data5u.com/free/gwgn/index.shtml'
+        ],
+        'enable': 0,
+    },
+    {
+        'name': 'httpsdaili',
+        'url_format': [
+            'http://www.httpsdaili.com/?stype=1',
+            'http://www.httpsdaili.com/?stype=3',
+        ],
+        'enable': 0,
+    },
+    {
+        'name': 'ip181',
+        'url_format': [
+            'http://www.ip181.com/',
+        ],
+        'enable': 1,
     },
 ]
 
