@@ -52,7 +52,7 @@ URLS = [
         'url_format': [
             'http://www.xdaili.cn:80/ipagent/freeip/getFreeIps?page=1&rows=10'
         ],
-        'enable': 1,
+        'enable': 0,
     },
     {
         'name': 'goubanjia',
@@ -71,6 +71,13 @@ URLS = [
             'http://www.66ip.cn/areaindex_%s/{}.html' % i for i in range(1, 35)],
         'start': 1,
         'end': 2,
+        'enable': 0
+    },
+    {
+        'name': 'baizhongsou',
+        'url_format': [
+            'http://ip.baizhongsou.com/'
+        ],
         'enable': 1
     },
 ]
