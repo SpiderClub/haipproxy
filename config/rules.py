@@ -163,6 +163,16 @@ URLS = [
         'url_format': [
             'http://ab57.ru/downloads/proxyold.txt',
         ],
+        'enable': 0,
+    },
+    {
+        'name': 'my-proxy',
+        'url_format': [
+            'https://www.my-proxy.com/free-elite-proxy.html',
+            'https://www.my-proxy.com/free-anonymous-proxy.html',
+            'https://www.my-proxy.com/free-socks-4-proxy.html',
+            'https://www.my-proxy.com/free-socks-5-proxy.html'
+        ],
         'enable': 1,
     },
 ]

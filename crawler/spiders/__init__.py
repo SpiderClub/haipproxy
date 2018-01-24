@@ -15,6 +15,8 @@ http://www.ip181.com/
 http://www.ip3366.net/
 http://www.iphai.com/
 http://www.yun-daili.com/
+http://ab57.ru/downloads/proxyold.txt
+https://www.my-proxy.com/
 
 website for ajax spider:
 http://www.goubanjia.com/

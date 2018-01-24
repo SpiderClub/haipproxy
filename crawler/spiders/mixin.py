@@ -14,22 +14,27 @@ class BaseSpider:
         'DOWNLOAD_DELAY': 3
     }
 
-    def parse_common(self, response, pre_extract='//tr', infos_pos=1,
+    def parse_common(self, response, pre_extract_method='xpath',
+                     pre_extract='//tr', infos_pos=1,
                      detail_rule='td::text', ip_pos=0, port_pos=1,
                      extract_protocol=True, split_detail=False):
         """
         Common response parser
         :param response: scrapy response
+        :param pre_extract_method: extracting method for extract all infos, xpath is default value
         :param pre_extract: pre parsing rule for extracing all infos
         :param infos_pos: pos for extracting infos
-        :param detail_rule: rule for extracting ip and port block
+        :param detail_rule: rule for extracting ip and port block, css selector is used here
         :param ip_pos: ip index
         :param port_pos: port index
         :param extract_protocol: if extract_protocol == False, default protocols will be used
         :param split_detail: if split_detail == True, ':' will be used to split ip:port
         :return: ip infos
         """
-        infos = response.xpath(pre_extract)[infos_pos:]
+        if pre_extract_method == 'xpath':
+            infos = response.xpath(pre_extract)[infos_pos:]
+        else:
+            infos = response.css(pre_extract)
         items = list()
         for info in infos:
             info_str = info.extract()
@@ -78,20 +83,30 @@ class BaseSpider:
 
         return items
 
-    def parse_raw_text(self, response, delimiter='\r\n'):
+    def parse_raw_text(self, response, pre_extract=None, delimiter='\r\n', redundancy=None, protocols=None):
         """
         Raw response parser
         :param response: scrapy response
+        :param pre_extract: pre parsing rule for extracing all infos, css selector is used here
         :param delimiter: split ip and port info from response
+        :param redundancy: remove redundancy from ip info
+        :param protocols: default procotols
         :return: ip infos
         """
         items = list()
-        infos = response.text.split(delimiter)
+        if pre_extract:
+            infos = response.css(pre_extract).extract()
+        else:
+            infos = response.text.split(delimiter)
         for info in infos:
             if ':' not in info:
                 continue
+            if redundancy:
+                info = info[:info.find(redundancy)]
+
             ip, port = info.split(':')
-            for protocol in self.default_protocols:
+            protocols = self.default_protocols if not protocols else protocols
+            for protocol in protocols:
                 items.append(ProxyUrlItem(url=self.construct_proxy_url(protocol, ip, port)))
         return items
 
