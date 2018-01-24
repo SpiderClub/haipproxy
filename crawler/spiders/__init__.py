@@ -17,6 +17,10 @@ http://www.iphai.com/
 http://www.yun-daili.com/
 http://ab57.ru/downloads/proxyold.txt
 https://www.my-proxy.com/
+https://www.us-proxy.org/
+http://www.proxylists.net/http_highanon.txt
+http://www.atomintersoft.com/
+https://www.rmccurdy.com/scripts/proxy/good.txt
 
 website for ajax spider:
 http://www.goubanjia.com/

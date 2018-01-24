@@ -14,12 +14,14 @@ class CommonSpider(BaseSpider, RedisSpider):
     task_type = SPIDER_COMMON_TASK
 
     def parse(self, response):
+        is_free_proxy = any(['us-proxy' in response.url or 'free-proxy' in response.url
+                             or 'socks-proxy' in response.url or 'sslproxies' in response.url])
         # todo register all the website dynamicly
         if 'xdaili' in response.url:
             items = self.parse_json(response, detail_rule=['RESULT', 'rows'])
         elif '66ip' in response.url:
             items = self.parse_common(response, 4)
-        elif 'baizhongsou' in response.url:
+        elif 'baizhongsou' in response.url or 'atomintersoft' in response.url:
             items = self.parse_common(response, split_detail=True)
         elif 'coderbusy' in response.url:
             items = self.parse_common(response, ip_pos=1, port_pos=2, extract_protocol=False)
@@ -28,8 +30,10 @@ class CommonSpider(BaseSpider, RedisSpider):
                                       detail_rule='span li::text')
         elif 'httpsdaili' in response.url or 'yun-daili' in response.url:
             items = self.parse_common(response, pre_extract='//tr[contains(@class, "odd")]', infos_pos=0)
-        elif 'ab57' in response.url:
+        elif 'ab57' in response.url or 'proxylists' in response.url:
             items = self.parse_raw_text(response)
+        elif 'rmccurdy' in response.url:
+            items = self.parse_raw_text(response, delimiter='\n')
         elif 'my-proxy' in response.url:
             protocols = None
             if 'socks-4' in response.url:
@@ -38,6 +42,11 @@ class CommonSpider(BaseSpider, RedisSpider):
                 protocols = ['socks5']
             items = self.parse_my_proxy(response, pre_extract='.list ::text',
                                         redundancy='#', protocols=protocols)
+        elif is_free_proxy:
+            protocols = None
+            if 'sslproxies' in response.url:
+                protocols = ['https']
+            items = self.parse_common(response, pre_extract='//tbody//tr', infos_pos=0, protocols=protocols)
         else:
             items = self.parse_common(response)
         for item in items:

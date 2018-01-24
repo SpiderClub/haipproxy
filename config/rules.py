@@ -166,12 +166,46 @@ URLS = [
         'enable': 0,
     },
     {
+        'name': 'proxylists',
+        'url_format': [
+            'http://www.proxylists.net/http_highanon.txt',
+        ],
+        'enable': 0,
+    },
+    {
         'name': 'my-proxy',
         'url_format': [
             'https://www.my-proxy.com/free-elite-proxy.html',
             'https://www.my-proxy.com/free-anonymous-proxy.html',
             'https://www.my-proxy.com/free-socks-4-proxy.html',
             'https://www.my-proxy.com/free-socks-5-proxy.html'
+        ],
+        'enable': 0,
+    },
+    {
+        'name': 'us-proxy',
+        'url_format': [
+            'https://www.us-proxy.org/',
+            'https://free-proxy-list.net/',
+            'https://free-proxy-list.net/uk-proxy.html',
+            'https://free-proxy-list.net/anonymous-proxy.html',
+            'https://www.socks-proxy.net/',
+            'https://www.sslproxies.org/'
+        ],
+        'enable': 0,
+    },
+    {
+        'name': 'atomintersoft',
+        'url_format': [
+            'http://www.atomintersoft.com/high_anonymity_elite_proxy_list',
+            'http://www.atomintersoft.com/anonymous_proxy_list',
+        ],
+        'enable': 0,
+    },
+    {
+        'name': 'rmccurdy',
+        'url_format': [
+            'https://www.rmccurdy.com/scripts/proxy/good.txt'
         ],
         'enable': 1,
     },

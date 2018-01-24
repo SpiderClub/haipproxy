@@ -17,7 +17,8 @@ class BaseSpider:
     def parse_common(self, response, pre_extract_method='xpath',
                      pre_extract='//tr', infos_pos=1,
                      detail_rule='td::text', ip_pos=0, port_pos=1,
-                     extract_protocol=True, split_detail=False):
+                     extract_protocol=True, split_detail=False,
+                     protocols=None):
         """
         Common response parser
         :param response: scrapy response
@@ -29,6 +30,7 @@ class BaseSpider:
         :param port_pos: port index
         :param extract_protocol: if extract_protocol == False, default protocols will be used
         :param split_detail: if split_detail == True, ':' will be used to split ip:port
+        :param protocols: this value will be used for the ip's protocols
         :return: ip infos
         """
         if pre_extract_method == 'xpath':
@@ -49,13 +51,14 @@ class BaseSpider:
                 port = proxy_detail[port_pos].strip()
             else:
                 ip, port = proxy_detail[0].split(':')
-
-            if extract_protocol:
-                protocols = self.procotol_extractor(info_str)
+            if protocols:
+                cur_protocols = protocols
+            elif extract_protocol:
+                cur_protocols = self.procotol_extractor(info_str)
             else:
-                protocols = self.default_protocols
+                cur_protocols = self.default_protocols
 
-            for protocol in protocols:
+            for protocol in cur_protocols:
                 items.append(ProxyUrlItem(url=self.construct_proxy_url(protocol, ip, port)))
 
         return items
@@ -105,7 +108,10 @@ class BaseSpider:
                 info = info[:info.find(redundancy)]
 
             ip, port = info.split(':')
+            if not ip or not port:
+                continue
             protocols = self.default_protocols if not protocols else protocols
+
             for protocol in protocols:
                 items.append(ProxyUrlItem(url=self.construct_proxy_url(protocol, ip, port)))
         return items
