@@ -10,7 +10,7 @@ NEWSPIDER_MODULE = 'crawler.spiders'
 # downloader settings
 ROBOTSTXT_OBEY = False
 COOKIES_ENABLED = False
-DOWNLOAD_TIMEOUT = 30
+DOWNLOAD_TIMEOUT = 60
 # to aviod infinite recursion
 DEPTH_LIMIT = 3
 # don't filter anything, also can set dont_filter=True in Request objects
