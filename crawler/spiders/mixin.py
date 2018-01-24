@@ -15,7 +15,8 @@ class BaseSpider:
     }
 
     def parse_common(self, response, pre_extract='//tr', infos_pos=1,
-                     detail_rule='td::text', ip_pos=0, port_pos=1, extract_protocol=True):
+                     detail_rule='td::text', ip_pos=0, port_pos=1,
+                     extract_protocol=True, split_detail=False):
         """
         Common response parser
         :param response: scrapy response
@@ -25,22 +26,25 @@ class BaseSpider:
         :param ip_pos: ip index
         :param port_pos: port index
         :param extract_protocol: if extract_protocol == False, default protocols will be used
+        :param split_detail: if split_detail == True, ':' will be used to split ip:port
         :return: ip infos
         """
         infos = response.xpath(pre_extract)[infos_pos:]
         items = list()
-
         for info in infos:
             info_str = info.extract()
-            if 'ip' in info_str or '透明' in info_str or 'transparent' in info_str.lower():
+            if '透明' in info_str or 'transparent' in info_str.lower():
                 continue
-
             proxy_detail = info.css(detail_rule).extract()
             if not proxy_detail:
                 continue
 
-            ip = proxy_detail[ip_pos].strip()
-            port = proxy_detail[port_pos].strip()
+            if not split_detail:
+                ip = proxy_detail[ip_pos].strip()
+                port = proxy_detail[port_pos].strip()
+            else:
+                ip, port = proxy_detail[0].split(':')
+
             if extract_protocol:
                 protocols = self.procotol_extractor(info_str)
             else:
@@ -78,8 +82,12 @@ class BaseSpider:
         """extract http protocol,default value is http and https"""
         detail = detail.lower()
         # TODO it might be socks4, fix this case
-        if 'socks' in detail:
+        if 'socks5' in detail:
             protocols = ['socks5']
+        elif 'socks4/5' in detail:
+            protocols = ['socks4', 'socks5']
+        elif 'socks4' in detail:
+            protocols = ['socks4']
         # TODO find a better way to recongnize both http and https protocol
         elif 'http,https' in detail or 'http/https' in detail:
             protocols = ['http', 'https']
@@ -88,7 +96,7 @@ class BaseSpider:
         elif 'http' in detail:
             protocols = ['http']
         else:
-            protocols = ['http', 'https']
+            protocols = self.default_protocols
         return protocols
 
     def construct_proxy_url(self, scheme, ip, port):
