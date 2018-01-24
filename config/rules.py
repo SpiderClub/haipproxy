@@ -156,6 +156,13 @@ URLS = [
         'offset': 15,
         'end': 0,
         'task_type': SPIDER_AJAX_TASK,
+        'enable': 0,
+    },
+    {
+        'name': 'ab57',
+        'url_format': [
+            'http://ab57.ru/downloads/proxyold.txt',
+        ],
         'enable': 1,
     },
 ]

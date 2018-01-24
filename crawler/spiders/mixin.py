@@ -78,6 +78,23 @@ class BaseSpider:
 
         return items
 
+    def parse_raw_text(self, response, delimiter='\r\n'):
+        """
+        Raw response parser
+        :param response: scrapy response
+        :param delimiter: split ip and port info from response
+        :return: ip infos
+        """
+        items = list()
+        infos = response.text.split(delimiter)
+        for info in infos:
+            if ':' not in info:
+                continue
+            ip, port = info.split(':')
+            for protocol in self.default_protocols:
+                items.append(ProxyUrlItem(url=self.construct_proxy_url(protocol, ip, port)))
+        return items
+
     def procotol_extractor(self, detail):
         """extract http protocol,default value is http and https"""
         detail = detail.lower()
