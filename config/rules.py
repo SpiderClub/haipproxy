@@ -63,8 +63,8 @@ URLS = [
         ],
         'start': 1,
         'end': 2,
+        'task_type': SPIDER_AJAX_TASK,
         'enable': 0,
-        'task_type': SPIDER_AJAX_TASK
     },
     {
         'name': '66ip',
@@ -86,8 +86,8 @@ URLS = [
         'url_format': [
             'https://proxy.coderbusy.com/',
         ],
+        'task_type': SPIDER_CRAWL_TASK,
         'enable': 0,
-        'task_type': SPIDER_CRAWL_TASK
     },
     {
         'name': 'data5u',
@@ -137,15 +137,26 @@ URLS = [
             'http://www.yun-daili.com/free.asp?stype=1',
             'http://www.yun-daili.com/free.asp?stype=3',
         ],
-        'enable': 1,
+        'enable': 0,
     },
     {
         'name': 'cn-proxy',
         'url_format': [
             'http://cn-proxy.com/',
         ],
+        'task_type': SPIDER_GFW_TASK,
+        'enable': 0,
+    },
+    {
+        'name': 'proxydb',
+        'url_format': [
+            'http://proxydb.net/?offset={}',
+        ],
+        'start': 0,
+        'offset': 15,
+        'end': 0,
+        'task_type': SPIDER_AJAX_TASK,
         'enable': 1,
-        'task_type': SPIDER_GFW_TASK
     },
 ]
 

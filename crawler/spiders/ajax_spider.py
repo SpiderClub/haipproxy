@@ -14,6 +14,8 @@ class AjaxSpider(BaseSpider, RedisAjaxSpider):
     def parse(self, response):
         if 'goubanjia' in response.url:
             items = self.parse_goubanjia(response)
+        elif 'proxydb' in response.url:
+            items = self.parse_common(response, detail_rule='a::text', split_detail=True)
         else:
             items = list()
 

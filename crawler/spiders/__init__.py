@@ -22,6 +22,7 @@ http://www.xdaili.cn/freeproxy
 
 website for crawl spider:
 https://proxy.coderbusy.com/
+http://proxydb.net/
 
 website for gfw spider:
 http://cn-proxy.com/
