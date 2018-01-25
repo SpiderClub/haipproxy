@@ -47,6 +47,8 @@ class CommonSpider(BaseSpider, RedisSpider):
             if 'sslproxies' in response.url:
                 protocols = ['https']
             items = self.parse_common(response, pre_extract='//tbody//tr', infos_pos=0, protocols=protocols)
+        elif 'mrhinkydink' in response.url:
+            items = self.parse_common(response, pre_extract_method='css', pre_extract='.text', infos_pos=1)
         else:
             items = self.parse_common(response)
         for item in items:

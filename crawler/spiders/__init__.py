@@ -22,6 +22,7 @@ http://www.proxylists.net/http_highanon.txt
 http://www.atomintersoft.com/
 https://www.rmccurdy.com/scripts/proxy/good.txt
 https://list.proxylistplus.com
+http://www.mrhinkydink.com/proxies.htm
 
 website for ajax spider:
 http://www.goubanjia.com/

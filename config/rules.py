@@ -280,6 +280,13 @@ URLS = [
         'start': 1,
         'end': 10,
         'task_type': SPIDER_AJAX_TASK,
+        'enable': 0,
+    },
+    {
+        'name': 'mrhinkydink',
+        'url_format': ['http://www.mrhinkydink.com/proxies.htm'] +
+                      ['http://www.mrhinkydink.com/proxies%s.htm' % i for i in range(2, 10)]
+        ,
         'enable': 1,
     },
 ]
