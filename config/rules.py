@@ -287,6 +287,17 @@ URLS = [
         'url_format': ['http://www.mrhinkydink.com/proxies.htm'] +
                       ['http://www.mrhinkydink.com/proxies%s.htm' % i for i in range(2, 10)]
         ,
+        'enable': 0,
+    },
+    {
+        'name': 'xroxy',
+        'url_format': [
+            'http://www.xroxy.com/proxylist.php?port=&type=&ssl=&country=&latency=&reliability=&sort=reliability'
+            '&desc=true&pnum={}#table',
+        ],
+        'task_type': SPIDER_GFW_TASK,
+        'start':0,
+        'end': 5,  # max 100
         'enable': 1,
     },
 ]
