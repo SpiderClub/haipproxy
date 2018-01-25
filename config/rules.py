@@ -4,7 +4,7 @@ spiders will parse response content according to the rules.
 """
 from config.settings import (
     SPIDER_AJAX_TASK, SPIDER_CRAWL_TASK,
-    SPIDER_GFW_TASK, SPIDER__AJAX_GFW_TASK)
+    SPIDER_GFW_TASK, SPIDER_AJAX_GFW_TASK)
 
 # todo: consider incremental crawling and incremental parser
 # todo: consider filter transport ip
@@ -144,6 +144,7 @@ URLS = [
         'name': 'cn-proxy',
         'url_format': [
             'http://cn-proxy.com/',
+            'http://cn-proxy.com/archives/218'
         ],
         'task_type': SPIDER_GFW_TASK,
         'enable': 0,
@@ -213,10 +214,40 @@ URLS = [
     {
         'name': 'proxylistplus',
         'url_format': [
-            #'http://list.proxylistplus.com/Socks-List-1',
+            'http://list.proxylistplus.com/Socks-List-1',
             'http://list.proxylistplus.com/SSL-List-1'
         ],
         'task_type': SPIDER_GFW_TASK,
+        'enable': 0,
+    },
+    {
+        'name': 'gatherproxy',
+        'url_format': [
+            'http://www.gatherproxy.com/',
+            'http://www.gatherproxy.com/proxylist/anonymity/?t=Elite',
+            'http://www.gatherproxy.com/proxylist/anonymity/?t=Anonymous',
+            'http://www.gatherproxy.com/proxylist/country/?c=China',
+            'http://www.gatherproxy.com/proxylist/country/?c=Brazil',
+            'http://www.gatherproxy.com/proxylist/country/?c=Indonesia',
+            'http://www.gatherproxy.com/proxylist/country/?c=Russia',
+            'http://www.gatherproxy.com/proxylist/country/?c=United%20States',
+            'http://www.gatherproxy.com/proxylist/country/?c=Thailand',
+            'http://www.gatherproxy.com/proxylist/port/8080',
+            'http://www.gatherproxy.com/proxylist/port/3128',
+            'http://www.gatherproxy.com/proxylist/port/80',
+            'http://www.gatherproxy.com/proxylist/port/8118'
+        ],
+        'task_type': SPIDER_GFW_TASK,
+        'enable': 0,
+    },
+    {
+        'name': 'proxy-list',
+        'url_format': [
+            'https://proxy-list.org/english/index.php?p={}',
+        ],
+        'start':1,
+        'end': 10,
+        'task_type': SPIDER_AJAX_GFW_TASK,
         'enable': 1,
     },
 ]

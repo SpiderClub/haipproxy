@@ -32,7 +32,7 @@ DOWNLOADER_MIDDLEWARES = {
     'crawler.middlewares.UserAgentMiddleware': 543,
     'crawler.middlewares.ProxyMiddleware': 543,
     'scrapy_splash.SplashCookiesMiddleware': 723,
-    'scrapy_splash.SplashMiddleware': 725,
+    'scrapy_splash.SplashMiddleware': 725,# it should be before than HttpProxyMiddleware
     'scrapy.downloadermiddlewares.httpcompression.HttpCompressionMiddleware': 810,
 }
 
@@ -55,6 +55,7 @@ SPIDER_COMMON_TASK = 'haipproxy:common_task'
 SPIDER_AJAX_TASK = 'haipproxy:ajax_task'
 SPIDER_CRAWL_TASK = 'haipproxy:crawl_task'
 SPIDER_GFW_TASK = 'haipproxy:gfw_task'
+SPIDER_AJAX_GFW_TASK = 'haipproxy:ajax_gfw_task'
 
 # redis args
 REDIS_HOST = '127.0.0.1'
