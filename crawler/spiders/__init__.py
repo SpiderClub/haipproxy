@@ -21,10 +21,12 @@ https://www.us-proxy.org/
 http://www.proxylists.net/http_highanon.txt
 http://www.atomintersoft.com/
 https://www.rmccurdy.com/scripts/proxy/good.txt
+https://list.proxylistplus.com
 
 website for ajax spider:
 http://www.goubanjia.com/
 http://www.xdaili.cn/freeproxy
+https://www.cool-proxy.net
 
 website for crawl spider:
 https://proxy.coderbusy.com/
@@ -33,8 +35,14 @@ http://proxydb.net/
 website for gfw spider:
 http://cn-proxy.com/
 
+website for ajax gfw spider:
+https://proxy-list.org/english/index.php
+http://www.cnproxy.com/
+http://free-proxy.cz/en/
+
 """
 from .basic_spider import CommonSpider
 from .ajax_spider import AjaxSpider
 from .crawl_spider import CrawlSpider
 from .gfw_spider import GFWSpider
+from .ajax_gfw_spider import AjaxGFWSpider

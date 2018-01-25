@@ -23,7 +23,8 @@ URLS = [
     {
         'name': 'kuaidaili',
         'url_format': [
-            'https://www.kuaidaili.com/free/inha/{}'
+            'https://www.kuaidaili.com/free/inha/{}',
+            'https://www.kuaidaili.com/proxylist/{}'
         ],
         'start': 1,
         'end': 2,
@@ -248,6 +249,37 @@ URLS = [
         'start':1,
         'end': 10,
         'task_type': SPIDER_AJAX_GFW_TASK,
+        'enable': 0,
+    },
+    {
+        'name': 'cnproxy',
+        'url_format': [
+            'http://www.cnproxy.com/proxy{}.html',
+            'http://www.cnproxy.com/proxyedu{}.html'
+        ],
+        'start': 1,
+        'end': 2,
+        'task_type': SPIDER_AJAX_GFW_TASK,
+        'enable': 0,
+    },
+    {
+        'name': 'free-proxy',
+        'url_format': [
+            'http://free-proxy.cz/en/proxylist/main/{}',
+        ],
+        'start': 1,
+        'end': 100,
+        'task_type': SPIDER_AJAX_GFW_TASK,
+        'enable': 0,
+    },
+    {
+        'name': 'cool-proxy',
+        'url_format': [
+            'https://www.cool-proxy.net/proxies/http_proxy_list/country_code:/port:/anonymous:1/page:{}',
+        ],
+        'start': 1,
+        'end': 10,
+        'task_type': SPIDER_AJAX_TASK,
         'enable': 1,
     },
 ]
