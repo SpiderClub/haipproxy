@@ -15,7 +15,7 @@ class BaseSpider:
     }
 
     def parse_common(self, response, pre_extract_method='xpath',
-                     pre_extract='//tr', infos_pos=1,
+                     pre_extract='//tr', infos_pos=1, infos_end=None,
                      detail_rule='td::text', ip_pos=0, port_pos=1,
                      extract_protocol=True, split_detail=False,
                      protocols=None):
@@ -25,6 +25,7 @@ class BaseSpider:
         :param pre_extract_method: extracting method for extract all infos, xpath is default value
         :param pre_extract: pre parsing rule for extracing all infos
         :param infos_pos: pos for extracting infos
+        :param infos_end: end pos for extracting infos,it value should be smaller than 0
         :param detail_rule: rule for extracting ip and port block, css selector is used here
         :param ip_pos: ip index
         :param port_pos: port index
@@ -34,7 +35,7 @@ class BaseSpider:
         :return: ip infos
         """
         if pre_extract_method == 'xpath':
-            infos = response.xpath(pre_extract)[infos_pos:]
+            infos = response.xpath(pre_extract)[infos_pos:infos_end]
         else:
             infos = response.css(pre_extract)
         items = list()

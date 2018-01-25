@@ -3,7 +3,8 @@ Spider rules.Scheduler will provide crawling tasks according to the rules and
 spiders will parse response content according to the rules.
 """
 from config.settings import (
-    SPIDER_AJAX_TASK, SPIDER_CRAWL_TASK, SPIDER_GFW_TASK)
+    SPIDER_AJAX_TASK, SPIDER_CRAWL_TASK,
+    SPIDER_GFW_TASK, SPIDER__AJAX_GFW_TASK)
 
 # todo: consider incremental crawling and incremental parser
 # todo: consider filter transport ip
@@ -207,6 +208,15 @@ URLS = [
         'url_format': [
             'https://www.rmccurdy.com/scripts/proxy/good.txt'
         ],
+        'enable': 0,
+    },
+    {
+        'name': 'proxylistplus',
+        'url_format': [
+            #'http://list.proxylistplus.com/Socks-List-1',
+            'http://list.proxylistplus.com/SSL-List-1'
+        ],
+        'task_type': SPIDER_GFW_TASK,
         'enable': 1,
     },
 ]
