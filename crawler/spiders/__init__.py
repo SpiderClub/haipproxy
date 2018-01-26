@@ -35,6 +35,7 @@ http://proxydb.net/
 
 website for gfw spider:
 http://cn-proxy.com/
+http://www.xroxy.com/
 
 website for ajax gfw spider:
 https://proxy-list.org/english/index.php

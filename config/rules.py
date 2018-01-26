@@ -103,9 +103,13 @@ URLS = [
     {
         'name': 'httpsdaili',
         'url_format': [
-            'http://www.httpsdaili.com/?stype=1',
-            'http://www.httpsdaili.com/?stype=3',
+            'http://www.httpsdaili.com/?stype=1&page={}',
+            'http://www.httpsdaili.com/?stype=2&page={}',
+            'http://www.httpsdaili.com/?stype=3&page={}',
+            'http://www.httpsdaili.com/?stype=4&page={}',
         ],
+        'start': 1,
+        'end': 3, # max 7
         'enable': 0,
     },
     {
@@ -130,8 +134,19 @@ URLS = [
             'http://www.iphai.com/free/wg',
             'http://www.iphai.com/free/np',
             'http://www.iphai.com/free/wp',
+            'http://www.iphai.com/'
         ],
         'enable': 0,
+    },
+    {
+        'name': 'swei360',
+        'url_format': [
+            'http://www.swei360.com/free/?page={}',
+            'http://www.swei360.com/free/?stype=3&page={}',
+        ],
+        'start': 1,
+        'end': 2, # max 7
+        'enable': 1,
     },
     {
         'name': 'yundaili',
@@ -298,8 +313,9 @@ URLS = [
         'task_type': SPIDER_GFW_TASK,
         'start':0,
         'end': 5,  # max 100
-        'enable': 1,
+        'enable': 0,
     },
+
 ]
 
 # todo find a better way to extract ip infos
