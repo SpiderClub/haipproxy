@@ -14,43 +14,43 @@ class CommonSpider(BaseSpider, RedisSpider):
     task_type = SPIDER_COMMON_TASK
 
     def parse(self, response):
-        is_free_proxy = any(['us-proxy' in response.url or 'free-proxy' in response.url
-                             or 'socks-proxy' in response.url or 'sslproxies' in response.url])
-        # todo register all the website dynamicly
-        if 'xdaili' in response.url:
+        url = response.url
+
+        if self.exists(url, 'xdaili'):
             items = self.parse_json(response, detail_rule=['RESULT', 'rows'])
-        elif '66ip' in response.url:
+        elif self.exists(url, '66ip'):
             items = self.parse_common(response, 4)
-        elif 'baizhongsou' in response.url or 'atomintersoft' in response.url:
+        elif self.exists(url, 'baizhongsou', 'atomintersoft'):
             items = self.parse_common(response, split_detail=True)
-        elif 'coderbusy' in response.url:
+        elif self.exists(url, 'coderbusy'):
             items = self.parse_common(response, ip_pos=1, port_pos=2, extract_protocol=False)
-        elif 'data5u' in response.url:
+        elif self.exists(url, 'data5u'):
             items = self.parse_common(response, pre_extract='//ul[contains(@class, "l2")]', infos_pos=0,
                                       detail_rule='span li::text')
-        elif 'httpsdaili' in response.url or 'yun-daili' in response.url:
+        elif self.exists(url, 'httpsdaili', 'yun-daili'):
             items = self.parse_common(response, pre_extract='//tr[contains(@class, "odd")]', infos_pos=0)
-        elif 'ab57' in response.url or 'proxylists' in response.url:
+        elif self.exists(url, 'ab57', 'proxylists'):
             items = self.parse_raw_text(response)
-        elif 'rmccurdy' in response.url:
+        elif self.exists(url, 'rmccurdy'):
             items = self.parse_raw_text(response, delimiter='\n')
-        elif 'my-proxy' in response.url:
+        elif self.exists(url, 'my-proxy'):
             protocols = None
-            if 'socks-4' in response.url:
+            if self.exists(url, 'socks-4'):
                 protocols = ['socks4']
-            if 'socks-5' in response.url:
+            if self.exists(url, 'socks-5'):
                 protocols = ['socks5']
             items = self.parse_my_proxy(response, pre_extract='.list ::text',
                                         redundancy='#', protocols=protocols)
-        elif is_free_proxy:
+        elif self.exists(url, 'us-proxy', 'free-proxy', 'sslproxies', 'socks-proxy'):
             protocols = None
-            if 'sslproxies' in response.url:
+            if self.exists(url, 'sslproxies'):
                 protocols = ['https']
             items = self.parse_common(response, pre_extract='//tbody//tr', infos_pos=0, protocols=protocols)
-        elif 'mrhinkydink' in response.url:
+        elif self.exists(url, 'mrhinkydink'):
             items = self.parse_common(response, pre_extract_method='css', pre_extract='.text', infos_pos=1)
         else:
             items = self.parse_common(response)
+
         for item in items:
             yield item
 

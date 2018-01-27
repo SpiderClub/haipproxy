@@ -13,15 +13,16 @@ class AjaxGFWSpider(BaseSpider, RedisAjaxSpider):
     task_type = SPIDER_AJAX_GFW_TASK
 
     def parse(self, response):
-        if 'proxy-list' in response.url:
+        url = response.url
+        if self.exists(url, 'proxy-list'):
             items = self.parse_common(response, pre_extract_method='css', pre_extract='.table ul',
                                       detail_rule='li::text', split_detail=True)
-        elif 'cnproxy' in response.url:
+        elif self.exists(url, 'cnproxy'):
             items = self.parse_cnproxy(response)
-        elif 'free-proxy' in response.url:
+        elif self.exists(url, 'free-proxy'):
             items = self.parse_free_proxy(response)
         else:
-            items = list()
+            items = self.parse_common(response)
 
         for item in items:
             yield item
@@ -55,9 +56,3 @@ class AjaxGFWSpider(BaseSpider, RedisAjaxSpider):
                 items.append(ProxyUrlItem(url=self.construct_proxy_url(protocol, ip, port)))
 
         return items
-
-
-
-
-
-

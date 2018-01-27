@@ -142,5 +142,12 @@ class BaseSpider:
         """construct proxy urls so spiders can directly use them"""
         return '{}://{}:{}'.format(scheme, ip, port)
 
+    def exists(self, url, *flags):
+        """check whether the flag in url or not"""
+        for flag in flags:
+            if flag in url:
+                return True
+        return False
+
 
 
