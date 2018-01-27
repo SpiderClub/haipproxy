@@ -4,8 +4,8 @@ Settings for global.
 
 # scrapy basic info
 BOT_NAME = 'haiproxy'
-SPIDER_MODULES = ['crawler.spiders']
-NEWSPIDER_MODULE = 'crawler.spiders'
+SPIDER_MODULES = ['crawler.spiders', 'crawler.validators']
+NEWSPIDER_MODULE = 'crawler'
 
 # downloader settings
 ROBOTSTXT_OBEY = False
@@ -13,19 +13,20 @@ COOKIES_ENABLED = False
 DOWNLOAD_TIMEOUT = 60
 # to aviod infinite recursion
 DEPTH_LIMIT = 3
+CONCURRENT_REQUESTS = 32
 # don't filter anything, also can set dont_filter=True in Request objects
 DUPEFILTER_CLASS = 'scrapy.dupefilters.BaseDupeFilter'
+HTTPCACHE_ENABLED = False
 
-
-# splush settings
+# splash settings
 SPLASH_URL = 'http://127.0.0.1:8050'
 
 
 # extension settings
 TELNETCONSOLE_ENABLED = False
-EXTENSIONS = {
-    'crawler.extensions.FailLogger': 500
-}
+# EXTENSIONS = {
+#     'crawler.extensions.FailLogger': 500
+# }
 
 
 DOWNLOADER_MIDDLEWARES = {
@@ -49,6 +50,14 @@ ITEM_PIPELINES = {
 LOG_LEVEL = 'DEBUG'
 
 
+# redis settings
+REDIS_HOST = '127.0.0.1'
+REDIS_PORT = 6379
+REDIS_PASSWORD = '123456'
+DEFAULT_REDIS_DB = 0
+META_DATA_DB = 1
+
+
 # custom spider settings
 SPIDER_FEED_SIZE = 10
 SPIDER_COMMON_TASK = 'haipproxy:common_task'
@@ -57,12 +66,14 @@ SPIDER_CRAWL_TASK = 'haipproxy:crawl_task'
 SPIDER_GFW_TASK = 'haipproxy:gfw_task'
 SPIDER_AJAX_GFW_TASK = 'haipproxy:ajax_gfw_task'
 
-# redis args
-REDIS_HOST = '127.0.0.1'
-REDIS_PORT = 6379
-REDIS_PASSWORD = '123456'
-DEFAULT_REDIS_DB = 0
-META_DATA_DB = 1
+# validator settings
+VALIDATOR_FEED_SIZE = 20
+
+# ip resource settings
+HTTP_QUEUE = 'haipproxy:http'
+HTTPS_QUEUE = 'haipproxy:https'
+SOCKS4_QUEUE = 'haipproxy:socks4'
+SOCKS5_QUEUE = 'haipproxy:socks4'
 
 
 
