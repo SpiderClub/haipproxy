@@ -4,24 +4,34 @@ initially score.
 """
 import json
 
-from config.settings import (
-    HTTP_QUEUE, HTTPS_QUEUE
-)
+import requests
+
 
 from ..redis_spiders import ValidatorRedisSpider
 from .mixin import BaseSpider
 
 
-class HttpBinSpider(BaseSpider, ValidatorRedisSpider):
+class HttpBinValidator(BaseSpider, ValidatorRedisSpider):
     name = 'httpbin'
-    urls = {
-        HTTP_QUEUE: 'http://httpbin.org/ip',
-        HTTPS_QUEUE: 'http://httpbin.org/ip',
-    }
+    urls = [
+        'http://httpbin.org/ip',
+        'https://httpbin.org/ip',
+    ]
+
+    def __init__(self):
+        super().__init__()
+        self.origin_ip = requests.get(self.urls[1]).json().get('origin')
 
     def parse_detail(self, response):
         ip = json.loads(response.body_as_unicode()).get('origin')
-        print(ip)
+        # filter transparent ip resources
+        if self.origin_ip in ip:
+            return
+
+
+
+
+
 
 
 

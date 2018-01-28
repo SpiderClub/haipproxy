@@ -1,13 +1,10 @@
 """
 scrapy middlerwares for both downloader and spider
 """
-from urllib.parse import urlsplit
+import time
 
+from config.settings import GFW_PROXY
 from .user_agents import FakeChromeUA
-
-
-HTTP_PROXY = 'http://202.115.44.136:8123'
-HTTPS_PROXY = 'https://202.115.44.136:8123'
 
 
 class UserAgentMiddleware(object):
@@ -20,19 +17,26 @@ class UserAgentMiddleware(object):
 class ProxyMiddleware(object):
     """This middleware provides http and https proxy for spiders"""
     def process_request(self, request, spider):
-        # todo 完善所有情况，如翻墙和普通代理
+        # todo implement the code for spider.proxy_mode == 1, using proxy pools
         if not hasattr(spider, 'proxy_mode') or not spider.proxy_mode:
             return
 
-        r = urlsplit(request.url)
         if spider.proxy_mode == 2:
             if 'splash' in request.meta:
-                request.meta['splash']['args']['proxy'] = 'http://202.115.44.136:8123'
+                request.meta['splash']['args']['proxy'] = GFW_PROXY
             else:
-                if r.scheme == 'https':
-                    request.meta['proxy'] = 'https://202.115.44.136:8123'
-                else:
-                    request.meta['proxy'] = 'http://202.115.44.136:8123'
+                request.meta['proxy'] = GFW_PROXY
 
-        # todo implement the code for spider.proxy_mode == 1, using proxy pools
 
+class RequestStartProfileMiddleware(object):
+    """This middleware calculate the ip's speed"""
+    def process_request(self, request, spider):
+        request.meta['start'] = int(time.time() * 1000)
+
+
+class RequestEndProfileMiddleware(object):
+    """This middleware calculate the ip's speed"""
+    def process_response(self, request, response, spider):
+        speed = int(time.time() * 1000) - request.meta['start']
+        request.meta['speed'] = speed
+        return response

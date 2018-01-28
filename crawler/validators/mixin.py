@@ -25,7 +25,7 @@ class BaseSpider:
     def parse_error(self, failure):
         request = failure.request
         proxy = request.meta.get('proxy')
-        print('this proxy timeout', proxy)
+        print('proxy {} has been failed', proxy)
 
 
 

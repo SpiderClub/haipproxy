@@ -9,9 +9,9 @@ from scrapy.spiders import (
 from scrapy_splash import SplashRequest
 
 from utils.connetion import get_redis_con
+from config.settings import HTTP_QUEUE
 
-
-__all__ = ['RedisSpider', 'RedisAjaxSpider', 'RedisCrawlSpider']
+__all__ = ['RedisSpider', 'RedisAjaxSpider', 'RedisCrawlSpider', 'ValidatorRedisSpider']
 
 
 class RedisMixin(object):
@@ -93,3 +93,28 @@ class RedisAjaxSpider(RedisSpider):
         self.logger.debug('Read {} requests from {}'.format(found, self.task_type))
 
 
+class ValidatorRedisSpider(RedisSpider):
+    """Scrapy only supports https and http proxy"""
+
+    def next_requests(self):
+        yield from self.next_requests_process(HTTP_QUEUE)
+
+    def next_requests_process(self, task_type):
+        fetch_one = self.redis_con.lpop
+        found = 0
+        while found < self.redis_batch_size:
+            data = fetch_one(task_type)
+            if not data:
+                break
+            proxy_url = data.decode()
+            for url in self.urls:
+                req = Request(url, meta={'proxy': proxy_url},
+                              callback=self.parse, errback=self.parse_error)
+                yield req
+                found += 1
+
+        self.logger.debug('Read {} ip sources from {}'.format(found, task_type))
+
+    def schedule_next_requests(self):
+        for req in self.next_requests():
+            self.crawler.engine.crawl(req, spider=self)
