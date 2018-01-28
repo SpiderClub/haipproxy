@@ -21,6 +21,8 @@ class AjaxGFWSpider(BaseSpider, RedisAjaxSpider):
             items = self.parse_cnproxy(response)
         elif self.exists(url, 'free-proxy'):
             items = self.parse_free_proxy(response)
+        elif self.exists(url, 'proxylist'):
+            items = self.parse_proxylist(response)
         else:
             items = self.parse_common(response)
 
@@ -56,3 +58,22 @@ class AjaxGFWSpider(BaseSpider, RedisAjaxSpider):
                 items.append(ProxyUrlItem(url=self.construct_proxy_url(protocol, ip, port)))
 
         return items
+
+    def parse_proxylist(self, response):
+        items = list()
+        infos = response.xpath('//tr')[2:]
+
+        for info in infos:
+            info_str = info.extract()
+            if '透明' in info_str or 'transparent' in info_str.lower():
+                continue
+            ip = info.css('td::text')[1].extract()
+            port = info.css('td a::text')[0].extract()
+            if not ip or not port:
+                continue
+
+            cur_protocols = self.procotol_extractor(info_str)
+            for protocol in cur_protocols:
+                items.append(ProxyUrlItem(url=self.construct_proxy_url(protocol, ip, port)))
+
+            return items
