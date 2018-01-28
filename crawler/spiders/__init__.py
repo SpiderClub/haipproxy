@@ -23,14 +23,12 @@ http://www.atomintersoft.com/
 https://www.rmccurdy.com/scripts/proxy/good.txt
 https://list.proxylistplus.com
 http://www.mrhinkydink.com/proxies.htm
+https://proxy.coderbusy.com/
 
 website for ajax spider:
 http://www.goubanjia.com/
 http://www.xdaili.cn/freeproxy
 https://www.cool-proxy.net
-
-website for crawl spider:
-https://proxy.coderbusy.com/
 http://proxydb.net/
 
 website for gfw spider:
@@ -45,6 +43,7 @@ http://free-proxy.cz/en/
 """
 from .basic_spider import CommonSpider
 from .ajax_spider import AjaxSpider
-from .crawl_spider import CrawlSpider
 from .gfw_spider import GFWSpider
 from .ajax_gfw_spider import AjaxGFWSpider
+
+# todo 有问题的 gather 66

@@ -12,11 +12,12 @@ ROBOTSTXT_OBEY = False
 COOKIES_ENABLED = False
 DOWNLOAD_TIMEOUT = 60
 # to aviod infinite recursion
-DEPTH_LIMIT = 3
+DEPTH_LIMIT = 100
 CONCURRENT_REQUESTS = 32
 # don't filter anything, also can set dont_filter=True in Request objects
 DUPEFILTER_CLASS = 'scrapy.dupefilters.BaseDupeFilter'
 HTTPCACHE_ENABLED = False
+GFW_PROXY = 'http://202.115.44.136:8123'
 
 # splash settings
 SPLASH_URL = 'http://127.0.0.1:8050'
@@ -33,7 +34,8 @@ DOWNLOADER_MIDDLEWARES = {
     'crawler.middlewares.UserAgentMiddleware': 543,
     'crawler.middlewares.ProxyMiddleware': 543,
     'scrapy_splash.SplashCookiesMiddleware': 723,
-    'scrapy_splash.SplashMiddleware': 725,# it should be before than HttpProxyMiddleware
+    # it should be before than HttpProxyMiddleware
+    'scrapy_splash.SplashMiddleware': 725,
     'scrapy.downloadermiddlewares.httpcompression.HttpCompressionMiddleware': 810,
 }
 
@@ -62,18 +64,41 @@ META_DATA_DB = 1
 SPIDER_FEED_SIZE = 10
 SPIDER_COMMON_TASK = 'haipproxy:common_task'
 SPIDER_AJAX_TASK = 'haipproxy:ajax_task'
-SPIDER_CRAWL_TASK = 'haipproxy:crawl_task'
 SPIDER_GFW_TASK = 'haipproxy:gfw_task'
 SPIDER_AJAX_GFW_TASK = 'haipproxy:ajax_gfw_task'
 
 # validator settings
 VALIDATOR_FEED_SIZE = 20
 
-# ip resource settings
+
+# initially validator just classify ip resources into http and https queues, which can
+# be stable or unstable
+
+# stable and unstable validator will validate ip resources to ensure whenever the proxy
+# is alive, so they do this job very frequently
+
+# data_all is a set , it's a dupefilter
+DATA_ALL = 'haipproxy:all'
+# http_queue is a zset/list, it's used to store initially http/https proxy resourecs
+# and their scores
 HTTP_QUEUE = 'haipproxy:http'
-HTTPS_QUEUE = 'haipproxy:https'
+# socks proxy resources container
 SOCKS4_QUEUE = 'haipproxy:socks4'
 SOCKS5_QUEUE = 'haipproxy:socks4'
+
+# they are list and hashset combined, client fetchs a proxy from the list with round-robin
+# the score bettwen 8~10 will be here, every time the clint uses a proxy, it will give a feedback
+# and the score will be recalculated
+# validator fetchs proxy from the tail of the list and append it to the tail, while client fetchs
+# proxy from the head of the list and append it to the tail
+VALIDATED_HTTP_QUEUE = 'haipproxy:http:stable'
+VALIDATED_HTTPS_QUEUE = 'haipproxy:https:stable'
+
+# they are zsets, the score bettwen 0~7 will be here, when there all not enough ips in stable queue,
+# the validator will fetch some of the ips according to the score into the stable queue
+VALIDATED_HTTP_QUEUE_UNSTABLE = 'haipproxy:http:unstable'
+VALIDATED_HTTPS_QUEUE_UNSTABLE = 'haipproxy:https:unstable'
+
 
 
 
