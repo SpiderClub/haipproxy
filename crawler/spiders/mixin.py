@@ -7,7 +7,7 @@ from ..items import ProxyUrlItem
 
 
 class BaseSpider:
-    default_protocols = ['http', 'https']
+    default_protocols = ['http']
     # slow down each spider
     custom_settings = {
         'CONCURRENT_REQUESTS_PER_DOMAIN': 1,
@@ -46,7 +46,6 @@ class BaseSpider:
             proxy_detail = info.css(detail_rule).extract()
             if not proxy_detail:
                 continue
-
             if not split_detail:
                 ip = proxy_detail[ip_pos].strip()
                 port = proxy_detail[port_pos].strip()
@@ -118,22 +117,14 @@ class BaseSpider:
         return items
 
     def procotol_extractor(self, detail):
-        """extract http protocol,default value is http and https"""
+        """extract http protocol,default value is http"""
         detail = detail.lower()
-        # TODO it might be socks4, fix this case
         if 'socks5' in detail:
             protocols = ['socks5']
         elif 'socks4/5' in detail:
             protocols = ['socks4', 'socks5']
         elif 'socks4' in detail:
             protocols = ['socks4']
-        # TODO find a better way to recongnize both http and https protocol
-        elif 'http,https' in detail or 'http/https' in detail:
-            protocols = ['http', 'https']
-        elif 'https' in detail:
-            protocols = ['https']
-        elif 'http' in detail:
-            protocols = ['http']
         else:
             protocols = self.default_protocols
         return protocols
