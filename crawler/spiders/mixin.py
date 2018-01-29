@@ -11,7 +11,10 @@ class BaseSpider:
     # slow down each spider
     custom_settings = {
         'CONCURRENT_REQUESTS_PER_DOMAIN': 1,
-        'DOWNLOAD_DELAY': 3
+        'DOWNLOAD_DELAY': 3,
+        'ITEM_PIPELINES': {
+            'crawler.pipelines.ProxyIPPipeline': 200,
+        }
     }
 
     def parse_common(self, response, pre_extract_method='xpath',

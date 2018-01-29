@@ -31,3 +31,15 @@ class ProxyIPPipeline:
         return item
 
 
+class ProxyDetailPipeline:
+    def open_spider(self, spider):
+        self.redis_con = get_redis_con(db=META_DATA_DB)
+
+    def process_item(self, item, spider):
+        return deferToThread(self._process_item, item, spider)
+
+    def _process_item(self, item, spider):
+        self.redis_con.zadd(item.queue, item.score, item.url)
+        return item
+
+
