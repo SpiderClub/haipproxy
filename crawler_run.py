@@ -7,11 +7,11 @@ from scrapy.utils.log import configure_logging
 from scrapy.utils.project import get_project_settings
 
 from crawler.spiders import (
-    CommonSpider, AjaxSpider, CrawlSpider, GFWSpider, AjaxGFWSpider)
+    CommonSpider, AjaxSpider, GFWSpider, AjaxGFWSpider)
 
 
 all_spiders = [
-    CommonSpider, AjaxSpider, CrawlSpider, GFWSpider, AjaxGFWSpider
+    CommonSpider, AjaxSpider, GFWSpider, AjaxGFWSpider
 ]
 
 

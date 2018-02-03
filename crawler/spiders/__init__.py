@@ -24,6 +24,7 @@ https://www.rmccurdy.com/scripts/proxy/good.txt
 https://list.proxylistplus.com
 http://www.mrhinkydink.com/proxies.htm
 https://proxy.coderbusy.com/
+http://www.mogumiao.com/
 
 website for ajax spider:
 http://www.goubanjia.com/

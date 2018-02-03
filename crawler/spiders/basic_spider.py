@@ -18,6 +18,8 @@ class CommonSpider(BaseSpider, RedisSpider):
 
         if self.exists(url, 'xdaili'):
             items = self.parse_json(response, detail_rule=['RESULT', 'rows'])
+        elif self.exists(url, 'mogumiao'):
+            items = self.parse_json(response, detail_rule=['msg'])
         elif self.exists(url, '66ip'):
             items = self.parse_common(response, infos_pos=4)
         elif self.exists(url, 'baizhongsou', 'atomintersoft'):
