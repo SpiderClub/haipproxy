@@ -6,13 +6,17 @@ import json
 
 import requests
 
-
+from config.settings import (
+    HTTP_QUEUE, VALIDATED_HTTP_QUEUE, VALIDATED_HTTPS_QUEUE)
 from ..redis_spiders import ValidatorRedisSpider
-from .mixin import BaseSpider
+from .mixin import BaseValidator
 
 
-class HttpBinValidator(BaseSpider, ValidatorRedisSpider):
-    name = 'httpbin'
+class HttpBinInitValidator(BaseValidator, ValidatorRedisSpider):
+    """This validator do initially work for ip resources"""
+    name = 'httpbin_validate_init'
+    data_structure = 'list'
+    task_types = [HTTP_QUEUE]
     urls = [
         'http://httpbin.org/ip',
         'https://httpbin.org/ip',
@@ -23,10 +27,26 @@ class HttpBinValidator(BaseSpider, ValidatorRedisSpider):
         self.origin_ip = requests.get(self.urls[1]).json().get('origin')
 
     def parse_detail(self, response):
+        """filter transparent ip resources"""
         ip = json.loads(response.body_as_unicode()).get('origin')
-        # filter transparent ip resources
         if self.origin_ip in ip:
-            return
+            return False
+        return True
+
+
+class CommonValidator(BaseValidator, ValidatorRedisSpider):
+    """This validator check the liveness of ip resources"""
+    name = 'httpbin'
+    data_structure = 'zset'
+    urls = [
+        'http://httpbin.org/ip',
+        'https://httpbin.org/ip',
+    ]
+    task_type = [VALIDATED_HTTP_QUEUE, VALIDATED_HTTPS_QUEUE]
+
+
+
+
 
 
 
