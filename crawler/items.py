@@ -11,4 +11,5 @@ class ProxyUrlItem(scrapy.Item):
 class ProxyDetailItem(scrapy.Item):
     url = scrapy.Field()
     score = scrapy.Field()
+    incr = scrapy.Field()
     queue = scrapy.Field()
