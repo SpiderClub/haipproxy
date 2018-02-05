@@ -16,7 +16,6 @@ class TaskScheduler:
             task_type = detail.get('task_type', SPIDER_COMMON_TASK)
             url_format = detail.get('url_format')
             # todo split the code into multi functions
-            print(*url_format)
             con.lpush(task_type, *url_format)
 
 
