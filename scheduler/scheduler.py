@@ -58,7 +58,4 @@ class TaskScheduler:
             release_lock(conn, task_name, lock_indentifier)
 
 
-if __name__ == '__main__':
-    task_schduler = TaskScheduler('Crawler')
-    task_schduler.schedule_all_right_now()
-    task_schduler.schedule_with_delay()
+
