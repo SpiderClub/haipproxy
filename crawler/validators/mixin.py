@@ -11,7 +11,7 @@ class BaseValidator:
     init_score = 10
     # slow down each spider
     custom_settings = {
-        'CONCURRENT_REQUESTS_PER_DOMAIN': 1,
+        'CONCURRENT_REQUESTS_PER_DOMAIN': 30,
         'RETRY_ENABLED': False,
         'DOWNLOADER_MIDDLEWARES': {
             'crawler.middlewares.RequestStartProfileMiddleware': 500,
@@ -31,15 +31,14 @@ class BaseValidator:
             not_transparent = self.parse_detail(response)
             if not_transparent:
                 if 'https' in url:
-                    yield ProxyDetailItem(proxy, self.init_score * 0.9, VALIDATED_HTTPS_QUEUE)
+                    yield ProxyDetailItem(url=proxy, score=self.init_score * 0.9, queue=VALIDATED_HTTPS_QUEUE)
                 else:
-                    yield ProxyDetailItem(proxy, self.init_score * 0.9, VALIDATED_HTTP_QUEUE)
+                    yield ProxyDetailItem(url=proxy, score=self.init_score * 0.9, queue=VALIDATED_HTTP_QUEUE)
         else:
-            score = 0
             if 'https' in url:
-                yield ProxyDetailItem(proxy, score, VALIDATED_HTTPS_QUEUE)
+                yield ProxyDetailItem(url=proxy, score='incr', queue=VALIDATED_HTTPS_QUEUE)
             else:
-                yield ProxyDetailItem(proxy, score, VALIDATED_HTTP_QUEUE)
+                yield ProxyDetailItem(url=proxy, score='incr', queue=VALIDATED_HTTP_QUEUE)
 
     def parse_detail(self, response):
         pass
@@ -47,19 +46,18 @@ class BaseValidator:
     def parse_error(self, failure):
         request = failure.request
         proxy = request.meta.get('proxy')
-        self.logger.info('proxy {} has been failed', proxy)
+        self.logger.info('proxy {} has been failed'.format(proxy))
         url = request.url
         if 'init' in self.name:
             if 'https' in url:
-                yield ProxyDetailItem(proxy, self.init_score * 0.7, VALIDATED_HTTPS_QUEUE)
+                yield ProxyDetailItem(url=proxy, score=self.init_score * 0.7, queue=VALIDATED_HTTPS_QUEUE)
             else:
-                yield ProxyDetailItem(proxy, self.init_score * 0.7, VALIDATED_HTTP_QUEUE)
+                yield ProxyDetailItem(url=proxy, score=self.init_score * 0.7, queue=VALIDATED_HTTP_QUEUE)
         else:
-            score = 0
             if 'https' in url:
-                yield ProxyDetailItem(proxy, score, VALIDATED_HTTPS_QUEUE)
+                yield ProxyDetailItem(url=proxy, score='decr', queue=VALIDATED_HTTPS_QUEUE)
             else:
-                yield ProxyDetailItem(proxy, score, VALIDATED_HTTP_QUEUE)
+                yield ProxyDetailItem(url=proxy, score='decr', queue=VALIDATED_HTTP_QUEUE)
 
 
 

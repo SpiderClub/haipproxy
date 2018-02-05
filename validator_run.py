@@ -7,11 +7,11 @@ from scrapy.utils.log import configure_logging
 from scrapy.utils.project import get_project_settings
 
 from crawler.validators import (
-    HttpBinValidator)
+    HttpBinInitValidator, CommonValidator)
 
 
 all_spiders = [
-    HttpBinValidator
+    HttpBinInitValidator, CommonValidator
 ]
 
 

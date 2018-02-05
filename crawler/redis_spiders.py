@@ -8,8 +8,9 @@ from scrapy.spiders import (
     Spider, CrawlSpider)
 from scrapy_splash import SplashRequest
 
-from utils.connetion import get_redis_con
-from config.settings import HTTP_QUEUE
+from config.settings import (
+    VALIDATOR_FEED_SIZE, SPIDER_FEED_SIZE)
+from utils.redis_util import get_redis_con
 
 __all__ = ['RedisSpider', 'RedisAjaxSpider', 'RedisCrawlSpider', 'ValidatorRedisSpider']
 
@@ -23,8 +24,7 @@ class RedisMixin(object):
 
     def setup_redis(self, crawler):
         """send signals when the spider is free"""
-        settings = crawler.settings
-        self.redis_batch_size = settings.getint('SPIDER_FEED_SIZE')
+        self.redis_batch_size = SPIDER_FEED_SIZE
         self.redis_con = get_redis_con()
 
         crawler.signals.connect(self.spider_idle, signal=signals.spider_idle)
@@ -95,9 +95,13 @@ class RedisAjaxSpider(RedisSpider):
 
 class ValidatorRedisSpider(RedisSpider):
     """Scrapy only supports https and http proxy"""
+    def setup_redis(self, crawler):
+        super().setup_redis(crawler)
+        self.redis_batch_size = VALIDATOR_FEED_SIZE
 
     def next_requests(self):
-        yield from self.next_requests_process(HTTP_QUEUE)
+        for task_type in self.task_types:
+            yield from self.next_requests_process(task_type)
 
     def next_requests_process(self, task_type):
         fetch_one = self.redis_con.lpop
@@ -113,8 +117,5 @@ class ValidatorRedisSpider(RedisSpider):
                 yield req
                 found += 1
 
-        self.logger.debug('Read {} ip sources from {}'.format(found, task_type))
+        self.logger.debug('Read {} ip proxies from {}'.format(found, task_type))
 
-    def schedule_next_requests(self):
-        for req in self.next_requests():
-            self.crawler.engine.crawl(req, spider=self)
