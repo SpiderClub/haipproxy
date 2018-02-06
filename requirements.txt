@@ -3,3 +3,5 @@ Twisted==17.9.0
 requests==2.18.4
 redis==2.10.6
 schedule==0.5.0
+scrapy-splash==0.7.2
+
