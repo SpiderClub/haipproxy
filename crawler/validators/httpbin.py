@@ -14,7 +14,7 @@ from .mixin import BaseValidator
 
 class HttpBinInitValidator(BaseValidator, ValidatorRedisSpider):
     """This validator do initially work for ip resources"""
-    name = 'httpbin_validate_init'
+    name = 'init'
     task_types = [HTTP_QUEUE]
     urls = [
         'http://httpbin.org/ip',
@@ -27,6 +27,9 @@ class HttpBinInitValidator(BaseValidator, ValidatorRedisSpider):
 
     def parse_detail(self, response):
         """filter transparent ip resources"""
+        if not response.body_as_unicode():
+            return False
+
         ip = json.loads(response.body_as_unicode()).get('origin')
         if self.origin_ip in ip:
             return False
@@ -35,7 +38,7 @@ class HttpBinInitValidator(BaseValidator, ValidatorRedisSpider):
 
 class CommonValidator(BaseValidator, ValidatorRedisSpider):
     """This validator check the liveness of ip resources"""
-    name = 'httpbin'
+    name = 'common'
     urls = [
         'http://httpbin.org/ip',
         'https://httpbin.org/ip',

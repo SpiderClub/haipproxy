@@ -10,10 +10,10 @@ NEWSPIDER_MODULE = 'crawler'
 # downloader settings
 ROBOTSTXT_OBEY = False
 COOKIES_ENABLED = False
-DOWNLOAD_TIMEOUT = 60
+DOWNLOAD_TIMEOUT = 30
 # to aviod infinite recursion
 DEPTH_LIMIT = 100
-CONCURRENT_REQUESTS = 32
+CONCURRENT_REQUESTS = 50
 # don't filter anything, also can set dont_filter=True in Request objects
 DUPEFILTER_CLASS = 'scrapy.dupefilters.BaseDupeFilter'
 HTTPCACHE_ENABLED = False
@@ -21,7 +21,6 @@ GFW_PROXY = 'http://202.115.44.136:8123'
 
 # splash settings
 SPLASH_URL = 'http://127.0.0.1:8050'
-
 
 # extension settings
 TELNETCONSOLE_ENABLED = False
@@ -51,7 +50,6 @@ ITEM_PIPELINES = {
 # scrapy log settings
 LOG_LEVEL = 'DEBUG'
 
-
 # redis settings
 REDIS_HOST = '127.0.0.1'
 REDIS_PORT = 6379
@@ -68,14 +66,15 @@ SPIDER_FEED_SIZE = 10
 SPIDER_COMMON_TASK = 'haipproxy:spider:common'
 SPIDER_AJAX_TASK = 'haipproxy:spider:ajax'
 SPIDER_GFW_TASK = 'haipproxy:spider:gfw'
-SPIDER_AJAX_GFW_TASK = 'haipproxy:spider:ajax'
+SPIDER_AJAX_GFW_TASK = 'haipproxy:spider:ajax_gfw'
 
 # custom validator settings
 VALIDATOR_FEED_SIZE = 50
+# they are just temp tasks
+# todo use set other than list
 VALIDATOR_HTTP_TASK = 'haipproxy:validator:http'
 VALIDATOR_HTTPS_TASK = 'haipproxy:validator:https'
 VALIDATOR_WEIBO_TASK = 'haipproxy:validator:weibo'
-
 
 # initially validator just classify ip resources into http and https queues, which can
 # be stable or unstable
@@ -91,25 +90,6 @@ HTTP_QUEUE = 'haipproxy:proxy:http'
 SOCKS4_QUEUE = 'haipproxy:proxy:socks4'
 SOCKS5_QUEUE = 'haipproxy:proxy:socks5'
 
-
-# valited queues are zsets.
+# valited queues are zsets.squid and other clients fetch ip resources from them.
 VALIDATED_HTTP_QUEUE = 'haipproxy:http:validated'
 VALIDATED_HTTPS_QUEUE = 'haipproxy:https:validated'
-
-# # they are list and hashset combined, client fetchs a proxy from the list with round-robin
-# # the score bettwen 8~10 will be here, every time the clint uses a proxy, it will give a feedback
-# # and the score will be recalculated
-# # validator fetchs proxy from the tail of the list and append it to the tail, while client fetchs
-# # proxy from the head of the list and append it to the tail
-# VALIDATED_HTTP_QUEUE = 'haipproxy:http:stable'
-# VALIDATED_HTTPS_QUEUE = 'haipproxy:https:stable'
-#
-# # they are zsets, the score bettwen 0~7 will be here, when there all not enough ips in stable queue,
-# # the validator will fetch some of the ips according to the score into the stable queue
-# VALIDATED_HTTP_QUEUE_UNSTABLE = 'haipproxy:http:unstable'
-# VALIDATED_HTTPS_QUEUE_UNSTABLE = 'haipproxy:https:unstable'
-
-
-
-
-
