@@ -1,6 +1,6 @@
 """
-This module provides task scheduler for spiders and validators.
+This module provides booter for spiders and validators.
 """
 
 from .scheduler import (
-    TaskScheduler, ValidatorScheduler)
+    crawler_start, scheduler_start)
