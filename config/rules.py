@@ -353,7 +353,7 @@ CRAWLER_TASK_MAPS = {
     'common': SPIDER_COMMON_TASK,
     'ajax': SPIDER_AJAX_TASK,
     'gfw': SPIDER_GFW_TASK,
-    'gfw_ajax': SPIDER_AJAX_GFW_TASK
+    'ajax_gfw': SPIDER_AJAX_GFW_TASK
 }
 
 VALIDATOR_TASK_MAPS = {
