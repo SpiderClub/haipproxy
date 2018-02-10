@@ -12,7 +12,8 @@ from scrapy.utils.log import configure_logging
 from scrapy.utils.project import get_project_settings
 
 from config.rules import (
-    CRWALER_TASKS, VALIDATOR_TASKS)
+    CRWALER_TASKS, VALIDATOR_TASKS,
+    CRAWLER_TASK_MAPS, VALIDATOR_TASK_MAPS)
 from crawler.spiders import (
     CommonSpider, AjaxSpider,
     GFWSpider, AjaxGFWSpider)
@@ -34,23 +35,29 @@ DEFAULT_CRAWLER_TASKS = [
 DEFAULT_VALIDATORS_TASKS = [HTTP_QUEUE, VALIDATOR_HTTP_TASK,
                             VALIDATOR_HTTPS_TASK]
 
-PROXY_CRAWLERS = [CommonSpider, AjaxSpider, GFWSpider, AjaxGFWSpider]
-PROXY_VALIDATORS = [HttpBinInitValidator, CommonValidator]
+DEFAULT_CRAWLERS = [CommonSpider, AjaxSpider, GFWSpider, AjaxGFWSpider]
+DEFAULT_VALIDATORS = [HttpBinInitValidator, CommonValidator]
 
 
 class BaseCase:
     def __init__(self, spider):
         self.spider = spider
 
-    def check(self, name):
-        return self.spider.name == name
+    def check(self, task):
+        return self.spider.task_type == task
 
 
 class BaseScheduler:
-    def __init__(self, name, tasks):
+    def __init__(self, name, tasks, task_types=None):
+        """
+        init function for Schedulers.
+        :param name: scheduler name, generally the value is usage of the scheduler
+        :param tasks: tasks in config.rules
+        :param task_types: for crawler, the value is task_type,while for validator, it's task name
+        """
         self.name = name
         self.tasks = tasks
-        self.allow_tasks = list()
+        self.task_types = list() if not task_types else task_types
 
     def schedule_with_delay(self):
         for task in self.tasks:
@@ -64,9 +71,19 @@ class BaseScheduler:
         with Pool() as pool:
             pool.map(self.schedule_task_with_lock, self.tasks)
 
-    def schedule_task_with_lock(self, task):
+    def get_lock(self, conn, task):
         if not task.get('enable'):
             return None
+        task_type = task.get('task_type')
+        if task_type not in self.task_types:
+            return None
+
+        task_name = task.get('name')
+        lock_indentifier = acquire_lock(conn, task_name)
+        return lock_indentifier
+
+    def schedule_task_with_lock(self, task):
+        raise NotImplementedError
 
 
 class CrawlerScheduler(BaseScheduler):
@@ -75,8 +92,7 @@ class CrawlerScheduler(BaseScheduler):
         if not task.get('enable'):
             return None
         task_type = task.get('task_type')
-
-        if task_type not in self.allow_tasks:
+        if task_type not in self.task_types:
             return None
 
         conn = get_redis_con()
@@ -107,17 +123,16 @@ class CrawlerScheduler(BaseScheduler):
 class ValidatorScheduler(BaseScheduler):
     def schedule_task_with_lock(self, task):
         """Validator scheduler filters tasks according to task name
-        since it's task name can stand for task type"""
+        since it's task name stands for task type"""
         if not task.get('enable'):
             return None
-
-        task_name = task.get('name')
-        if task_name not in self.allow_tasks:
+        task_type = task.get('task_type')
+        if task_type not in self.task_types:
             return None
 
         conn = get_redis_con()
         internal = task.get('internal')
-        task_type = task.get('task_type')
+        task_name = task.get('name')
         resource_queue = task.get('resource')
         lock_indentifier = acquire_lock(conn, task_name)
         if not lock_indentifier:
@@ -146,22 +161,45 @@ class ValidatorScheduler(BaseScheduler):
 
 @click.command()
 @click.option('--usage', type=click.Choice(['crawler', 'validator']), default='crawler')
-@click.argument('names', nargs=-1)
-def crawler_start(usage, names):
-    """start specified spiders or validators from cmd with scrapy core api"""
-    if usage == 'crawler':
-        origin_spiders = PROXY_CRAWLERS
-    else:
-        origin_spiders = PROXY_VALIDATORS
+@click.argument('task_types', nargs=-1)
+def scheduler_start(usage, task_types):
+    """Start specified scheduler."""
+    default_tasks = CRWALER_TASKS if usage == 'crawler' else VALIDATOR_TASKS
+    default_allow_tasks = DEFAULT_CRAWLER_TASKS if usage == 'crawler' else DEFAULT_VALIDATORS_TASKS
+    maps = CRAWLER_TASK_MAPS if usage == 'crawler' else VALIDATOR_TASK_MAPS
+    SchedulerCls = CrawlerScheduler if usage == 'crawler' else ValidatorScheduler
+    scheduler = SchedulerCls(usage, default_tasks)
 
-    spiders = list()
-    all_cases = list(map(BaseCase, origin_spiders))
-    if not names:
+    if not task_types:
+        scheduler.task_types = default_allow_tasks
+    else:
+        for task_type in task_types:
+            allow_task_type = maps.get(task_type)
+            if not allow_task_type:
+                continue
+            scheduler.task_types.append(allow_task_type)
+
+    scheduler.schedule_all_right_now()
+    scheduler.schedule_with_delay()
+
+
+@click.command()
+@click.option('--usage', type=click.Choice(['crawler', 'validator']), default='crawler')
+@click.argument('tasks', nargs=-1)
+def crawler_start(usage, tasks):
+    """Start specified spiders or validators from cmd with scrapy core api.
+    There are four kinds of spiders: common, ajax, gfw, ajax_gfw.If you don't
+    assign any tasks, all the spiders will run.
+    """
+    origin_spiders = DEFAULT_CRAWLERS if usage == 'crawler' else DEFAULT_VALIDATORS
+    if not tasks:
         spiders = origin_spiders
     else:
-        for spider_name in names:
-            for case in all_cases:
-                if case.check(spider_name):
+        spiders = list()
+        cases = list(map(BaseCase, origin_spiders))
+        for task in tasks:
+            for case in cases:
+                if case.check(task):
                     spiders.append(case.spider)
 
     settings = get_project_settings()
@@ -172,23 +210,3 @@ def crawler_start(usage, names):
     d = runner.join()
     d.addBoth(lambda _: reactor.stop())
     reactor.run()
-
-
-@click.command()
-@click.option('--usage', type=click.Choice(['crawler', 'validator']), default='crawler')
-@click.argument('tasks', nargs=-1)
-def scheduler_start(usage, tasks):
-    """start specified scheduler"""
-    if usage == 'crawler':
-        scheduler = CrawlerScheduler(usage, CRWALER_TASKS)
-        if not tasks:
-            scheduler.allow_tasks = DEFAULT_CRAWLER_TASKS
-        else:
-            pass
-    else:
-        scheduler = ValidatorScheduler(usage, VALIDATOR_TASKS)
-        if not tasks:
-            scheduler.allow_tasks = DEFAULT_VALIDATORS_TASKS
-
-    scheduler.schedule_all_right_now()
-    scheduler.schedule_with_delay()

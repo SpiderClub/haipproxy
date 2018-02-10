@@ -9,6 +9,9 @@ from config.settings import (
     VALIDATOR_HTTP_TASK, VALIDATOR_HTTPS_TASK)
 
 
+__all__ = ['CRWALER_TASKS', 'VALIDATOR_TASKS', 'CRAWLER_TASK_MAPS', 'VALIDATOR_TASK_MAPS']
+
+
 CRWALER_TASKS = [
     {
         'name': 'mogumiao',
@@ -233,7 +236,7 @@ CRWALER_TASKS = [
     },
     {
         'name': 'proxydb',
-        'resource': ['http://proxydb.net/?offset=%s' % 15 * i for i in range(20)],
+        'resource': ['http://proxydb.net/?offset=%s' % (15 * i) for i in range(20)],
         'task_type': SPIDER_AJAX_TASK,
         'internal': 3 * 60,
         'enable': 1,
@@ -346,7 +349,7 @@ VALIDATOR_TASKS = [
 ]
 
 
-SPIDER_TASK_MAPS = {
+CRAWLER_TASK_MAPS = {
     'common': SPIDER_COMMON_TASK,
     'ajax': SPIDER_AJAX_TASK,
     'gfw': SPIDER_GFW_TASK,
