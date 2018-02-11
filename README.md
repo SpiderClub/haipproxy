@@ -21,9 +21,27 @@
 - MIT授权协议。项目使用最宽松的开源协议授权，Just do whatever you want!
 
 # Quick start
-- 使用Docker进行部署
 - Standalone
-- cluster的方式（传统方式和k8s的方式）
+ - 安装Python3和Redis。有问题可以阅读[这篇文章](https://github.com/SpiderClub/weibospider/wiki/%E5%88%86%E5%B8%83%E5%BC%8F%E7%88%AC%E8%99%AB%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE)。
+ - 根据Redis的实际配置修改项目配置文件[config/settings.py](.config/settings.py)中的`REDIS_HOST`、`REDIS_PASSWORD`等参数。
+ - 安装[scrapy-splash](https://github.com/scrapy-plugins/scrapy-splash)。
+ - 安装项目相关依赖
+   > pip install requirements.txt
+ - 启动*scrapy worker*，包括代理IP采集器和校验器
+   > python crawler_booter.py --usage crawler
+
+   > python crawler_booter.py --usage validator
+ - 启动*调度器*，包括代理IP定时调度和校验
+   > python scheduler_booter.py --usage crawler
+
+   > python scheduler_booter.py --usage validator
+
+
+   注意，*crawler*和*scheduler*有多种类型，并且每种类型对应有不同的任务队列，详细见[haipproxy中的任务类型及作用]()
+- Dockerize
+
+# Cluster Deployment
+
 
 # How to contribute
 - 欢迎给项目提新feature
@@ -45,7 +63,7 @@
 - 项目架构概览
 
 配置相关细节
-- [配置文件细节]()
+- [配置文件参数及意义]()
 
 设计和实现相关
 - [通用代理爬虫设计思路和细节]()
