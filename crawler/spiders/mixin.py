@@ -2,6 +2,7 @@
 Useful mixin class for all the spiders.
 """
 import json
+import ipaddress
 
 from ..items import ProxyUrlItem
 
@@ -49,11 +50,15 @@ class BaseSpider:
             proxy_detail = info.css(detail_rule).extract()
             if not proxy_detail:
                 continue
+
             if not split_detail:
                 ip = proxy_detail[ip_pos].strip()
                 port = proxy_detail[port_pos].strip()
             else:
                 ip, port = proxy_detail[0].split(':')
+            if not self.proxy_check(ip, port):
+                continue
+
             if protocols:
                 cur_protocols = protocols
             elif extract_protocol:
@@ -83,6 +88,9 @@ class BaseSpider:
         for info in infos:
             ip = info.get(ip_key)
             port = info.get(port_key)
+            if not self.proxy_check(ip, port):
+                continue
+
             protocols = self.procotol_extractor(str(info))
             for protocol in protocols:
                 items.append(ProxyUrlItem(url=self.construct_proxy_url(protocol, ip, port)))
@@ -113,6 +121,10 @@ class BaseSpider:
             ip, port = info.split(':')
             if not ip or not port:
                 continue
+
+            if not self.proxy_check(ip, port):
+                continue
+
             protocols = self.default_protocols if not protocols else protocols
 
             for protocol in protocols:
@@ -131,6 +143,24 @@ class BaseSpider:
         else:
             protocols = self.default_protocols
         return protocols
+
+    def proxy_check(self, ip, port):
+        """
+        check whether the proxy ip and port are valid
+        :param ip: proxy ip value
+        :param port: proxy port value
+        :return: True or False
+        """
+        try:
+            ipaddress.ip_address(ip)
+            p = int(port)
+            if p > 65535 or p <= 0:
+                return False
+        except ValueError:
+            return False
+
+        return True
+
 
     def construct_proxy_url(self, scheme, ip, port):
         """construct proxy urls so spiders can directly use them"""
