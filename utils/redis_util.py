@@ -8,7 +8,7 @@ from config.settings import (
     REDIS_PASSWORD, LOCKER_PREFIX)
 
 
-def get_redis_con(**kwargs):
+def get_redis_conn(**kwargs):
     host = kwargs.get('host', REDIS_HOST)
     port = kwargs.get('port', REDIS_PORT)
     db = kwargs.get('db', DEFAULT_REDIS_DB)

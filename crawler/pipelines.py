@@ -3,14 +3,14 @@ scrapy pipelines for storing proxy ip infos.
 """
 from twisted.internet.threads import deferToThread
 
-from utils.redis_util import get_redis_con
+from utils.redis_util import get_redis_conn
 from config.settings import (
     META_DATA_DB, DATA_ALL, INIT_HTTP_QUEUE, INIT_SOCKS4_QUEUE, INIT_SOCKS5_QUEUE)
 
 
 class ProxyIPPipeline:
     def open_spider(self, spider):
-        self.redis_con = get_redis_con(db=META_DATA_DB)
+        self.redis_con = get_redis_conn(db=META_DATA_DB)
 
     def process_item(self, item, spider):
         return deferToThread(self._process_item, item, spider)
@@ -35,7 +35,7 @@ class ProxyIPPipeline:
 
 class ProxyDetailPipeline:
     def open_spider(self, spider):
-        self.redis_con = get_redis_con(db=META_DATA_DB)
+        self.redis_con = get_redis_conn(db=META_DATA_DB)
 
     def process_item(self, item, spider):
         return deferToThread(self._process_item, item, spider)

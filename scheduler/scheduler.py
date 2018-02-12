@@ -25,7 +25,7 @@ from config.settings import (
     VALIDATOR_HTTP_TASK,
     VALIDATOR_HTTPS_TASK, TIMER_RECORDER)
 from utils.redis_util import (
-    get_redis_con, acquire_lock,
+    get_redis_conn, acquire_lock,
     release_lock)
 
 
@@ -94,7 +94,7 @@ class CrawlerScheduler(BaseScheduler):
         if task_type not in self.task_types:
             return None
 
-        conn = get_redis_con()
+        conn = get_redis_conn()
         task_name = task.get('name')
         internal = task.get('internal')
         urls = task.get('resource')
@@ -129,7 +129,7 @@ class ValidatorScheduler(BaseScheduler):
         if task_type not in self.task_types:
             return None
 
-        conn = get_redis_con()
+        conn = get_redis_conn()
         internal = task.get('internal')
         task_name = task.get('name')
         resource_queue = task.get('resource')

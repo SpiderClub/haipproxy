@@ -10,7 +10,7 @@ from scrapy_splash import SplashRequest
 
 from config.settings import (
     VALIDATOR_FEED_SIZE, SPIDER_FEED_SIZE)
-from utils.redis_util import get_redis_con
+from utils.redis_util import get_redis_conn
 
 __all__ = ['RedisSpider', 'RedisAjaxSpider', 'RedisCrawlSpider', 'ValidatorRedisSpider']
 
@@ -25,7 +25,7 @@ class RedisMixin(object):
     def setup_redis(self, crawler):
         """send signals when the spider is free"""
         self.redis_batch_size = SPIDER_FEED_SIZE
-        self.redis_con = get_redis_con()
+        self.redis_con = get_redis_conn()
 
         crawler.signals.connect(self.spider_idle, signal=signals.spider_idle)
 
