@@ -11,7 +11,9 @@ class SquidClient:
     default_template_path = '/usr/local/etc/squid.conf.backup'
     default_batch_size = 500
     default_conf_detail = "cache_peer {} parent {} 0 no-query weighted-round-robin weight=2 " \
-                          "connect-fail-limit=2 allow-miss max-conn=5 name=proxy-{}"
+                          "connect-fail-limit=2 allow-miss max-conn=10 name=proxy-{}"
+    other_confs = ['request_header_access Via deny all', 'request_header_access X-Forwarded-For deny all',
+                   'request_header_access From deny all', 'never_direct allow all']
 
     def __init__(self, batch_size=None, queue=None, template_path=None, conf_path=None, squid_path=None):
         self.resource_queue = RESOURCE_MAPS.get('queue', VALIDATED_HTTPS_QUEUE) \
@@ -45,10 +47,7 @@ class SquidClient:
                 conts.append(self.default_conf_detail.format(ip, port, index))
 
             conf += '\n'.join(conts)
-            conf += 'request_header_access Via deny all\n'
-            conf += 'request_header_access X-Forwarded-For deny all\n'
-            conf += 'request_header_access From deny all\n'
-            conf += 'never_direct allow all\n'
+            conf += '\n'.join(self.other_confs)
             fw.write(conf)
 
         subprocess.call([self.squid_path, '-k', 'reconfigure'], shell=True)

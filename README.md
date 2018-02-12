@@ -4,7 +4,7 @@
 
 # Features
 - 快速抓取代理IP。项目使用scrapy做高速网络请求，能快速填充IP代理池。
-- IP抓取和提取精准。目前很多同类项目都是简单做的抓取，对于诸如[全网代理IP](http://www.goubanjia.com/free/gngn/index.shtml)
+- IP抓取和提取精准。目前很多同类项目都是简单做的抓取，对于诸如[全网代理IP](http://www.goubanjia.com/)
 这类做了前端混淆的加密网站几乎没做还原处理。某些网站页面结构看似单一，却暗含陷阱。此外，还有一些网站本身就会限制请求次数。本项目有效地
 解决了这三个问题。想知道细节的请点击[这里]()
 - IP来源丰富。本项目的IP来源参考了大量的同类开源项目（有兴趣可以查看`Reference`部分），并且自己进行了一些扩充。
@@ -22,7 +22,7 @@
 
 # Quick start
 - Standalone
- - 安装Python3和Redis。有问题可以阅读[这篇文章](https://github.com/SpiderClub/weibospider/wiki/%E5%88%86%E5%B8%83%E5%BC%8F%E7%88%AC%E8%99%AB%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE)。
+ - 安装Python3和Redis。有问题可以阅读[这篇文章](https://github.com/SpiderClub/weibospider/wiki/%E5%88%86%E5%B8%83%E5%BC%8F%E7%88%AC%E8%99%AB%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE)的相关部分。
  - 根据Redis的实际配置修改项目配置文件[config/settings.py](.config/settings.py)中的`REDIS_HOST`、`REDIS_PASSWORD`等参数。
  - 安装[scrapy-splash](https://github.com/scrapy-plugins/scrapy-splash)。
  - 安装项目相关依赖
