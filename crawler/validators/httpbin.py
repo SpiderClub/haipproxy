@@ -25,15 +25,18 @@ class HttpBinInitValidator(BaseValidator, ValidatorRedisSpider):
         super().__init__()
         self.origin_ip = requests.get(self.urls[1]).json().get('origin')
 
-    def parse_detail(self, response):
+    def is_transparent(self, response):
         """filter transparent ip resources"""
         if not response.body_as_unicode():
-            return False
+            return True
+        try:
+            ip = json.loads(response.body_as_unicode()).get('origin')
+            if self.origin_ip in ip:
+                return True
+        except AttributeError:
+            return True
 
-        ip = json.loads(response.body_as_unicode()).get('origin')
-        if self.origin_ip in ip:
-            return False
-        return True
+        return False
 
 
 class CommonValidator(BaseValidator, ValidatorRedisSpider):
