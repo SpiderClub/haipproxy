@@ -25,9 +25,6 @@ SPLASH_URL = 'http://127.0.0.1:8050'
 # extension settings
 RETRY_ENABLED = False
 TELNETCONSOLE_ENABLED = False
-# EXTENSIONS = {
-#     'crawler.extensions.FailLogger': 500
-# }
 
 
 DOWNLOADER_MIDDLEWARES = {

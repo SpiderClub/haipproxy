@@ -158,9 +158,7 @@ class BaseSpider:
                 return False
         except ValueError:
             return False
-
         return True
-
 
     def construct_proxy_url(self, scheme, ip, port):
         """construct proxy urls so spiders can directly use them"""

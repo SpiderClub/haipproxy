@@ -42,7 +42,7 @@ class ProxyDetailPipeline:
 
     def _process_item(self, item, spider):
         score = self.redis_con.zscore(item['queue'], item['url'])
-        if not item['incr'] or score is None:
+        if score is None:
             self.redis_con.zadd(item['queue'], item['score'], item['url'])
         else:
             if item['incr'] > 0 and score >= 10:
@@ -52,7 +52,7 @@ class ProxyDetailPipeline:
                 self.redis_con.zincrby(item['queue'], item['url'], 1)
             elif item['incr'] < 0 and 0 < score:
                 self.redis_con.zincrby(item['queue'], item['url'], -1)
-            elif item['incr'] < 0 and score <= 0:
+            elif item['incr'] == '-inf' or (item['incr'] < 0 and score <= 0):
                 pipe = self.redis_con.pipeline(True)
                 pipe.srem(DATA_ALL, item['url'])
                 pipe.redis_con.zrem(item['queue'], item['url'])

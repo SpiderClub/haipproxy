@@ -119,3 +119,6 @@ class ValidatorRedisSpider(RedisSpider):
 
         self.logger.debug('Read {} ip proxies from {}'.format(found, task_type))
 
+    def parse_error(self, failure):
+        raise NotImplementedError
+

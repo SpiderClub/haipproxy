@@ -1,6 +1,9 @@
 """
 Useful mixin class for all the validators.
 """
+from twisted.internet.error import (
+    TimeoutError, TCPTimedOutError)
+
 from config.settings import (
     VALIDATED_HTTP_QUEUE, VALIDATED_HTTPS_QUEUE)
 from ..items import ProxyDetailItem
@@ -8,7 +11,7 @@ from ..items import ProxyDetailItem
 
 class BaseValidator:
     """base validator for all the validators"""
-    init_score = 10
+    init_score = 5
     # slow down each spider
     custom_settings = {
         'CONCURRENT_REQUESTS': 50,
@@ -28,28 +31,27 @@ class BaseValidator:
         # don't consider speed at first
         proxy = response.meta.get('proxy')
         url = response.url
-        if 'init' in self.name:
-            not_transparent = self.parse_detail(response)
-            if not_transparent:
-                item = self.set_item_queue(url, proxy, self.init_score * 0.9, 0)
-                yield item
-        else:
-            item = self.set_item_queue(url, proxy, self.init_score * 0.9, 1)
-            yield item
+        transparent = self.is_transparent(response)
+        if transparent:
+            return
 
-    def parse_detail(self, response):
-        pass
+        item = self.set_item_queue(url, proxy, self.init_score, 1)
+        yield item
+
+    def is_transparent(self, response):
+        return False
 
     def parse_error(self, failure):
-        # todo detail with all kinds of errors
+        """"""
         request = failure.request
         proxy = request.meta.get('proxy')
-        self.logger.info('proxy {} has been failed'.format(proxy))
-        url = request.url
-        if 'init' in self.name:
-            item = self.set_item_queue(url, proxy, self.init_score * 0.7, 0)
+        self.logger.error('proxy {} has been failed,{} is raised'.format(proxy, failure))
+        if failure.check(TimeoutError, TCPTimedOutError):
+            decr = -1
         else:
-            item = self.set_item_queue(url, proxy, self.init_score * 0.7, -1)
+            decr = '-inf'
+
+        item = self.set_item_queue(request.url, proxy, self.init_score, decr)
         yield item
 
     def set_item_queue(self, url, proxy, score, incr):
