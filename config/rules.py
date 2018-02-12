@@ -252,8 +252,7 @@ CRWALER_TASKS = [
     },
     {
         'name': 'goubanjia',
-        'resource': ['http://www.goubanjia.com/free/gngn/index%s.shtml' % i for i in range(1, 11)] +
-                    ['http://www.goubanjia.com/free/gwgn/index%s.shtml' % i for i in range(1, 11)],
+        'resource': ['http://www.goubanjia.com/'],
         'task_type': SPIDER_AJAX_TASK,
         'internal': 10,
         'enable': 1,
