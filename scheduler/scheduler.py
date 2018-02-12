@@ -22,7 +22,7 @@ from crawler.validators import (
 from config.settings import (
     SPIDER_COMMON_TASK, SPIDER_AJAX_TASK,
     SPIDER_GFW_TASK, SPIDER_AJAX_GFW_TASK,
-    HTTP_QUEUE, VALIDATOR_HTTP_TASK,
+    VALIDATOR_HTTP_TASK,
     VALIDATOR_HTTPS_TASK, TIMER_RECORDER)
 from utils.redis_util import (
     get_redis_con, acquire_lock,
@@ -32,8 +32,7 @@ from utils.redis_util import (
 DEFAULT_CRAWLER_TASKS = [
     SPIDER_COMMON_TASK, SPIDER_AJAX_TASK,
     SPIDER_GFW_TASK, SPIDER_AJAX_GFW_TASK]
-DEFAULT_VALIDATORS_TASKS = [HTTP_QUEUE, VALIDATOR_HTTP_TASK,
-                            VALIDATOR_HTTPS_TASK]
+DEFAULT_VALIDATORS_TASKS = [VALIDATOR_HTTP_TASK, VALIDATOR_HTTPS_TASK]
 
 DEFAULT_CRAWLERS = [CommonSpider, AjaxSpider, GFWSpider, AjaxGFWSpider]
 DEFAULT_VALIDATORS = [HttpBinInitValidator, CommonValidator]

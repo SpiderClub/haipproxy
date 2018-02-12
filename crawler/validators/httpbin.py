@@ -7,7 +7,7 @@ import json
 import requests
 
 from config.settings import (
-    HTTP_QUEUE, VALIDATOR_HTTP_TASK, VALIDATOR_HTTPS_TASK)
+    INIT_HTTP_QUEUE, VALIDATOR_HTTP_TASK, VALIDATOR_HTTPS_TASK)
 from ..redis_spiders import ValidatorRedisSpider
 from .mixin import BaseValidator
 
@@ -15,7 +15,7 @@ from .mixin import BaseValidator
 class HttpBinInitValidator(BaseValidator, ValidatorRedisSpider):
     """This validator do initially work for ip resources"""
     name = 'init'
-    task_types = [HTTP_QUEUE]
+    task_types = [INIT_HTTP_QUEUE]
     urls = [
         'http://httpbin.org/ip',
         'https://httpbin.org/ip',

@@ -5,7 +5,7 @@ from twisted.internet.threads import deferToThread
 
 from utils.redis_util import get_redis_con
 from config.settings import (
-    META_DATA_DB, DATA_ALL, HTTP_QUEUE, SOCKS4_QUEUE, SOCKS5_QUEUE)
+    META_DATA_DB, DATA_ALL, INIT_HTTP_QUEUE, INIT_SOCKS4_QUEUE, INIT_SOCKS5_QUEUE)
 
 
 class ProxyIPPipeline:
@@ -24,11 +24,11 @@ class ProxyIPPipeline:
         not_exists = pipeline.sadd(DATA_ALL, url)
         if not_exists:
             if 'socks4' in url:
-                pipeline.rpush(SOCKS4_QUEUE, url)
+                pipeline.rpush(INIT_SOCKS4_QUEUE, url)
             elif 'socks5' in url:
-                pipeline.rpush(SOCKS5_QUEUE, url)
+                pipeline.rpush(INIT_SOCKS5_QUEUE, url)
             else:
-                pipeline.rpush(HTTP_QUEUE, url)
+                pipeline.rpush(INIT_HTTP_QUEUE, url)
         pipeline.execute()
         return item
 

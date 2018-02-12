@@ -17,12 +17,13 @@ CONCURRENT_REQUESTS = 50
 # don't filter anything, also can set dont_filter=True in Request objects
 DUPEFILTER_CLASS = 'scrapy.dupefilters.BaseDupeFilter'
 HTTPCACHE_ENABLED = False
-GFW_PROXY = 'http://202.115.44.136:8123'
+GFW_PROXY = 'http://127.0.0.1:8123'
 
 # splash settings
 SPLASH_URL = 'http://127.0.0.1:8050'
 
 # extension settings
+RETRY_ENABLED = False
 TELNETCONSOLE_ENABLED = False
 # EXTENSIONS = {
 #     'crawler.extensions.FailLogger': 500
@@ -85,10 +86,10 @@ VALIDATOR_WEIBO_TASK = 'haipproxy:validator:weibo'
 # data_all is a set , it's a dupefilter
 DATA_ALL = 'haipproxy:all'
 # http_queue is a list, it's used to store initially http/https proxy resourecs
-HTTP_QUEUE = 'haipproxy:proxy:http'
+INIT_HTTP_QUEUE = 'haipproxy:init:http'
 # socks proxy resources container
-SOCKS4_QUEUE = 'haipproxy:proxy:socks4'
-SOCKS5_QUEUE = 'haipproxy:proxy:socks5'
+INIT_SOCKS4_QUEUE = 'haipproxy:init:socks4'
+INIT_SOCKS5_QUEUE = 'haipproxy:init:socks5'
 
 # valited queues are zsets.squid and other clients fetch ip resources from them.
 VALIDATED_HTTP_QUEUE = 'haipproxy:http:validated'
