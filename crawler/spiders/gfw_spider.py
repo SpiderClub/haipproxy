@@ -7,7 +7,7 @@ import json
 
 from config.settings import SPIDER_GFW_TASK
 from ..items import ProxyUrlItem
-from .basic_spider import CommonSpider
+from .common_spider import CommonSpider
 
 
 class GFWSpider(CommonSpider):

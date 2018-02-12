@@ -10,13 +10,16 @@ from .mixin import BaseSpider
 
 # notice multi inheritance order in python
 class CommonSpider(BaseSpider, RedisSpider):
-    name = 'common'
+    name = 'basic'
     task_type = SPIDER_COMMON_TASK
 
     def parse(self, response):
         url = response.url
-
-        if self.exists(url, 'xdaili'):
+        if self.exists(url, 'kxdaili'):
+            items = self.parse_common(response)
+        elif self.exists(url, 'kuaidaili'):
+            items = self.parse_common(response, infos_pos=4)
+        elif self.exists(url, 'xdaili'):
             items = self.parse_json(response, detail_rule=['RESULT', 'rows'])
         elif self.exists(url, 'mogumiao'):
             items = self.parse_json(response, detail_rule=['msg'])

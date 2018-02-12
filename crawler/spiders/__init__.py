@@ -42,7 +42,7 @@ http://www.cnproxy.com/
 http://free-proxy.cz/en/
 
 """
-from .basic_spider import CommonSpider
+from .common_spider import CommonSpider
 from .ajax_spider import AjaxSpider
 from .gfw_spider import GFWSpider
 from .ajax_gfw_spider import AjaxGFWSpider
