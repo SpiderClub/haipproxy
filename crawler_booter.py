@@ -10,8 +10,8 @@ python crawler_booter.py --usage crawler common ajax
 While if you want to start all the validators, run:
 python crawler_booter.py --usage validator
 
-If you just want to start init validator, run:
-python crawler_booter.py --usage validator init
+If you just want to start init and common validator, run:
+python crawler_booter.py --usage validator init common
 """
 from scheduler import crawler_start
 

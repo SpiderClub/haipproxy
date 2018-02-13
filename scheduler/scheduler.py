@@ -44,13 +44,19 @@ class BaseCase:
         self.spider = spider
 
     def check(self, task):
-        return self.spider.task_type == task
+        if hasattr(self.spider, 'task_type'):
+            task_type = CRAWLER_TASK_MAPS.get(task)
+            return self.spider.task_type == task_type
+        print(task)
+        print(self.spider.name)
+        print(self.spider.name == task)
+        return self.spider.name == task
 
 
 class BaseScheduler:
     def __init__(self, name, tasks, task_types=None):
         """
-        init function for Schedulers.
+        init function for schedulers.
         :param name: scheduler name, generally the value is usage of the scheduler
         :param tasks: tasks in config.rules
         :param task_types: for crawler, the value is task_type,while for validator, it's task name
@@ -137,7 +143,6 @@ class ValidatorScheduler(BaseScheduler):
         lock_indentifier = acquire_lock(conn, task_name)
         if not lock_indentifier:
             return False
-
         pipe = conn.pipeline(True)
         try:
             now = int(time.time())
@@ -146,6 +151,7 @@ class ValidatorScheduler(BaseScheduler):
             r, proxies = pipe.execute()
             if not r or (now - int(r.decode('utf-8'))) >= internal * 60:
                 if not proxies:
+                    print('fetched no proxies from task {}'.format(task_name))
                     return None
 
                 pipe.rpush(task_type, *proxies)
