@@ -225,6 +225,7 @@ def squid_conf_update(internal):
     """Timertask for updating proxies for squid config file"""
     print('the updating task is starting...')
     client = SquidClient('https')
+    client.update_conf()
     schedule.every(internal).minutes.do(client.update_conf)
     while True:
         schedule.run_pending()

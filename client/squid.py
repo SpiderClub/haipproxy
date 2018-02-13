@@ -34,7 +34,6 @@ class SquidClient:
     def update_conf(self):
         conn = get_redis_conn()
         proxies = conn.zrevrange(self.resource_queue, 0, self.batch_size)
-
         conts = list()
         with open(self.template_path, 'r') as fr, open(self.conf_path, 'w') as fw:
             conf = fr.read()
@@ -46,9 +45,9 @@ class SquidClient:
                 _, ip_port = proxy.split('://')
                 ip, port = ip_port.split(':')
                 conts.append(self.default_conf_detail.format(ip, port, index))
-
+            conts.extend(self.other_confs)
             conf += '\n'.join(conts)
-            conf += '\n'.join(self.other_confs)
             fw.write(conf)
 
         subprocess.call([self.squid_path, '-k', 'reconfigure'], shell=True)
+        print('update squid conf successfully')
