@@ -45,18 +45,18 @@ class ProxyDetailPipeline:
         if score is None:
             self.redis_con.zadd(item['queue'], item['score'], item['url'])
         else:
-            if item['incr'] > 0 and score >= 10:
+            if item['incr'] == '-inf' or (item['incr'] < 0 and score <= 0):
+                pipe = self.redis_con.pipeline(True)
+                pipe.srem(DATA_ALL, item['url'])
+                pipe.redis_con.zrem(item['queue'], item['url'])
+                pipe.execute()
+            elif item['incr'] > 0 and score >= 10:
                 incr = round(10/score, 2)
                 self.redis_con.zincrby(item['queue'], item['url'], incr)
             elif item['incr'] > 0 and score < 10:
                 self.redis_con.zincrby(item['queue'], item['url'], 1)
             elif item['incr'] < 0 and 0 < score:
                 self.redis_con.zincrby(item['queue'], item['url'], -1)
-            elif item['incr'] == '-inf' or (item['incr'] < 0 and score <= 0):
-                pipe = self.redis_con.pipeline(True)
-                pipe.srem(DATA_ALL, item['url'])
-                pipe.redis_con.zrem(item['queue'], item['url'])
-                pipe.execute()
 
         return item
 
