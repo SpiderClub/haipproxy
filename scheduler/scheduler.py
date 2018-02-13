@@ -19,7 +19,7 @@ from crawler.spiders import (
     CommonSpider, AjaxSpider,
     GFWSpider, AjaxGFWSpider)
 from crawler.validators import (
-    HttpBinInitValidator, CommonValidator)
+    HttpBinInitValidator, HTTPValidator, HTTPSValidator)
 from config.settings import (
     SPIDER_COMMON_TASK, SPIDER_AJAX_TASK,
     SPIDER_GFW_TASK, SPIDER_AJAX_GFW_TASK,
@@ -36,21 +36,16 @@ DEFAULT_CRAWLER_TASKS = [
 DEFAULT_VALIDATORS_TASKS = [VALIDATOR_HTTP_TASK, VALIDATOR_HTTPS_TASK]
 
 DEFAULT_CRAWLERS = [CommonSpider, AjaxSpider, GFWSpider, AjaxGFWSpider]
-DEFAULT_VALIDATORS = [HttpBinInitValidator, CommonValidator]
+DEFAULT_VALIDATORS = [HttpBinInitValidator, HTTPValidator, HTTPSValidator]
 
 
 class BaseCase:
     def __init__(self, spider):
         self.spider = spider
 
-    def check(self, task):
-        if hasattr(self.spider, 'task_type'):
-            task_type = CRAWLER_TASK_MAPS.get(task)
-            return self.spider.task_type == task_type
-        print(task)
-        print(self.spider.name)
-        print(self.spider.name == task)
-        return self.spider.name == task
+    def check(self, task, maps):
+        task_type = maps.get(task)
+        return self.spider.task_type == task_type
 
 
 class BaseScheduler:
@@ -182,6 +177,8 @@ def scheduler_start(usage, task_types):
         for task_type in task_types:
             allow_task_type = maps.get(task_type)
             if not allow_task_type:
+                print('scheduler task {} is invalid task, the allowed tasks are {}'.format(
+                    task_type, list(maps.keys())))
                 continue
             scheduler.task_types.append(allow_task_type)
 
@@ -197,6 +194,7 @@ def crawler_start(usage, tasks):
     There are four kinds of spiders: common, ajax, gfw, ajax_gfw.If you don't
     assign any tasks, all the spiders will run.
     """
+    maps = CRAWLER_TASK_MAPS if usage == 'crawler' else VALIDATOR_TASK_MAPS
     origin_spiders = DEFAULT_CRAWLERS if usage == 'crawler' else DEFAULT_VALIDATORS
     if not tasks:
         spiders = origin_spiders
@@ -205,8 +203,11 @@ def crawler_start(usage, tasks):
         cases = list(map(BaseCase, origin_spiders))
         for task in tasks:
             for case in cases:
-                if case.check(task):
+                if case.check(task, maps):
                     spiders.append(case.spider)
+            else:
+                print('spider task {} is invalid task, the allowed tasks are {}'.format(
+                    task, list(maps.keys())))
 
     settings = get_project_settings()
     configure_logging(settings)

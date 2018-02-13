@@ -10,7 +10,7 @@ from .mixin import BaseSpider
 
 # notice multi inheritance order in python
 class CommonSpider(BaseSpider, RedisSpider):
-    name = 'basic'
+    name = 'common'
     task_type = SPIDER_COMMON_TASK
 
     def parse(self, response):

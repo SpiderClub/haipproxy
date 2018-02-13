@@ -5,4 +5,4 @@ Here are all the validator website
 http://httpbin.org/ip
 """
 from .httpbin import (
-    HttpBinInitValidator, CommonValidator)
+    HttpBinInitValidator, HTTPValidator, HTTPSValidator)

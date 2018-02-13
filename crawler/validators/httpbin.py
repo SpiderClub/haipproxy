@@ -15,7 +15,7 @@ from .mixin import BaseValidator
 class HttpBinInitValidator(BaseValidator, ValidatorRedisSpider):
     """This validator do initially work for ip resources"""
     name = 'init'
-    task_types = [INIT_HTTP_QUEUE]
+    task_type = INIT_HTTP_QUEUE
     urls = [
         'http://httpbin.org/ip',
         'https://httpbin.org/ip',
@@ -39,14 +39,22 @@ class HttpBinInitValidator(BaseValidator, ValidatorRedisSpider):
         return False
 
 
-class CommonValidator(BaseValidator, ValidatorRedisSpider):
-    """This validator check the liveness of ip resources"""
-    name = 'common'
+class HTTPValidator(BaseValidator, ValidatorRedisSpider):
+    """This validator check the liveness of http proxy resources"""
+    name = 'http'
     urls = [
         'http://httpbin.org/ip',
+    ]
+    task_type = VALIDATOR_HTTP_TASK
+
+
+class HTTPSValidator(BaseValidator, ValidatorRedisSpider):
+    """This validator check the liveness of https proxy resources"""
+    name = 'https'
+    urls = [
         'https://httpbin.org/ip',
     ]
-    task_types = [VALIDATOR_HTTP_TASK, VALIDATOR_HTTPS_TASK]
+    task_type = VALIDATOR_HTTPS_TASK
 
 
 

@@ -100,8 +100,7 @@ class ValidatorRedisSpider(RedisSpider):
         self.redis_batch_size = VALIDATOR_FEED_SIZE
 
     def next_requests(self):
-        for task_type in self.task_types:
-            yield from self.next_requests_process(task_type)
+        yield from self.next_requests_process(self.task_type)
 
     def next_requests_process(self, task_type):
         fetch_one = self.redis_con.lpop
