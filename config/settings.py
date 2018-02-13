@@ -17,10 +17,10 @@ CONCURRENT_REQUESTS = 50
 # don't filter anything, also can set dont_filter=True in Request objects
 DUPEFILTER_CLASS = 'scrapy.dupefilters.BaseDupeFilter'
 HTTPCACHE_ENABLED = False
-GFW_PROXY = 'http://127.0.0.1:8123'
+GFW_PROXY = 'http://202.115.44.136:8123'
 
 # splash settings
-SPLASH_URL = 'http://127.0.0.1:8050'
+SPLASH_URL = 'http://202.115.44.154:8050'
 
 # extension settings
 RETRY_ENABLED = False
@@ -91,3 +91,13 @@ INIT_SOCKS5_QUEUE = 'haipproxy:init:socks5'
 # valited queues are zsets.squid and other clients fetch ip resources from them.
 VALIDATED_HTTP_QUEUE = 'haipproxy:http:validated'
 VALIDATED_HTTPS_QUEUE = 'haipproxy:https:validated'
+
+
+# squid settings
+SQUID_BIN_PATH = '/usr/local/sbin/squid'
+SQUID_CONF_PATH = '/usr/local/etc/squid.conf'
+SQUID_TEMPLATE_PATH = '/usr/local/etc/squid.conf.backup'
+SQUID_PROXIES_RESOURCE = VALIDATED_HTTPS_QUEUE
+SQUID_UPDATE_INTERNAL = 10  # minutes
+PROXY_BATCH_SIZE = 500
+

@@ -11,6 +11,7 @@ from scrapy.crawler import CrawlerRunner
 from scrapy.utils.log import configure_logging
 from scrapy.utils.project import get_project_settings
 
+from client import SquidClient
 from config.rules import (
     CRWALER_TASKS, VALIDATOR_TASKS,
     CRAWLER_TASK_MAPS, VALIDATOR_TASK_MAPS)
@@ -22,8 +23,8 @@ from crawler.validators import (
 from config.settings import (
     SPIDER_COMMON_TASK, SPIDER_AJAX_TASK,
     SPIDER_GFW_TASK, SPIDER_AJAX_GFW_TASK,
-    VALIDATOR_HTTP_TASK,
-    VALIDATOR_HTTPS_TASK, TIMER_RECORDER)
+    VALIDATOR_HTTP_TASK, VALIDATOR_HTTPS_TASK,
+    TIMER_RECORDER, SQUID_UPDATE_INTERNAL)
 from utils.redis_util import (
     get_redis_conn, acquire_lock,
     release_lock)
@@ -209,3 +210,15 @@ def crawler_start(usage, tasks):
     d = runner.join()
     d.addBoth(lambda _: reactor.stop())
     reactor.run()
+
+
+@click.command()
+@click.option('--internal', default=SQUID_UPDATE_INTERNAL, help='Updating frenquency of squid conf.')
+def squid_conf_update(internal):
+    """Timertask for updating proxies for squid config file"""
+    print('the updating task is starting...')
+    client = SquidClient('https')
+    schedule.every(internal).minutes.do(client.update_conf)
+    while True:
+        schedule.run_pending()
+        time.sleep(1)

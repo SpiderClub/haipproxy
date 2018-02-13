@@ -336,19 +336,19 @@ VALIDATOR_TASKS = [
         'name': 'http',
         'task_type': VALIDATOR_HTTP_TASK,
         'resource': VALIDATED_HTTP_QUEUE,
-        'internal': 30,  # 2 hours
+        'internal': 2*60,  # 2 hours
         'enable': 1,
     },
     {
         'name': 'https',
         'task_type': VALIDATOR_HTTPS_TASK,
         'resource': VALIDATED_HTTPS_QUEUE,
-        'internal': 30,  # 2 hours
+        'internal': 2*60,  # 2 hours
         'enable': 1,
     },
 ]
 
-
+# all the crawlers will fetch tasks from the following queues to execute
 CRAWLER_TASK_MAPS = {
     'common': SPIDER_COMMON_TASK,
     'ajax': SPIDER_AJAX_TASK,
@@ -356,11 +356,13 @@ CRAWLER_TASK_MAPS = {
     'ajax_gfw': SPIDER_AJAX_GFW_TASK
 }
 
+# all the validators will fetch proxies from the following queues to validate
 VALIDATOR_TASK_MAPS = {
     'http': VALIDATOR_HTTP_TASK,
     'https': VALIDATOR_HTTPS_TASK
 }
 
+# all the clients will fetch resources from the following queues to use
 RESOURCE_MAPS = {
     'http': VALIDATED_HTTP_QUEUE,
     'https': VALIDATED_HTTPS_QUEUE
