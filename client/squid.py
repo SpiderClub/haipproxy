@@ -11,8 +11,8 @@ from config.settings import (
 class SquidClient:
     default_queue = 'https'
     default_batch_size = 500
-    default_conf_detail = "cache_peer {} parent {} 0 no-query weighted-round-robin weight=2 " \
-                          "connect-fail-limit=2 allow-miss max-conn=10 name=proxy-{}"
+    default_conf_detail = "cache_peer {} parent {} 0 no-query weighted-round-robin weight=1 " \
+                          "connect-fail-limit=1 allow-miss max-conn=5 name=proxy-{}"
     other_confs = ['request_header_access Via deny all', 'request_header_access X-Forwarded-For deny all',
                    'request_header_access From deny all', 'never_direct allow all']
 
@@ -36,7 +36,7 @@ class SquidClient:
         proxies = conn.zrevrange(self.resource_queue, 0, self.batch_size)
         conts = list()
         with open(self.template_path, 'r') as fr, open(self.conf_path, 'w') as fw:
-            conf = fr.read()
+            conts.append(fr.read())
 
             # if two proxies use the same ip and different ports and no name
             # if assigned,cache_peer error will raise.
@@ -46,7 +46,7 @@ class SquidClient:
                 ip, port = ip_port.split(':')
                 conts.append(self.default_conf_detail.format(ip, port, index))
             conts.extend(self.other_confs)
-            conf += '\n'.join(conts)
+            conf = '\n'.join(conts)
             fw.write(conf)
 
         subprocess.call([self.squid_path, '-k', 'reconfigure'], shell=True)
