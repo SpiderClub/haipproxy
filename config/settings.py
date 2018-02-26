@@ -20,7 +20,7 @@ HTTPCACHE_ENABLED = False
 GFW_PROXY = 'http://127.0.0.1:8123'
 
 # splash settings
-SPLASH_URL = 'http://127.0.0.1:8050'
+SPLASH_URL = 'http://splash:8050'
 
 # extension settings
 RETRY_ENABLED = False
@@ -49,7 +49,7 @@ ITEM_PIPELINES = {
 LOG_LEVEL = 'DEBUG'
 
 # redis settings
-REDIS_HOST = '127.0.0.1'
+REDIS_HOST = 'redis'
 REDIS_PORT = 6379
 REDIS_PASSWORD = ''
 DEFAULT_REDIS_DB = 0
