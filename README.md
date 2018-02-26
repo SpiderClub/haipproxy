@@ -1,4 +1,6 @@
 # HAipproxy
+[README](README.md) | [中文文档](README_ZH.md)
+
 This project crawls proxy ip resources from the Internet.What we wish is to provide a 
 anonymous ip proxy pool with **highly availability and low latency** for distributed 
 spiders.
@@ -16,7 +18,7 @@ spiders.
 ### Standalone
 - Install Python3 and Redis Server
 - Change redis args of the project *[config/settings.py](config/settings.py)* according to redis conf,such as `REDIS_HOST`,`REDIS_PASSWORD`
-- Install [scrapy-splash](https://github.com/scrapy-plugins/scrapy-splash)
+- Install [scrapy-splash](https://github.com/scrapy-plugins/scrapy-splash) and change `SPLASH_URL` in *[config/settings.py](config/settings.py)*
 - Install dependencies
   > pip install -r requirements.txt
 - Start *scrapy worker*,including ip proxy crawler and validator
