@@ -1,42 +1,44 @@
 # HAipproxy
 This project crawls proxy ip resources from the Internet.What we wish is to provide a 
-anonymous ip proxy pool with highly availability and low latency for distributed spiders.
+anonymous ip proxy pool with **highly availability and low latency** for distributed 
+spiders.
 
 # Features
 - Distributed crawlers with high performance, powered by scrapy and redis
-- Large-scale of ip proxy resources
+- Large-scale of proxy ip resources
 - HA design for both crawlers and schedulers
 - Flexible architecture with task routing
 - Support HTTP/HTTPS and Socks5 proxy
-- MIT LICENSE.Just do whatever you want!
+- MIT LICENSE.Feel free to do whatever you want
 
 # Quick start
-- Standalone
- - Install Python3 and Redis Server
- - Change *[config/settings.py](.config/settings.py)* according to redis conf, such as `REDIS_HOST`,`REDIS_PASSWORD`
- - Install [scrapy-splash](https://github.com/scrapy-plugins/scrapy-splash)
- - Install dependencies
-   > pip install requirements.txt
- - Start *scrapy worker*,including ip proxy crawler and validator
-   > python crawler_booter.py --usage crawler
 
-   > python crawler_booter.py --usage validator
- - Start *task scheduler*,including crawler task scheduler and validator task scheduler
-   > python scheduler_booter.py --usage crawler
+## Standalone
+- Install Python3 and Redis Server
+- Change redis args of the project *[config/settings.py](config/settings.py)* according to redis conf,such as `REDIS_HOST`,`REDIS_PASSWORD`
+- Install [scrapy-splash](https://github.com/scrapy-plugins/scrapy-splash)
+- Install dependencies
+> pip install requirements.txt
+- Start *scrapy worker*,including ip proxy crawler and validator
+> python crawler_booter.py --usage crawler
 
-   > python scheduler_booter.py --usage validator
+> python crawler_booter.py --usage validator
+- Start *task scheduler*,including crawler task scheduler and validator task scheduler
+> python scheduler_booter.py --usage crawler
 
-- Dockerize
+> python scheduler_booter.py --usage validator
 
-# Other things
+## Dockerize
+
+# Other important things
 - This project is highly dependent on redis,if you want to replace redis with another mq or database,
 just do it at your own risk
 - If there is no Great Fire Wall at your country,change `SPIDER_GFW_TASK` to `SPIDER_COMMON_TASK`, and 
-change `SPIDER_AJAX_GFW_TASK` to `SPIDER_AJAX_TASK` in [config/rules.py](./config/rules.py).If you don't want to crawl
-some websites, set `enable=0`
-- If the project is useful to you,just star it
-- Issues and new features are welcome
-
+change `SPIDER_AJAX_GFW_TASK` to `SPIDER_AJAX_TASK` in [config/rules.py](config/rules.py).May be some 
+code for parsing pages should also changed in [common_spider.py](crawler/spiders/common_spider.py) and [ajax_spider.py](crawler/spiders/ajax_spider.py).
+If you don't want to crawlsome websites, set `enable=0`
+- Issues and PRs are welcome
+- Just star it if it's useful to you
 
 # Reference
 Thanks to all the contributors of the following projects.
