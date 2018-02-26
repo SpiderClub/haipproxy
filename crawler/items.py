@@ -13,3 +13,10 @@ class ProxyDetailItem(scrapy.Item):
     score = scrapy.Field()
     incr = scrapy.Field()
     queue = scrapy.Field()
+
+
+class ProxyVerifiedTimeItem(scrapy.Item):
+    url = scrapy.Field()
+    verified_time = scrapy.Field()
+    incr = scrapy.Field()
+    queue = scrapy.Field()

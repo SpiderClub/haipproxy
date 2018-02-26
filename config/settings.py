@@ -92,12 +92,14 @@ INIT_SOCKS5_QUEUE = 'haipproxy:init:socks5'
 VALIDATED_HTTP_QUEUE = 'haipproxy:http:validated'
 VALIDATED_HTTPS_QUEUE = 'haipproxy:https:validated'
 
+# it should be smaller than SQUID_UPDATE_INTERNAL
+TTL_VALIDATED_TIME = 5  # minutes
+TTL_HTTP_QUEUE = 'haipproxy:ttl:http'
+TTL_HTTPS_QUEUE = 'haipproxy:ttl:https'
 
 # squid settings
-SQUID_BIN_PATH = '/usr/local/sbin/squid'
-SQUID_CONF_PATH = '/usr/local/etc/squid.conf'
-SQUID_TEMPLATE_PATH = '/usr/local/etc/squid.conf.backup'
-SQUID_PROXIES_RESOURCE = VALIDATED_HTTPS_QUEUE
+SQUID_BIN_PATH = '/usr/local/sbin/squid'  # mac os
+SQUID_CONF_PATH = '/usr/local/etc/squid.conf'  # mac os
+SQUID_TEMPLATE_PATH = '/usr/local/etc/squid.conf.backup'  # mac os
 SQUID_UPDATE_INTERNAL = 10  # minutes
 PROXY_BATCH_SIZE = 500
-

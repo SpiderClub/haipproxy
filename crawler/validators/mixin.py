@@ -1,12 +1,16 @@
 """
 Useful mixin class for all the validators.
 """
+import time
+
 from twisted.internet.error import (
     TimeoutError, TCPTimedOutError)
 
 from config.settings import (
-    VALIDATED_HTTP_QUEUE, VALIDATED_HTTPS_QUEUE)
-from ..items import ProxyDetailItem
+    VALIDATED_HTTP_QUEUE, VALIDATED_HTTPS_QUEUE,
+    TTL_HTTPS_QUEUE, TTL_HTTP_QUEUE)
+from ..items import (
+    ProxyDetailItem, ProxyVerifiedTimeItem)
 
 
 class BaseValidator:
@@ -35,8 +39,9 @@ class BaseValidator:
         if transparent:
             return
 
-        item = self.set_item_queue(url, proxy, self.init_score, 1)
-        yield item
+        items = self.set_item_queue(url, proxy, self.init_score, 1)
+        for item in items:
+            yield item
 
     def is_transparent(self, response):
         return False
@@ -51,16 +56,22 @@ class BaseValidator:
         else:
             decr = '-inf'
 
-        item = self.set_item_queue(request.url, proxy, self.init_score, decr)
-        yield item
+        items = self.set_item_queue(request.url, proxy, self.init_score, decr)
+        for item in items:
+            yield item
 
     def set_item_queue(self, url, proxy, score, incr):
-        item = ProxyDetailItem(url=proxy, score=score, incr=incr)
+        proxy_item = ProxyDetailItem(url=proxy, score=score, incr=incr)
+        time_item = ProxyVerifiedTimeItem(url=proxy, verified_time=int(time.time()), incr=incr)
+        # todo find a better way to distinguish each task queue,
+        # may split the set_item_queue method from basevalidator to each child validtor
         if 'https' in url:
-            item['queue'] = VALIDATED_HTTPS_QUEUE
+            proxy_item['queue'] = VALIDATED_HTTPS_QUEUE
+            time_item['queue'] = TTL_HTTPS_QUEUE
         else:
-            item['queue'] = VALIDATED_HTTP_QUEUE
-        return item
+            proxy_item['queue'] = VALIDATED_HTTP_QUEUE
+            time_item['queue'] = TTL_HTTP_QUEUE
+        return proxy_item, time_item
 
 
 

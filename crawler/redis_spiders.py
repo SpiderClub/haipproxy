@@ -12,7 +12,8 @@ from config.settings import (
     VALIDATOR_FEED_SIZE, SPIDER_FEED_SIZE)
 from utils.redis_util import get_redis_conn
 
-__all__ = ['RedisSpider', 'RedisAjaxSpider', 'RedisCrawlSpider', 'ValidatorRedisSpider']
+__all__ = ['RedisSpider', 'RedisAjaxSpider',
+           'RedisCrawlSpider', 'ValidatorRedisSpider']
 
 
 class RedisMixin(object):

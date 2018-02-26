@@ -1,26 +1,34 @@
+"""
+Squid Client for spiders.
+"""
+
+import time
 import subprocess
 
-from config.rules import RESOURCE_MAPS
-from utils.redis_util import get_redis_conn
+from config.rules import (
+    RESOURCE_MAPS, VERIFIED_TIME_MAPS)
+from utils import (
+    get_redis_conn, decode_all)
 from config.settings import (
-    VALIDATED_HTTPS_QUEUE, SQUID_BIN_PATH,
-    SQUID_CONF_PATH, SQUID_TEMPLATE_PATH,
-    PROXY_BATCH_SIZE, SQUID_PROXIES_RESOURCE)
+    SQUID_BIN_PATH, SQUID_CONF_PATH,
+    SQUID_TEMPLATE_PATH, PROXY_BATCH_SIZE,
+    VALIDATED_HTTPS_QUEUE, TTL_HTTPS_QUEUE,
+    TTL_VALIDATED_TIME)
 
 
 class SquidClient:
-    default_queue = 'https'
-    default_batch_size = 500
     default_conf_detail = "cache_peer {} parent {} 0 no-query weighted-round-robin weight=1 " \
-                          "connect-fail-limit=1 allow-miss max-conn=5 name=proxy-{}"
+                          "connect-fail-limit=2 allow-miss max-conn=5 name=proxy-{}"
     other_confs = ['request_header_access Via deny all', 'request_header_access X-Forwarded-For deny all',
                    'request_header_access From deny all', 'never_direct allow all']
 
-    def __init__(self, queue=None):
-        self.resource_queue = RESOURCE_MAPS.get(queue) if queue else SQUID_PROXIES_RESOURCE
-        self.batch_size = PROXY_BATCH_SIZE
+    def __init__(self, resource_queue=None, verified_queue=None):
+        self.resource_queue = RESOURCE_MAPS.get(resource_queue) if resource_queue else VALIDATED_HTTPS_QUEUE
+        self.verified_queue = VERIFIED_TIME_MAPS.get(verified_queue) if verified_queue else TTL_HTTPS_QUEUE
         self.template_path = SQUID_TEMPLATE_PATH
         self.conf_path = SQUID_CONF_PATH
+        # todo consider whether the batch size is neccessary
+        self.batch_size = PROXY_BATCH_SIZE
         if not SQUID_BIN_PATH:
             try:
                 r = subprocess.check_output('which squid', shell=True)
@@ -33,7 +41,14 @@ class SquidClient:
 
     def update_conf(self):
         conn = get_redis_conn()
-        proxies = conn.zrevrange(self.resource_queue, 0, self.batch_size)
+        start_time = int(time.time()) - TTL_VALIDATED_TIME * 60
+        pipe = conn.pipeline(False)
+        pipe.zrevrangebyscore(self.resource_queue, '+inf', 6)
+        pipe.zrevrangebyscore(self.verified_queue, '+inf', start_time)
+        scored_proxies, verified_proxies = pipe.execute()
+        proxies = decode_all(scored_proxies and verified_proxies)
+
+        print(proxies)
         conts = list()
         with open(self.template_path, 'r') as fr, open(self.conf_path, 'w') as fw:
             conts.append(fr.read())

@@ -7,11 +7,12 @@ from config.settings import (
     SPIDER_GFW_TASK, SPIDER_AJAX_GFW_TASK,
     VALIDATED_HTTP_QUEUE, VALIDATED_HTTPS_QUEUE,
     VALIDATOR_HTTP_TASK, VALIDATOR_HTTPS_TASK,
-    INIT_HTTP_QUEUE)
+    INIT_HTTP_QUEUE, TTL_HTTP_QUEUE,
+    TTL_HTTPS_QUEUE)
 
 
 __all__ = ['CRWALER_TASKS', 'VALIDATOR_TASKS', 'CRAWLER_TASK_MAPS',
-           'VALIDATOR_TASK_MAPS', 'RESOURCE_MAPS']
+           'VALIDATOR_TASK_MAPS', 'RESOURCE_MAPS', 'VERIFIED_TIME_MAPS']
 
 
 CRWALER_TASKS = [
@@ -349,7 +350,7 @@ VALIDATOR_TASKS = [
     },
 ]
 
-# all the crawlers will fetch tasks from the following queues to execute
+# crawlers will fetch tasks from the following queues
 CRAWLER_TASK_MAPS = {
     'common': SPIDER_COMMON_TASK,
     'ajax': SPIDER_AJAX_TASK,
@@ -357,15 +358,21 @@ CRAWLER_TASK_MAPS = {
     'ajax_gfw': SPIDER_AJAX_GFW_TASK
 }
 
-# all the validators will fetch proxies from the following queues to validate
+# validators will fetch proxies from the following queues
 VALIDATOR_TASK_MAPS = {
     'init': INIT_HTTP_QUEUE,
     'http': VALIDATOR_HTTP_TASK,
     'https': VALIDATOR_HTTPS_TASK
 }
 
-# all the clients will fetch resources from the following queues to use
+# clients will fetch proxies from the following queues
 RESOURCE_MAPS = {
     'http': VALIDATED_HTTP_QUEUE,
     'https': VALIDATED_HTTPS_QUEUE
+}
+
+# clients will fetch proxies from the following queues which are verified recently
+VERIFIED_TIME_MAPS = {
+    'http': TTL_HTTP_QUEUE,
+    'https': TTL_HTTPS_QUEUE
 }

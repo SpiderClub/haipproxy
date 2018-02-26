@@ -5,16 +5,23 @@ from twisted.internet.threads import deferToThread
 
 from utils.redis_util import get_redis_conn
 from config.settings import (
-    META_DATA_DB, DATA_ALL, INIT_HTTP_QUEUE, INIT_SOCKS4_QUEUE, INIT_SOCKS5_QUEUE)
+    META_DATA_DB, DATA_ALL,
+    INIT_HTTP_QUEUE, INIT_SOCKS4_QUEUE,
+    INIT_SOCKS5_QUEUE)
 
 
-class ProxyIPPipeline:
+class BasePipeline:
     def open_spider(self, spider):
         self.redis_con = get_redis_conn(db=META_DATA_DB)
 
     def process_item(self, item, spider):
         return deferToThread(self._process_item, item, spider)
 
+    def _process_item(self, item, spider):
+        raise NotImplementedError
+
+
+class ProxyIPPipeline(BasePipeline):
     def _process_item(self, item, spider):
         url = item.get('url', None)
         if not url:
@@ -33,31 +40,33 @@ class ProxyIPPipeline:
         return item
 
 
-class ProxyDetailPipeline:
-    def open_spider(self, spider):
-        self.redis_con = get_redis_conn(db=META_DATA_DB)
-
-    def process_item(self, item, spider):
-        return deferToThread(self._process_item, item, spider)
-
+class ProxyDetailPipeline(BasePipeline):
     def _process_item(self, item, spider):
         score = self.redis_con.zscore(item['queue'], item['url'])
         if score is None:
             self.redis_con.zadd(item['queue'], item['score'], item['url'])
         else:
-            if item['incr'] == '-inf' or (item['incr'] < 0 and score <= 0):
+            # delete ip resource when score < 1 or error happends
+            if item['incr'] == '-inf' or (item['incr'] < 0 and score <= 1):
                 pipe = self.redis_con.pipeline(True)
                 pipe.srem(DATA_ALL, item['url'])
                 pipe.redis_con.zrem(item['queue'], item['url'])
                 pipe.execute()
+            elif item['incr'] < 0 and 1 < score:
+                self.redis_con.zincrby(item['queue'], item['url'], -1)
+            elif item['incr'] > 0 and score < 10:
+                self.redis_con.zincrby(item['queue'], item['url'], 1)
             elif item['incr'] > 0 and score >= 10:
                 incr = round(10/score, 2)
                 self.redis_con.zincrby(item['queue'], item['url'], incr)
-            elif item['incr'] > 0 and score < 10:
-                self.redis_con.zincrby(item['queue'], item['url'], 1)
-            elif item['incr'] < 0 and 0 < score:
-                self.redis_con.zincrby(item['queue'], item['url'], -1)
 
         return item
 
 
+class ProxyVerifiedTimePipeline(BasePipeline):
+    def _process_item(self, item, spider):
+        if item['incr'] == '-inf' or item['incr'] < 0:
+            pass
+
+        self.redis_con.zadd(item['queue'], item['verified_time'], item['url'])
+        return item
