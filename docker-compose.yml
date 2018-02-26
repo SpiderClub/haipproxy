@@ -17,12 +17,6 @@ services:
       - .:/haipproxy
     ports:
       - "3128:3128"
-#
-#  validator:
-#    build: .
-#    command: python crawler_booter.py --usage validator
-#    volumes:
-#      - .:/haipproxy
-#    links:
-#      - redis
-#      - splash
+    links:
+      - redis
+      - splash
