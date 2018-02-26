@@ -18,22 +18,22 @@ spiders.
 - Change redis args of the project *[config/settings.py](config/settings.py)* according to redis conf,such as `REDIS_HOST`,`REDIS_PASSWORD`
 - Install [scrapy-splash](https://github.com/scrapy-plugins/scrapy-splash)
 - Install dependencies
-> pip install requirements.txt
+ > pip install requirements.txt
 - Start *scrapy worker*,including ip proxy crawler and validator
-> python crawler_booter.py --usage crawler
+ > python crawler_booter.py --usage crawler
 
-> python crawler_booter.py --usage validator
+ > python crawler_booter.py --usage validator
 - Start *task scheduler*,including crawler task scheduler and validator task scheduler
-> python scheduler_booter.py --usage crawler
+ > python scheduler_booter.py --usage crawler
 
-> python scheduler_booter.py --usage validator
+ > python scheduler_booter.py --usage validator
 
 ### Dockerize
 - Install docker-compose
-> pip install -U docker-compose
+ > pip install -U docker-compose
 
 - Start all the containers using docker-compose
-> docker-compose up
+ > docker-compose up
 
 # Other important things
 - This project is highly dependent on redis,if you want to replace redis with another mq or database,
