@@ -1,2 +1,4 @@
 Scrapy==1.5.0
 Twisted==17.9.0
+scrapy-splash==0.7.2
+redis==2.10.6
