@@ -6,14 +6,15 @@ import time
 import subprocess
 
 from config.rules import (
-    RESOURCE_MAPS, VERIFIED_TIME_MAPS)
+    RESOURCE_MAPS, VERIFIED_TIME_MAPS,
+    SPEED_MAPS)
 from utils import (
     get_redis_conn, decode_all)
 from config.settings import (
     SQUID_BIN_PATH, SQUID_CONF_PATH,
     SQUID_TEMPLATE_PATH, PROXY_BATCH_SIZE,
     VALIDATED_HTTPS_QUEUE, TTL_HTTPS_QUEUE,
-    TTL_VALIDATED_TIME)
+    TTL_VALIDATED_TIME, SPEED_HTTPS_QUEUE)
 
 
 class SquidClient:
@@ -22,9 +23,10 @@ class SquidClient:
     other_confs = ['request_header_access Via deny all', 'request_header_access X-Forwarded-For deny all',
                    'request_header_access From deny all', 'never_direct allow all']
 
-    def __init__(self, resource_queue=None, verified_queue=None):
+    def __init__(self, resource_queue=None, verified_queue=None, speed_queue=None):
         self.resource_queue = RESOURCE_MAPS.get(resource_queue) if resource_queue else VALIDATED_HTTPS_QUEUE
         self.verified_queue = VERIFIED_TIME_MAPS.get(verified_queue) if verified_queue else TTL_HTTPS_QUEUE
+        self.speed_queue = SPEED_MAPS.get(speed_queue) if speed_queue else SPEED_HTTPS_QUEUE
         self.template_path = SQUID_TEMPLATE_PATH
         self.conf_path = SQUID_CONF_PATH
         # todo consider whether the batch size is neccessary
@@ -43,11 +45,12 @@ class SquidClient:
         conn = get_redis_conn()
         start_time = int(time.time()) - TTL_VALIDATED_TIME * 60
         pipe = conn.pipeline(False)
+        # todo min score and min speed should be configured
         pipe.zrevrangebyscore(self.resource_queue, '+inf', 6)
         pipe.zrevrangebyscore(self.verified_queue, '+inf', start_time)
-        scored_proxies, verified_proxies = pipe.execute()
-        proxies = decode_all(scored_proxies and verified_proxies)
-
+        pipe.zrangebyscore(self.verified_queue, 0, 5000)
+        scored_proxies, verified_proxies, speed_proxies = pipe.execute()
+        proxies = decode_all(scored_proxies and verified_proxies and speed_proxies)
         print(proxies)
         conts = list()
         with open(self.template_path, 'r') as fr, open(self.conf_path, 'w') as fw:
@@ -55,8 +58,7 @@ class SquidClient:
 
             # if two proxies use the same ip and different ports and no name
             # if assigned,cache_peer error will raise.
-            for index, value in enumerate(proxies):
-                proxy = value.decode()
+            for index, proxy in enumerate(proxies):
                 _, ip_port = proxy.split('://')
                 ip, port = ip_port.split(':')
                 conts.append(self.default_conf_detail.format(ip, port, index))

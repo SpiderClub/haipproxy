@@ -93,9 +93,13 @@ VALIDATED_HTTP_QUEUE = 'haipproxy:http:validated'
 VALIDATED_HTTPS_QUEUE = 'haipproxy:https:validated'
 
 # it should be smaller than SQUID_UPDATE_INTERNAL
-TTL_VALIDATED_TIME = 5  # minutes
+TTL_VALIDATED_TIME = 10  # minutes
 TTL_HTTP_QUEUE = 'haipproxy:ttl:http'
 TTL_HTTPS_QUEUE = 'haipproxy:ttl:https'
+
+# queue for proxy speed
+SPEED_HTTP_QUEUE = 'haipproxy:speed:http'
+SPEED_HTTPS_QUEUE = 'haipproxy:speed:https'
 
 # squid settings
 SQUID_BIN_PATH = '/usr/local/sbin/squid'  # mac os

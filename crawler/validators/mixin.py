@@ -8,9 +8,11 @@ from twisted.internet.error import (
 
 from config.settings import (
     VALIDATED_HTTP_QUEUE, VALIDATED_HTTPS_QUEUE,
-    TTL_HTTPS_QUEUE, TTL_HTTP_QUEUE)
+    TTL_HTTPS_QUEUE, TTL_HTTP_QUEUE,
+    SPEED_HTTP_QUEUE, SPEED_HTTPS_QUEUE)
 from ..items import (
-    ProxyDetailItem, ProxyVerifiedTimeItem)
+    ProxyScoreItem, ProxyVerifiedTimeItem,
+    ProxySpeedItem)
 
 
 class BaseValidator:
@@ -61,17 +63,21 @@ class BaseValidator:
             yield item
 
     def set_item_queue(self, url, proxy, score, incr):
-        proxy_item = ProxyDetailItem(url=proxy, score=score, incr=incr)
+        proxy_item = ProxyScoreItem(url=proxy, score=score, incr=incr)
         time_item = ProxyVerifiedTimeItem(url=proxy, verified_time=int(time.time()), incr=incr)
+        speed_item = ProxySpeedItem(url=proxy, response_time=int(time.time()), incr=incr)
         # todo find a better way to distinguish each task queue,
         # may split the set_item_queue method from basevalidator to each child validtor
         if 'https' in url:
             proxy_item['queue'] = VALIDATED_HTTPS_QUEUE
             time_item['queue'] = TTL_HTTPS_QUEUE
+            speed_item['queue'] = SPEED_HTTPS_QUEUE
         else:
             proxy_item['queue'] = VALIDATED_HTTP_QUEUE
             time_item['queue'] = TTL_HTTP_QUEUE
-        return proxy_item, time_item
+            speed_item['queue'] = TTL_HTTP_QUEUE
+
+        return proxy_item, time_item, speed_item
 
 
 

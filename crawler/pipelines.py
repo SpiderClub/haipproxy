@@ -6,7 +6,8 @@ from scrapy.exceptions import DropItem
 
 from utils import get_redis_conn
 from .items import (
-    ProxyDetailItem, ProxyVerifiedTimeItem)
+    ProxyScoreItem, ProxyVerifiedTimeItem,
+    ProxySpeedItem)
 from config.settings import (
     META_DATA_DB, DATA_ALL,
     INIT_HTTP_QUEUE, INIT_SOCKS4_QUEUE,
@@ -45,10 +46,12 @@ class ProxyIPPipeline(BasePipeline):
 
 class ProxyCommonPipeline(BasePipeline):
     def _process_item(self, item, spider):
-        if isinstance(item, ProxyDetailItem):
+        if isinstance(item, ProxyScoreItem):
             self._process_score_item(item, spider)
         if isinstance(item, ProxyVerifiedTimeItem):
             self._process_verified_item(item, spider)
+        if isinstance(item, ProxySpeedItem):
+            pass
 
         return item
 
@@ -76,3 +79,9 @@ class ProxyCommonPipeline(BasePipeline):
             raise DropItem('item verification has failed')
 
         self.redis_con.zadd(item['queue'], item['verified_time'], item['url'])
+
+    def _process_speed_item(self, item, spider):
+        if item['incr'] == '-inf' or item['incr'] < 0:
+            raise DropItem('item verification has failed')
+
+        self.redis_con.zadd(item['queue'], item['response_time'], item['url'])
