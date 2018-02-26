@@ -10,6 +10,7 @@ python scheduler_booter.py --usage crawler common
 While if you want to start validator scheduler, run:
 python scheduler_booter.py --usage validator
 
+Notice that the scheduler doesn't schedule init queue.
 If you want to start https validator only, run:
 python scheduler_booter.py --usage validator https
 """

@@ -1,13 +1,15 @@
 """
 This module is used to update squid conf periodically.
 
-You can start the task using the following cmd:
+If you belongs to admin group,you can start the task using the following cmd:
 python squid_update.py
 
 The default internal value is 10 minutes in settings.py,use
 the following cmd if you want a different updating internal
 python squid_update.py --internal 5
 
+Notice that if you don't belong to admin group, you must run this script with sudo:
+sudo python squid_update.py
 """
 
 from scheduler import squid_conf_update

@@ -34,14 +34,14 @@ class BaseValidator:
     }
 
     def parse(self, response):
-        # don't consider speed at first
         proxy = response.meta.get('proxy')
+        speed = response.meta.get('speed')
         url = response.url
         transparent = self.is_transparent(response)
         if transparent:
             return
 
-        items = self.set_item_queue(url, proxy, self.init_score, 1)
+        items = self.set_item_queue(url, proxy, self.init_score, 1, speed)
         for item in items:
             yield item
 
@@ -62,10 +62,10 @@ class BaseValidator:
         for item in items:
             yield item
 
-    def set_item_queue(self, url, proxy, score, incr):
+    def set_item_queue(self, url, proxy, score, incr, speed=0):
         proxy_item = ProxyScoreItem(url=proxy, score=score, incr=incr)
         time_item = ProxyVerifiedTimeItem(url=proxy, verified_time=int(time.time()), incr=incr)
-        speed_item = ProxySpeedItem(url=proxy, response_time=int(time.time()), incr=incr)
+        speed_item = ProxySpeedItem(url=proxy, response_time=speed, incr=incr)
         # todo find a better way to distinguish each task queue,
         # may split the set_item_queue method from basevalidator to each child validtor
         if 'https' in url:
@@ -75,7 +75,7 @@ class BaseValidator:
         else:
             proxy_item['queue'] = VALIDATED_HTTP_QUEUE
             time_item['queue'] = TTL_HTTP_QUEUE
-            speed_item['queue'] = TTL_HTTP_QUEUE
+            speed_item['queue'] = SPEED_HTTP_QUEUE
 
         return proxy_item, time_item, speed_item
 

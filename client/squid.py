@@ -14,7 +14,7 @@ from config.settings import (
     SQUID_BIN_PATH, SQUID_CONF_PATH,
     SQUID_TEMPLATE_PATH, PROXY_BATCH_SIZE,
     VALIDATED_HTTPS_QUEUE, TTL_HTTPS_QUEUE,
-    TTL_VALIDATED_TIME, SPEED_HTTPS_QUEUE)
+    TTL_VALIDATED_RESOURCE, SPEED_HTTPS_QUEUE)
 
 
 class SquidClient:
@@ -43,12 +43,12 @@ class SquidClient:
 
     def update_conf(self):
         conn = get_redis_conn()
-        start_time = int(time.time()) - TTL_VALIDATED_TIME * 60
+        start_time = int(time.time()) - TTL_VALIDATED_RESOURCE * 60
         pipe = conn.pipeline(False)
         # todo min score and min speed should be configured
         pipe.zrevrangebyscore(self.resource_queue, '+inf', 6)
         pipe.zrevrangebyscore(self.verified_queue, '+inf', start_time)
-        pipe.zrangebyscore(self.verified_queue, 0, 5000)
+        pipe.zrangebyscore(self.speed_queue, 0, 5000)
         scored_proxies, verified_proxies, speed_proxies = pipe.execute()
         proxies = decode_all(scored_proxies and verified_proxies and speed_proxies)
         print(proxies)

@@ -51,7 +51,7 @@ class ProxyCommonPipeline(BasePipeline):
         if isinstance(item, ProxyVerifiedTimeItem):
             self._process_verified_item(item, spider)
         if isinstance(item, ProxySpeedItem):
-            pass
+            self._process_speed_item(item, spider)
 
         return item
 

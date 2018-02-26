@@ -13,7 +13,8 @@ from config.settings import (
 
 
 __all__ = ['CRWALER_TASKS', 'VALIDATOR_TASKS', 'CRAWLER_TASK_MAPS',
-           'VALIDATOR_TASK_MAPS', 'RESOURCE_MAPS', 'VERIFIED_TIME_MAPS']
+           'VALIDATOR_TASK_MAPS', 'RESOURCE_MAPS', 'VERIFIED_TIME_MAPS',
+           'SPEED_MAPS']
 
 
 CRWALER_TASKS = [

@@ -24,7 +24,7 @@ from config.settings import (
     SPIDER_COMMON_TASK, SPIDER_AJAX_TASK,
     SPIDER_GFW_TASK, SPIDER_AJAX_GFW_TASK,
     VALIDATOR_HTTP_TASK, VALIDATOR_HTTPS_TASK,
-    TIMER_RECORDER, SQUID_UPDATE_INTERNAL)
+    TIMER_RECORDER, TTL_VALIDATED_RESOURCE)
 from utils.redis_util import (
     get_redis_conn, acquire_lock,
     release_lock)
@@ -220,7 +220,7 @@ def crawler_start(usage, tasks):
 
 
 @click.command()
-@click.option('--internal', default=SQUID_UPDATE_INTERNAL, help='Updating frenquency of squid conf.')
+@click.option('--internal', default=TTL_VALIDATED_RESOURCE, help='Updating frenquency of squid conf.')
 def squid_conf_update(internal):
     """Timertask for updating proxies for squid config file"""
     print('the updating task is starting...')
