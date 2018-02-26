@@ -12,14 +12,15 @@ class AjaxSpider(BaseSpider, RedisAjaxSpider):
     task_type = SPIDER_AJAX_TASK
 
     def parse(self, response):
-        if 'goubanjia' in response.url:
+        url = response.url
+        if self.exists(url, 'goubanjia'):
             items = self.parse_goubanjia(response)
-        elif 'proxydb' in response.url:
+        elif self.exists(url, 'proxydb'):
             items = self.parse_common(response, detail_rule='a::text', split_detail=True)
-        elif 'cool-proxy' in response.url:
+        elif self.exists(url, 'cool-proxy'):
             items = self.parse_common(response, infos_pos=1, infos_end=-1)
         else:
-            items = list()
+            items = self.parse_common(response)
 
         for item in items:
             yield item

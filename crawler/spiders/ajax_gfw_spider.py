@@ -13,15 +13,18 @@ class AjaxGFWSpider(BaseSpider, RedisAjaxSpider):
     task_type = SPIDER_AJAX_GFW_TASK
 
     def parse(self, response):
-        if 'proxy-list' in response.url:
+        url = response.url
+        if self.exists(url, 'proxy-list'):
             items = self.parse_common(response, pre_extract_method='css', pre_extract='.table ul',
                                       detail_rule='li::text', split_detail=True)
-        elif 'cnproxy' in response.url:
+        elif self.exists(url, 'cnproxy'):
             items = self.parse_cnproxy(response)
-        elif 'free-proxy' in response.url:
+        elif self.exists(url, 'free-proxy'):
             items = self.parse_free_proxy(response)
+        elif self.exists(url, 'proxylist'):
+            items = self.parse_proxylist(response)
         else:
-            items = list()
+            items = self.parse_common(response)
 
         for item in items:
             yield item
@@ -56,8 +59,21 @@ class AjaxGFWSpider(BaseSpider, RedisAjaxSpider):
 
         return items
 
+    def parse_proxylist(self, response):
+        items = list()
+        infos = response.xpath('//tr')[2:]
 
+        for info in infos:
+            info_str = info.extract()
+            if '透明' in info_str or 'transparent' in info_str.lower():
+                continue
+            ip = info.css('td::text')[1].extract()
+            port = info.css('td a::text')[0].extract()
+            if not ip or not port:
+                continue
 
+            cur_protocols = self.procotol_extractor(info_str)
+            for protocol in cur_protocols:
+                items.append(ProxyUrlItem(url=self.construct_proxy_url(protocol, ip, port)))
 
-
-
+            return items

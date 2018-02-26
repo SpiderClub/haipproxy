@@ -2,25 +2,86 @@
 scrapy pipelines for storing proxy ip infos.
 """
 from twisted.internet.threads import deferToThread
-from scrapy.utils.serialize import ScrapyJSONEncoder
+from scrapy.exceptions import DropItem
 
-from config.settings import META_DATA_DB
-from utils.connetion import get_redis_con
+from utils import get_redis_conn
+from .items import (
+    ProxyScoreItem, ProxyVerifiedTimeItem,
+    ProxySpeedItem)
+from config.settings import (
+    META_DATA_DB, DATA_ALL,
+    INIT_HTTP_QUEUE, INIT_SOCKS4_QUEUE,
+    INIT_SOCKS5_QUEUE)
 
 
-serialize = ScrapyJSONEncoder().encode
-
-
-class ProxyIPPipeline:
+class BasePipeline:
     def open_spider(self, spider):
-        self.redis_con = get_redis_con(db=META_DATA_DB)
+        self.redis_con = get_redis_conn(db=META_DATA_DB)
 
     def process_item(self, item, spider):
         return deferToThread(self._process_item, item, spider)
 
     def _process_item(self, item, spider):
-        serialized_item = serialize(item)
-        self.redis_con.rpush('to_think', serialized_item)
+        raise NotImplementedError
+
+
+class ProxyIPPipeline(BasePipeline):
+    def _process_item(self, item, spider):
+        url = item.get('url', None)
+        if not url:
+            return item
+
+        pipeline = self.redis_con.pipeline()
+        not_exists = pipeline.sadd(DATA_ALL, url)
+        if not_exists:
+            if 'socks4' in url:
+                pipeline.rpush(INIT_SOCKS4_QUEUE, url)
+            elif 'socks5' in url:
+                pipeline.rpush(INIT_SOCKS5_QUEUE, url)
+            else:
+                pipeline.rpush(INIT_HTTP_QUEUE, url)
+        pipeline.execute()
         return item
 
 
+class ProxyCommonPipeline(BasePipeline):
+    def _process_item(self, item, spider):
+        if isinstance(item, ProxyScoreItem):
+            self._process_score_item(item, spider)
+        if isinstance(item, ProxyVerifiedTimeItem):
+            self._process_verified_item(item, spider)
+        if isinstance(item, ProxySpeedItem):
+            pass
+
+        return item
+
+    def _process_score_item(self, item, spider):
+        score = self.redis_con.zscore(item['queue'], item['url'])
+        if score is None:
+            self.redis_con.zadd(item['queue'], item['score'], item['url'])
+        else:
+            # delete ip resource when score < 1 or error happends
+            if item['incr'] == '-inf' or (item['incr'] < 0 and score <= 1):
+                pipe = self.redis_con.pipeline(True)
+                pipe.srem(DATA_ALL, item['url'])
+                pipe.zrem(item['queue'], item['url'])
+                pipe.execute()
+            elif item['incr'] < 0 and 1 < score:
+                self.redis_con.zincrby(item['queue'], item['url'], -1)
+            elif item['incr'] > 0 and score < 10:
+                self.redis_con.zincrby(item['queue'], item['url'], 1)
+            elif item['incr'] > 0 and score >= 10:
+                incr = round(10/score, 2)
+                self.redis_con.zincrby(item['queue'], item['url'], incr)
+
+    def _process_verified_item(self, item, spider):
+        if item['incr'] == '-inf' or item['incr'] < 0:
+            raise DropItem('item verification has failed')
+
+        self.redis_con.zadd(item['queue'], item['verified_time'], item['url'])
+
+    def _process_speed_item(self, item, spider):
+        if item['incr'] == '-inf' or item['incr'] < 0:
+            raise DropItem('item verification has failed')
+
+        self.redis_con.zadd(item['queue'], item['response_time'], item['url'])

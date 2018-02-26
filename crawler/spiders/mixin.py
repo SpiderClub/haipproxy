@@ -2,16 +2,20 @@
 Useful mixin class for all the spiders.
 """
 import json
+import ipaddress
 
 from ..items import ProxyUrlItem
 
 
 class BaseSpider:
-    default_protocols = ['http', 'https']
+    default_protocols = ['http']
     # slow down each spider
     custom_settings = {
         'CONCURRENT_REQUESTS_PER_DOMAIN': 1,
-        'DOWNLOAD_DELAY': 3
+        'DOWNLOAD_DELAY': 3,
+        'ITEM_PIPELINES': {
+            'crawler.pipelines.ProxyIPPipeline': 200,
+        }
     }
 
     def parse_common(self, response, pre_extract_method='xpath',
@@ -52,6 +56,9 @@ class BaseSpider:
                 port = proxy_detail[port_pos].strip()
             else:
                 ip, port = proxy_detail[0].split(':')
+            if not self.proxy_check(ip, port):
+                continue
+
             if protocols:
                 cur_protocols = protocols
             elif extract_protocol:
@@ -81,6 +88,9 @@ class BaseSpider:
         for info in infos:
             ip = info.get(ip_key)
             port = info.get(port_key)
+            if not self.proxy_check(ip, port):
+                continue
+
             protocols = self.procotol_extractor(str(info))
             for protocol in protocols:
                 items.append(ProxyUrlItem(url=self.construct_proxy_url(protocol, ip, port)))
@@ -111,6 +121,10 @@ class BaseSpider:
             ip, port = info.split(':')
             if not ip or not port:
                 continue
+
+            if not self.proxy_check(ip, port):
+                continue
+
             protocols = self.default_protocols if not protocols else protocols
 
             for protocol in protocols:
@@ -118,29 +132,44 @@ class BaseSpider:
         return items
 
     def procotol_extractor(self, detail):
-        """extract http protocol,default value is http and https"""
+        """extract http protocol,default value is http"""
         detail = detail.lower()
-        # TODO it might be socks4, fix this case
         if 'socks5' in detail:
             protocols = ['socks5']
         elif 'socks4/5' in detail:
             protocols = ['socks4', 'socks5']
         elif 'socks4' in detail:
             protocols = ['socks4']
-        # TODO find a better way to recongnize both http and https protocol
-        elif 'http,https' in detail or 'http/https' in detail:
-            protocols = ['http', 'https']
-        elif 'https' in detail:
-            protocols = ['https']
-        elif 'http' in detail:
-            protocols = ['http']
         else:
             protocols = self.default_protocols
         return protocols
 
+    def proxy_check(self, ip, port):
+        """
+        check whether the proxy ip and port are valid
+        :param ip: proxy ip value
+        :param port: proxy port value
+        :return: True or False
+        """
+        try:
+            ipaddress.ip_address(ip)
+            p = int(port)
+            if p > 65535 or p <= 0:
+                return False
+        except ValueError:
+            return False
+        return True
+
     def construct_proxy_url(self, scheme, ip, port):
         """construct proxy urls so spiders can directly use them"""
         return '{}://{}:{}'.format(scheme, ip, port)
+
+    def exists(self, url, *flags):
+        """check whether the flag in url or not"""
+        for flag in flags:
+            if flag in url:
+                return True
+        return False
 
 
 

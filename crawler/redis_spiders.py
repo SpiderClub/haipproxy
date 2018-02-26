@@ -8,10 +8,12 @@ from scrapy.spiders import (
     Spider, CrawlSpider)
 from scrapy_splash import SplashRequest
 
-from utils.connetion import get_redis_con
+from config.settings import (
+    VALIDATOR_FEED_SIZE, SPIDER_FEED_SIZE)
+from utils.redis_util import get_redis_conn
 
-
-__all__ = ['RedisSpider', 'RedisAjaxSpider', 'RedisCrawlSpider']
+__all__ = ['RedisSpider', 'RedisAjaxSpider',
+           'RedisCrawlSpider', 'ValidatorRedisSpider']
 
 
 class RedisMixin(object):
@@ -23,9 +25,8 @@ class RedisMixin(object):
 
     def setup_redis(self, crawler):
         """send signals when the spider is free"""
-        settings = crawler.settings
-        self.redis_batch_size = settings.getint('SPIDER_FEED_SIZE')
-        self.redis_con = get_redis_con()
+        self.redis_batch_size = SPIDER_FEED_SIZE
+        self.redis_con = get_redis_conn()
 
         crawler.signals.connect(self.spider_idle, signal=signals.spider_idle)
 
@@ -92,4 +93,32 @@ class RedisAjaxSpider(RedisSpider):
 
         self.logger.debug('Read {} requests from {}'.format(found, self.task_type))
 
+
+class ValidatorRedisSpider(RedisSpider):
+    """Scrapy only supports https and http proxy"""
+    def setup_redis(self, crawler):
+        super().setup_redis(crawler)
+        self.redis_batch_size = VALIDATOR_FEED_SIZE
+
+    def next_requests(self):
+        yield from self.next_requests_process(self.task_type)
+
+    def next_requests_process(self, task_type):
+        fetch_one = self.redis_con.lpop
+        found = 0
+        while found < self.redis_batch_size:
+            data = fetch_one(task_type)
+            if not data:
+                break
+            proxy_url = data.decode()
+            for url in self.urls:
+                req = Request(url, meta={'proxy': proxy_url},
+                              callback=self.parse, errback=self.parse_error)
+                yield req
+                found += 1
+
+        self.logger.debug('Read {} ip proxies from {}'.format(found, task_type))
+
+    def parse_error(self, failure):
+        raise NotImplementedError
 
