@@ -13,7 +13,7 @@ spiders.
 
 # Quick start
 
-## Standalone
+### Standalone
 - Install Python3 and Redis Server
 - Change redis args of the project *[config/settings.py](config/settings.py)* according to redis conf,such as `REDIS_HOST`,`REDIS_PASSWORD`
 - Install [scrapy-splash](https://github.com/scrapy-plugins/scrapy-splash)
@@ -28,7 +28,12 @@ spiders.
 
 > python scheduler_booter.py --usage validator
 
-## Dockerize
+### Dockerize
+- Install docker-compose
+> pip install -U docker-compose
+
+- Start all the containers using docker-compose
+> docker-compose up
 
 # Other important things
 - This project is highly dependent on redis,if you want to replace redis with another mq or database,
