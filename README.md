@@ -18,7 +18,7 @@ spiders.
 - Change redis args of the project *[config/settings.py](config/settings.py)* according to redis conf,such as `REDIS_HOST`,`REDIS_PASSWORD`
 - Install [scrapy-splash](https://github.com/scrapy-plugins/scrapy-splash)
 - Install dependencies
-  > pip install requirements.txt
+  > pip install -r requirements.txt
 - Start *scrapy worker*,including ip proxy crawler and validator
   > python crawler_booter.py --usage crawler
 
