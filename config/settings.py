@@ -17,10 +17,10 @@ CONCURRENT_REQUESTS = 50
 # don't filter anything, also can set dont_filter=True in Request objects
 DUPEFILTER_CLASS = 'scrapy.dupefilters.BaseDupeFilter'
 HTTPCACHE_ENABLED = False
-GFW_PROXY = 'http://202.115.44.136:8123'
+GFW_PROXY = 'http://127.0.0.1:8123'
 
 # splash settings
-SPLASH_URL = 'http://202.115.44.154:8050'
+SPLASH_URL = 'http://127.0.0.1:8050'
 
 # extension settings
 RETRY_ENABLED = False
@@ -49,7 +49,7 @@ ITEM_PIPELINES = {
 LOG_LEVEL = 'DEBUG'
 
 # redis settings
-REDIS_HOST = '202.115.44.154'
+REDIS_HOST = '127.0.0.1'
 REDIS_PORT = 6379
 REDIS_PASSWORD = '123456'
 DEFAULT_REDIS_DB = 0

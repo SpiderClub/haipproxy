@@ -26,7 +26,7 @@ class BaseValidator:
             'crawler.middlewares.RequestEndProfileMiddleware': 500,
         },
         'ITEM_PIPELINES': {
-            'crawler.pipelines.ProxyDetailPipeline': 200,
+            'crawler.pipelines.ProxyCommonPipeline': 200,
         }
 
     }

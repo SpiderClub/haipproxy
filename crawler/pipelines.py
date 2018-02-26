@@ -2,8 +2,11 @@
 scrapy pipelines for storing proxy ip infos.
 """
 from twisted.internet.threads import deferToThread
+from scrapy.exceptions import DropItem
 
-from utils.redis_util import get_redis_conn
+from utils import get_redis_conn
+from .items import (
+    ProxyDetailItem, ProxyVerifiedTimeItem)
 from config.settings import (
     META_DATA_DB, DATA_ALL,
     INIT_HTTP_QUEUE, INIT_SOCKS4_QUEUE,
@@ -40,8 +43,16 @@ class ProxyIPPipeline(BasePipeline):
         return item
 
 
-class ProxyDetailPipeline(BasePipeline):
+class ProxyCommonPipeline(BasePipeline):
     def _process_item(self, item, spider):
+        if isinstance(item, ProxyDetailItem):
+            self._process_score_item(item, spider)
+        if isinstance(item, ProxyVerifiedTimeItem):
+            self._process_verified_item(item, spider)
+
+        return item
+
+    def _process_score_item(self, item, spider):
         score = self.redis_con.zscore(item['queue'], item['url'])
         if score is None:
             self.redis_con.zadd(item['queue'], item['score'], item['url'])
@@ -50,7 +61,7 @@ class ProxyDetailPipeline(BasePipeline):
             if item['incr'] == '-inf' or (item['incr'] < 0 and score <= 1):
                 pipe = self.redis_con.pipeline(True)
                 pipe.srem(DATA_ALL, item['url'])
-                pipe.redis_con.zrem(item['queue'], item['url'])
+                pipe.zrem(item['queue'], item['url'])
                 pipe.execute()
             elif item['incr'] < 0 and 1 < score:
                 self.redis_con.zincrby(item['queue'], item['url'], -1)
@@ -60,13 +71,8 @@ class ProxyDetailPipeline(BasePipeline):
                 incr = round(10/score, 2)
                 self.redis_con.zincrby(item['queue'], item['url'], incr)
 
-        return item
-
-
-class ProxyVerifiedTimePipeline(BasePipeline):
-    def _process_item(self, item, spider):
+    def _process_verified_item(self, item, spider):
         if item['incr'] == '-inf' or item['incr'] < 0:
-            pass
+            raise DropItem('item verification has failed')
 
         self.redis_con.zadd(item['queue'], item['verified_time'], item['url'])
-        return item
