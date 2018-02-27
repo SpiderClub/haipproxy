@@ -337,6 +337,7 @@ CRWALER_TASKS = [
 ]
 
 
+# validator scheduler will fetch tasks from task queue and store into resource
 VALIDATOR_TASKS = [
     {
         'name': 'http',
@@ -350,6 +351,13 @@ VALIDATOR_TASKS = [
         'task_queue': TEMP_HTTPS_QUEUE,
         'resource': VALIDATED_HTTPS_QUEUE,
         'internal': 2*60,  # 2 hours
+        'enable': 1,
+    },
+    {
+        'name': 'weibo',
+        'task_queue': TEMP_WEIBO_QUEUE,
+        'resource': VALIDATED_WEIBO_QUEUE,
+        'internal': 2 * 60,  # 2 hours
         'enable': 1,
     },
 ]
