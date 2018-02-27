@@ -22,7 +22,7 @@ HTTPCACHE_ENABLED = False
 GFW_PROXY = 'http://127.0.0.1:8123'
 
 # splash settings
-SPLASH_URL = 'http://splash:8050'
+SPLASH_URL = 'http://127.0.0.1:8050'
 
 # extension settings
 RETRY_ENABLED = False
@@ -40,11 +40,6 @@ DOWNLOADER_MIDDLEWARES = {
 
 SPIDER_MIDDLEWARES = {
     'scrapy_splash.SplashDeduplicateArgsMiddleware': 100,
-}
-
-# item pipeline settings
-ITEM_PIPELINES = {
-    'crawler.pipelines.ProxyIPPipeline': 200,
 }
 
 # scrapy log settings

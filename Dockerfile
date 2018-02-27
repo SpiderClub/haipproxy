@@ -13,5 +13,3 @@ COPY . /haipproxy
 WORKDIR /haipproxy
 RUN pip install -i https://pypi.douban.com/simple/ -r requirements.txt
 CMD ['python', 'crawler_booter.py', '--usage', 'crawler']
-
-# sed -i 's/http_access deny all/http_access allow all/g' /etc/squid/squid.conf
