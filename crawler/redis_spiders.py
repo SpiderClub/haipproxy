@@ -19,7 +19,7 @@ __all__ = ['RedisSpider', 'RedisAjaxSpider',
 class RedisMixin(object):
     keyword_encoding = 'utf-8'
     proxy_mode = 0
-    # all the redis spiders fetch task from task_type queue
+    # all the redis spiders fetch task from task_queue queue
     task_queue = None
 
     def start_requests(self):
@@ -105,11 +105,11 @@ class ValidatorRedisSpider(RedisSpider):
     def next_requests(self):
         yield from self.next_requests_process(self.task_queue)
 
-    def next_requests_process(self, task_type):
+    def next_requests_process(self, task_queue):
         fetch_one = self.redis_con.lpop
         found = 0
         while found < self.redis_batch_size:
-            data = fetch_one(task_type)
+            data = fetch_one(task_queue)
             if not data:
                 break
             proxy_url = data.decode()
@@ -119,7 +119,7 @@ class ValidatorRedisSpider(RedisSpider):
                 yield req
                 found += 1
 
-        self.logger.debug('Read {} ip proxies from {}'.format(found, task_type))
+        self.logger.debug('Read {} ip proxies from {}'.format(found, task_queue))
 
     def parse_error(self, failure):
         raise NotImplementedError

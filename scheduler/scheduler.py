@@ -15,11 +15,8 @@ from client import SquidClient
 from config.rules import (
     CRWALER_TASKS, VALIDATOR_TASKS,
     CRAWLER_TASK_MAPS, TEMP_TASK_MAPS)
-from crawler.spiders import (
-    CommonSpider, AjaxSpider,
-    GFWSpider, AjaxGFWSpider)
-from crawler.validators import (
-    HttpBinInitValidator, HttpValidator, HttpsValidator)
+from crawler.spiders import all_spiders
+from crawler.validators import all_validators
 from config.settings import (
     SPIDER_COMMON_TASK, SPIDER_AJAX_TASK,
     SPIDER_GFW_TASK, SPIDER_AJAX_GFW_TASK,
@@ -35,8 +32,8 @@ DEFAULT_CRAWLER_TASKS = [
     SPIDER_GFW_TASK, SPIDER_AJAX_GFW_TASK]
 DEFAULT_VALIDATORS_TASKS = [TEMP_HTTP_QUEUE, TEMP_HTTPS_QUEUE]
 
-DEFAULT_CRAWLERS = [CommonSpider, AjaxSpider, GFWSpider, AjaxGFWSpider]
-DEFAULT_VALIDATORS = [HttpBinInitValidator, HttpValidator, HttpsValidator]
+DEFAULT_CRAWLERS = all_spiders
+DEFAULT_VALIDATORS = all_validators
 
 
 class BaseCase:
@@ -44,21 +41,21 @@ class BaseCase:
         self.spider = spider
 
     def check(self, task, maps):
-        task_type = maps.get(task)
-        return self.spider.task_type == task_type
+        task_queue = maps.get(task)
+        return self.spider.task_queue == task_queue
 
 
 class BaseScheduler:
-    def __init__(self, name, tasks, task_types=None):
+    def __init__(self, name, tasks, task_queues=None):
         """
         init function for schedulers.
         :param name: scheduler name, generally the value is usage of the scheduler
         :param tasks: tasks in config.rules
-        :param task_types: for crawler, the value is task_type,while for validator, it's task name
+        :param task_queues: for crawler, the value is task_queue,while for validator, it's task name
         """
         self.name = name
         self.tasks = tasks
-        self.task_types = list() if not task_types else task_types
+        self.task_queues = list() if not task_queues else task_queues
 
     def schedule_with_delay(self):
         for task in self.tasks:
@@ -75,8 +72,8 @@ class BaseScheduler:
     def get_lock(self, conn, task):
         if not task.get('enable'):
             return None
-        task_type = task.get('task_type')
-        if task_type not in self.task_types:
+        task_queue = task.get('task_queue')
+        if task_queue not in self.task_queues:
             return None
 
         task_name = task.get('name')
@@ -92,8 +89,8 @@ class CrawlerScheduler(BaseScheduler):
         """Crawler scheduler filters tasks according to task type"""
         if not task.get('enable'):
             return None
-        task_type = task.get('task_type')
-        if task_type not in self.task_types:
+        task_queue = task.get('task_queue')
+        if task_queue not in self.task_queues:
             return None
 
         conn = get_redis_conn()
@@ -110,7 +107,7 @@ class CrawlerScheduler(BaseScheduler):
             pipe.hget(TIMER_RECORDER, task_name)
             r = pipe.execute()[0]
             if not r or (now - int(r.decode('utf-8'))) >= internal * 60:
-                pipe.lpush(task_type, *urls)
+                pipe.lpush(task_queue, *urls)
                 pipe.hset(TIMER_RECORDER, task_name, now)
                 pipe.execute()
                 print('crawler task {} has been stored into redis successfully'.format(task_name))
@@ -127,8 +124,8 @@ class ValidatorScheduler(BaseScheduler):
         since it's task name stands for task type"""
         if not task.get('enable'):
             return None
-        task_type = task.get('task_type')
-        if task_type not in self.task_types:
+        task_queue = task.get('task_queue')
+        if task_queue not in self.task_queues:
             return None
 
         conn = get_redis_conn()
@@ -149,7 +146,7 @@ class ValidatorScheduler(BaseScheduler):
                     print('fetched no proxies from task {}'.format(task_name))
                     return None
 
-                pipe.rpush(task_type, *proxies)
+                pipe.rpush(task_queue, *proxies)
                 pipe.hset(TIMER_RECORDER, task_name, now)
                 pipe.execute()
                 print('validator task {} has been stored into redis successfully'.format(task_name))
@@ -162,8 +159,8 @@ class ValidatorScheduler(BaseScheduler):
 
 @click.command()
 @click.option('--usage', type=click.Choice(['crawler', 'validator']), default='crawler')
-@click.argument('task_types', nargs=-1)
-def scheduler_start(usage, task_types):
+@click.argument('task_queues', nargs=-1)
+def scheduler_start(usage, task_queues):
     """Start specified scheduler."""
     default_tasks = CRWALER_TASKS if usage == 'crawler' else VALIDATOR_TASKS
     default_allow_tasks = DEFAULT_CRAWLER_TASKS if usage == 'crawler' else DEFAULT_VALIDATORS_TASKS
@@ -171,16 +168,16 @@ def scheduler_start(usage, task_types):
     SchedulerCls = CrawlerScheduler if usage == 'crawler' else ValidatorScheduler
     scheduler = SchedulerCls(usage, default_tasks)
 
-    if not task_types:
-        scheduler.task_types = default_allow_tasks
+    if not task_queues:
+        scheduler.task_queues = default_allow_tasks
     else:
-        for task_type in task_types:
-            allow_task_type = maps.get(task_type)
-            if not allow_task_type:
+        for task_queue in task_queues:
+            allow_task_queue = maps.get(task_queue)
+            if not allow_task_queue:
                 print('scheduler task {} is invalid task, the allowed tasks are {}'.format(
-                    task_type, list(maps.keys())))
+                    task_queue, list(maps.keys())))
                 continue
-            scheduler.task_types.append(allow_task_type)
+            scheduler.task_queues.append(allow_task_queue)
 
     scheduler.schedule_all_right_now()
     scheduler.schedule_with_delay()
@@ -208,6 +205,9 @@ def crawler_start(usage, tasks):
             else:
                 print('spider task {} is invalid task, the allowed tasks are {}'.format(
                     task, list(maps.keys())))
+    if not spiders:
+        print('no spider starts up, please check your task input')
+        return
 
     settings = get_project_settings()
     configure_logging(settings)

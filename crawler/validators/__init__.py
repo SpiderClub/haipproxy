@@ -15,3 +15,9 @@ from .httpbin import (
     HttpsValidator)
 
 from .weibo import WeiBoValidator
+
+
+all_validators = [
+    HttpBinInitValidator, HttpValidator,
+    HttpsValidator, WeiBoValidator
+]

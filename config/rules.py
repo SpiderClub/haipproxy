@@ -24,14 +24,14 @@ CRWALER_TASKS = [
         'name': 'mogumiao',
         'resource': ['http://www.mogumiao.com/proxy/free/listFreeIp',
                      'http://www.mogumiao.com/proxy/api/freeIp?count=15'],
-        'task_type': SPIDER_COMMON_TASK,
+        'task_queue': SPIDER_COMMON_TASK,
         'internal': 5,
         'enable': 1,
     },
     {
         'name': 'xdaili',
         'resource': ['http://www.xdaili.cn:80/ipagent/freeip/getFreeIps?page=1&rows=10'],
-        'task_type': SPIDER_COMMON_TASK,
+        'task_queue': SPIDER_COMMON_TASK,
         'internal': 10,
         'enable': 1,
     },
@@ -40,7 +40,7 @@ CRWALER_TASKS = [
         'resource': ['http://www.xicidaili.com/nn/%s' % i for i in range(1, 6)] +
                     ['http://www.xicidaili.com/wn/%s' % i for i in range(1, 6)] +
                     ['http://www.xicidaili.com/wt/%s' % i for i in range(1, 6)],
-        'task_type': SPIDER_COMMON_TASK,
+        'task_queue': SPIDER_COMMON_TASK,
         'internal': 60,
         'enable': 1
     },
@@ -48,7 +48,7 @@ CRWALER_TASKS = [
         'name': 'kuaidaili',
         'resource': ['https://www.kuaidaili.com/free/inha/%s' % i for i in range(1, 6)] +
                     ['https://www.kuaidaili.com/proxylist/%s' % i for i in range(1, 11)],
-        'task_type': SPIDER_COMMON_TASK,
+        'task_queue': SPIDER_COMMON_TASK,
         'internal': 60,
         'enable': 1
     },
@@ -57,14 +57,14 @@ CRWALER_TASKS = [
         'resource': [
             'http://www.kxdaili.com/dailiip/%s/%s.html#ip' % (i, j) for i in range(1, 3) for j in range(1, 11)
         ],
-        'task_type': SPIDER_COMMON_TASK,
+        'task_queue': SPIDER_COMMON_TASK,
         'internal': 60,
         'enable': 1
     },
     {
         'name': 'mrhinkydink',
         'resource': ['http://www.mrhinkydink.com/proxies.htm'],
-        'task_type': SPIDER_COMMON_TASK,
+        'task_queue': SPIDER_COMMON_TASK,
         'internal': 2 * 60,
         'enable': 1,
     },
@@ -73,7 +73,7 @@ CRWALER_TASKS = [
         'resource': ['http://www.nianshao.me/?stype=1&page=%s' % i for i in range(1, 11)] +
                     ['http://www.nianshao.me/?stype=2&page=%s' % i for i in range(1, 11)] +
                     ['http://www.nianshao.me/?stype=5&page=%s' % i for i in range(1, 11)],
-        'task_type': SPIDER_COMMON_TASK,
+        'task_queue': SPIDER_COMMON_TASK,
         'internal': 60,
         'enable': 1
     },
@@ -82,14 +82,14 @@ CRWALER_TASKS = [
         'resource': ['http://www.66ip.cn/%s.html' % i for i in range(1, 3)] +
                     ['http://www.66ip.cn/areaindex_%s/%s.html' % (i, j)
                      for i in range(1, 35) for j in range(1, 3)],
-        'task_type': SPIDER_COMMON_TASK,
+        'task_queue': SPIDER_COMMON_TASK,
         'internal': 2 * 60,
         'enable': 1
     },
     {
         'name': 'baizhongsou',
         'resource': ['http://ip.baizhongsou.com/'],
-        'task_type': SPIDER_COMMON_TASK,
+        'task_queue': SPIDER_COMMON_TASK,
         'internal': 30,
         'enable': 1
     },
@@ -107,7 +107,7 @@ CRWALER_TASKS = [
                     ['https://proxy.coderbusy.com/classical/country/us.aspx?page=%s' % i for i in range(1, 11)] +
                     ['https://proxy.coderbusy.com/classical/country/id.aspx?page=%s' % i for i in range(1, 6)] +
                     ['https://proxy.coderbusy.com/classical/country/ru.aspx?page=%s' % i for i in range(1, 6)],
-        'task_type': SPIDER_COMMON_TASK,
+        'task_queue': SPIDER_COMMON_TASK,
         'internal': 2 * 60,
         'enable': 1
     },
@@ -118,14 +118,14 @@ CRWALER_TASKS = [
             'http://www.data5u.com/free/gngn/index.shtml',
             'http://www.data5u.com/free/gwgn/index.shtml'
         ],
-        'task_type': SPIDER_COMMON_TASK,
+        'task_queue': SPIDER_COMMON_TASK,
         'internal': 10,
         'enable': 1,
     },
     {
         'name': 'httpsdaili',
         'resource': ['http://www.httpsdaili.com/?stype=1&page=%s' % i for i in range(1, 8)],
-        'task_type': SPIDER_COMMON_TASK,
+        'task_queue': SPIDER_COMMON_TASK,
         'internal': 3 * 60,
         'enable': 1,
     },
@@ -133,7 +133,7 @@ CRWALER_TASKS = [
         'name': 'ip181',
         'resource': ['http://www.ip181.com/'] +
                     ['http://www.ip181.com/daili/%s.html' % i for i in range(1, 4)],
-        'task_type': SPIDER_COMMON_TASK,
+        'task_queue': SPIDER_COMMON_TASK,
         'internal': 10,
         'enable': 1,
     },
@@ -141,7 +141,7 @@ CRWALER_TASKS = [
         'name': 'ip3366',
         'resource': ['http://www.ip3366.net/free/?stype=1&page=%s' % i for i in range(1, 3)] +
                     ['http://www.ip3366.net/free/?stype=3&page=%s' % i for i in range(1, 3)],
-        'task_type': SPIDER_COMMON_TASK,
+        'task_queue': SPIDER_COMMON_TASK,
         'internal': 30,
         'enable': 1
     },
@@ -154,7 +154,7 @@ CRWALER_TASKS = [
             'http://www.iphai.com/free/wp',
             'http://www.iphai.com/'
         ],
-        'task_type': SPIDER_COMMON_TASK,
+        'task_queue': SPIDER_COMMON_TASK,
         'internal': 60,
         'enable': 1,
     },
@@ -162,7 +162,7 @@ CRWALER_TASKS = [
         'name': 'swei360',
         'resource': ['http://www.swei360.com/free/?page=%s' % i for i in range(1, 4)] +
                     ['http://www.swei360.com/free/?stype=3&page=%s' % i for i in range(1, 4)],
-        'task_type': SPIDER_COMMON_TASK,
+        'task_queue': SPIDER_COMMON_TASK,
         'internal': 30,
         'enable': 1,
     },
@@ -174,7 +174,7 @@ CRWALER_TASKS = [
             'http://www.yun-daili.com/free.asp?stype=3',
             'http://www.yun-daili.com/free.asp?stype=4',
         ],
-        'task_type': SPIDER_COMMON_TASK,
+        'task_queue': SPIDER_COMMON_TASK,
         'internal': 6 * 60,
         'enable': 1,
     },
@@ -183,7 +183,7 @@ CRWALER_TASKS = [
         'resource': [
             'http://ab57.ru/downloads/proxyold.txt',
         ],
-        'task_type': SPIDER_COMMON_TASK,
+        'task_queue': SPIDER_COMMON_TASK,
         'internal': 60,
         'enable': 1,
     },
@@ -192,7 +192,7 @@ CRWALER_TASKS = [
         'resource': [
             'http://www.proxylists.net/http_highanon.txt',
         ],
-        'task_type': SPIDER_COMMON_TASK,
+        'task_queue': SPIDER_COMMON_TASK,
         'internal': 60,
         'enable': 1,
     },
@@ -204,7 +204,7 @@ CRWALER_TASKS = [
             'https://www.my-proxy.com/free-socks-4-proxy.html',
             'https://www.my-proxy.com/free-socks-5-proxy.html'
         ],
-        'task_type': SPIDER_COMMON_TASK,
+        'task_queue': SPIDER_COMMON_TASK,
         'internal': 60,
         'enable': 1,
     },
@@ -218,7 +218,7 @@ CRWALER_TASKS = [
             'https://www.socks-proxy.net/',
             'https://www.sslproxies.org/'
         ],
-        'task_type': SPIDER_COMMON_TASK,
+        'task_queue': SPIDER_COMMON_TASK,
         'internal': 60,
         'enable': 1,
     },
@@ -228,7 +228,7 @@ CRWALER_TASKS = [
             'http://www.atomintersoft.com/high_anonymity_elite_proxy_list',
             'http://www.atomintersoft.com/anonymous_proxy_list',
         ],
-        'task_type': SPIDER_COMMON_TASK,
+        'task_queue': SPIDER_COMMON_TASK,
         'internal': 60,
         'enable': 1,
     },
@@ -237,14 +237,14 @@ CRWALER_TASKS = [
         'resource': [
             'https://www.rmccurdy.com/scripts/proxy/good.txt'
         ],
-        'task_type': SPIDER_COMMON_TASK,
+        'task_queue': SPIDER_COMMON_TASK,
         'internal': 60,
         'enable': 1,
     },
     {
         'name': 'proxydb',
         'resource': ['http://proxydb.net/?offset=%s' % (15 * i) for i in range(20)],
-        'task_type': SPIDER_AJAX_TASK,
+        'task_queue': SPIDER_AJAX_TASK,
         'internal': 3 * 60,
         'enable': 1,
     },
@@ -252,14 +252,14 @@ CRWALER_TASKS = [
         'name': 'cool-proxy',
         'resource': ['https://www.cool-proxy.net/proxies/http_proxy_list/country_code:/port:/anonymous:1/page:%s'
                      % i for i in range(1, 11)],
-        'task_type': SPIDER_AJAX_TASK,
+        'task_queue': SPIDER_AJAX_TASK,
         'internal': 30,
         'enable': 1,
     },
     {
         'name': 'goubanjia',
         'resource': ['http://www.goubanjia.com/'],
-        'task_type': SPIDER_AJAX_TASK,
+        'task_queue': SPIDER_AJAX_TASK,
         'internal': 10,
         'enable': 1,
     },
@@ -269,7 +269,7 @@ CRWALER_TASKS = [
             'http://cn-proxy.com/',
             'http://cn-proxy.com/archives/218'
         ],
-        'task_type': SPIDER_GFW_TASK,
+        'task_queue': SPIDER_GFW_TASK,
         'internal': 60,
         'enable': 1,
     },
@@ -277,7 +277,7 @@ CRWALER_TASKS = [
         'name': 'xroxy',
         'resource': ['http://www.xroxy.com/proxylist.php?port=&type=&ssl=&country=&latency=&reliability=&'
                      'sort=reliability&desc=true&pnum=%s#table' % i for i in range(20)],
-        'task_type': SPIDER_GFW_TASK,
+        'task_queue': SPIDER_GFW_TASK,
         'internal': 60,
         'enable': 1,
     },
@@ -287,7 +287,7 @@ CRWALER_TASKS = [
             'http://list.proxylistplus.com/Socks-List-1',
             'http://list.proxylistplus.com/SSL-List-1'
         ],
-        'task_type': SPIDER_GFW_TASK,
+        'task_queue': SPIDER_GFW_TASK,
         'internal': 3 * 60,
         'enable': 1,
     },
@@ -295,21 +295,21 @@ CRWALER_TASKS = [
         'name': 'cnproxy',
         'resource': ['http://www.cnproxy.com/proxy%s.html' % i for i in range(1, 11)] +
                     ['http://www.cnproxy.com/proxyedu%s.html' % i for i in range(1, 3)],
-        'task_type': SPIDER_AJAX_GFW_TASK,
+        'task_queue': SPIDER_AJAX_GFW_TASK,
         'internal': 60,
         'enable': 1,
     },
     {
         'name': 'free-proxy',
         'resource': ['http://free-proxy.cz/en/proxylist/main/%s' % i for i in range(1, 30)],
-        'task_type': SPIDER_AJAX_GFW_TASK,
+        'task_queue': SPIDER_AJAX_GFW_TASK,
         'internal': 3 * 60,
         'enable': 1,
     },
     {
         'name': 'proxy-list',
         'resource': ['https://proxy-list.org/english/index.php?p=%s' % i for i in range(1, 11)],
-        'task_type': SPIDER_AJAX_GFW_TASK,
+        'task_queue': SPIDER_AJAX_GFW_TASK,
         'internal': 60,
         'enable': 1,
     },
@@ -330,7 +330,7 @@ CRWALER_TASKS = [
             'http://www.gatherproxy.com/proxylist/port/80',
             'http://www.gatherproxy.com/proxylist/port/8118'
         ],
-        'task_type': SPIDER_AJAX_GFW_TASK,
+        'task_queue': SPIDER_AJAX_GFW_TASK,
         'internal': 60,
         'enable': 1,
     },
@@ -340,14 +340,14 @@ CRWALER_TASKS = [
 VALIDATOR_TASKS = [
     {
         'name': 'http',
-        'task_type': TEMP_HTTP_QUEUE,
+        'task_queue': TEMP_HTTP_QUEUE,
         'resource': VALIDATED_HTTP_QUEUE,
         'internal': 2*60,  # 2 hours
         'enable': 1,
     },
     {
         'name': 'https',
-        'task_type': TEMP_HTTPS_QUEUE,
+        'task_queue': TEMP_HTTPS_QUEUE,
         'resource': VALIDATED_HTTPS_QUEUE,
         'internal': 2*60,  # 2 hours
         'enable': 1,

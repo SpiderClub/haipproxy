@@ -47,3 +47,8 @@ from .ajax_spider import AjaxSpider
 from .gfw_spider import GFWSpider
 from .ajax_gfw_spider import AjaxGFWSpider
 
+
+all_spiders = [
+    CommonSpider, AjaxSpider,
+    GFWSpider, AjaxGFWSpider
+]
