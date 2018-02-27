@@ -14,7 +14,8 @@ from config.settings import (
     SQUID_BIN_PATH, SQUID_CONF_PATH,
     SQUID_TEMPLATE_PATH, PROXY_BATCH_SIZE,
     VALIDATED_HTTPS_QUEUE, TTL_HTTPS_QUEUE,
-    TTL_VALIDATED_RESOURCE, SPEED_HTTPS_QUEUE)
+    TTL_VALIDATED_RESOURCE, SPEED_HTTPS_QUEUE,
+    LONGEST_RESPONSE_TIME, LOWEST_SCORE)
 
 
 class SquidClient:
@@ -45,13 +46,16 @@ class SquidClient:
         conn = get_redis_conn()
         start_time = int(time.time()) - TTL_VALIDATED_RESOURCE * 60
         pipe = conn.pipeline(False)
-        # todo min score and min speed should be configured
-        pipe.zrevrangebyscore(self.resource_queue, '+inf', 6)
+        pipe.zrevrangebyscore(self.resource_queue, '+inf', LOWEST_SCORE)
         pipe.zrevrangebyscore(self.verified_queue, '+inf', start_time)
-        pipe.zrangebyscore(self.speed_queue, 0, 5000)
+        pipe.zrangebyscore(self.speed_queue, 0, 1000*LONGEST_RESPONSE_TIME)
         scored_proxies, verified_proxies, speed_proxies = pipe.execute()
-        proxies = decode_all(scored_proxies and verified_proxies and speed_proxies)
-        print(proxies)
+        proxies = scored_proxies and verified_proxies and speed_proxies
+        if not proxies:
+            proxies = scored_proxies if scored_proxies else verified_proxies
+
+        proxies = decode_all(proxies)
+
         conts = list()
         with open(self.template_path, 'r') as fr, open(self.conf_path, 'w') as fw:
             conts.append(fr.read())

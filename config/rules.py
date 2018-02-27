@@ -6,7 +6,7 @@ from config.settings import (
     SPIDER_COMMON_TASK, SPIDER_AJAX_TASK,
     SPIDER_GFW_TASK, SPIDER_AJAX_GFW_TASK,
     VALIDATED_HTTP_QUEUE, VALIDATED_HTTPS_QUEUE,
-    VALIDATOR_HTTP_TASK, VALIDATOR_HTTPS_TASK,
+    TEMP_HTTP_QUEUE, TEMP_HTTPS_QUEUE,
     INIT_HTTP_QUEUE, TTL_HTTP_QUEUE,
     TTL_HTTPS_QUEUE, SPEED_HTTPS_QUEUE,
     SPEED_HTTP_QUEUE)
@@ -338,14 +338,14 @@ CRWALER_TASKS = [
 VALIDATOR_TASKS = [
     {
         'name': 'http',
-        'task_type': VALIDATOR_HTTP_TASK,
+        'task_type': TEMP_HTTP_QUEUE,
         'resource': VALIDATED_HTTP_QUEUE,
         'internal': 2*60,  # 2 hours
         'enable': 1,
     },
     {
         'name': 'https',
-        'task_type': VALIDATOR_HTTPS_TASK,
+        'task_type': TEMP_HTTPS_QUEUE,
         'resource': VALIDATED_HTTPS_QUEUE,
         'internal': 2*60,  # 2 hours
         'enable': 1,
@@ -363,8 +363,8 @@ CRAWLER_TASK_MAPS = {
 # validators will fetch proxies from the following queues
 VALIDATOR_TASK_MAPS = {
     'init': INIT_HTTP_QUEUE,
-    'http': VALIDATOR_HTTP_TASK,
-    'https': VALIDATOR_HTTPS_TASK
+    'http': TEMP_HTTP_QUEUE,
+    'https': TEMP_HTTPS_QUEUE
 }
 
 # clients will fetch proxies from the following queues

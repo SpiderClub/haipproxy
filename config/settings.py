@@ -65,7 +65,7 @@ META_DATA_DB = 0
 TIMER_RECORDER = 'haipproxy:schduler:task'
 LOCKER_PREFIX = 'haipproxy:lock:'
 
-# custom spider settings
+# proxies crawler's settings
 SPIDER_FEED_SIZE = 10
 SPIDER_COMMON_TASK = 'haipproxy:spider:common'
 SPIDER_AJAX_TASK = 'haipproxy:spider:ajax'
@@ -74,7 +74,7 @@ SPIDER_AJAX_GFW_TASK = 'haipproxy:spider:ajax_gfw'
 
 # data_all is a set , it's a dupefilter
 DATA_ALL = 'haipproxy:all'
-# the data flow is init queue->validator_queue(temp)->validated_queue(score queue)->
+# the data flow is init queue->validated_queue->validator_queue(temp)->validated_queue(score queue)->
 # ttl_queue, speed_qeuue -> clients
 # http_queue is a list, it's used to store initially http/https proxy resourecs
 INIT_HTTP_QUEUE = 'haipproxy:init:http'
@@ -87,9 +87,9 @@ VALIDATOR_FEED_SIZE = 50
 
 # they are just temp queues, come from init queue, in order to filter transparnt ip
 # todo use set other than list
-VALIDATOR_HTTP_TASK = 'haipproxy:validator:http'
-VALIDATOR_HTTPS_TASK = 'haipproxy:validator:https'
-VALIDATOR_WEIBO_TASK = 'haipproxy:validator:weibo'
+TEMP_HTTP_QUEUE = 'haipproxy:validator:http'
+TEMP_HTTPS_QUEUE = 'haipproxy:validator:https'
+TEMP_WEIBO_QUEUE = 'haipproxy:validator:weibo'
 
 # valited queues are zsets.squid and other clients fetch ip resources from them.
 VALIDATED_HTTP_QUEUE = 'haipproxy:http:validated'
@@ -109,4 +109,9 @@ SPEED_HTTPS_QUEUE = 'haipproxy:speed:https'
 SQUID_BIN_PATH = '/usr/sbin/squid'  # mac os '/usr/local/sbin/squid'
 SQUID_CONF_PATH = '/etc/squid/squid.conf'  # mac os '/usr/local/etc/squid.conf'
 SQUID_TEMPLATE_PATH = '/etc/squid/squid.conf.backup'  # mac os /usr/local/etc/squid.conf.backup
-PROXY_BATCH_SIZE = 100
+
+# client settings
+# client picks proxies which's response time is between 0 and 5 seconds
+LONGEST_RESPONSE_TIME = 5
+# client picks proxies which's score is not less than 7
+LOWEST_SCORE = 7
