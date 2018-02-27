@@ -1,7 +1,9 @@
 """
 Settings for global.
 """
-
+#####################################################################
+# Scrapy settings of this project
+#####################################################################
 # scrapy basic info
 BOT_NAME = 'haiproxy'
 SPIDER_MODULES = ['crawler.spiders', 'crawler.validators']
@@ -48,6 +50,10 @@ ITEM_PIPELINES = {
 # scrapy log settings
 LOG_LEVEL = 'DEBUG'
 
+
+#####################################################################
+# Custom settings of this project
+#####################################################################
 # redis settings
 REDIS_HOST = 'redis'
 REDIS_PORT = 6379
@@ -78,7 +84,8 @@ INIT_SOCKS5_QUEUE = 'haipproxy:init:socks5'
 
 # custom validator settings
 VALIDATOR_FEED_SIZE = 50
-# they are just temp tasks
+
+# they are just temp queues, come from init queue, in order to filter transparnt ip
 # todo use set other than list
 VALIDATOR_HTTP_TASK = 'haipproxy:validator:http'
 VALIDATOR_HTTPS_TASK = 'haipproxy:validator:https'
@@ -88,7 +95,7 @@ VALIDATOR_WEIBO_TASK = 'haipproxy:validator:weibo'
 VALIDATED_HTTP_QUEUE = 'haipproxy:http:validated'
 VALIDATED_HTTPS_QUEUE = 'haipproxy:https:validated'
 
-TTL_VALIDATED_RESOURCE = 3  # minutes
+TTL_VALIDATED_RESOURCE = 2  # minutes
 TTL_HTTP_QUEUE = 'haipproxy:ttl:http'
 TTL_HTTPS_QUEUE = 'haipproxy:ttl:https'
 

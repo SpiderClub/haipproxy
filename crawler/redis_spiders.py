@@ -8,9 +8,9 @@ from scrapy.spiders import (
     Spider, CrawlSpider)
 from scrapy_splash import SplashRequest
 
+from utils import get_redis_conn
 from config.settings import (
     VALIDATOR_FEED_SIZE, SPIDER_FEED_SIZE)
-from utils.redis_util import get_redis_conn
 
 __all__ = ['RedisSpider', 'RedisAjaxSpider',
            'RedisCrawlSpider', 'ValidatorRedisSpider']
@@ -19,6 +19,8 @@ __all__ = ['RedisSpider', 'RedisAjaxSpider',
 class RedisMixin(object):
     keyword_encoding = 'utf-8'
     proxy_mode = 0
+    # all the redis spiders fetch task from task_type queue
+    task_type = None
 
     def start_requests(self):
         return self.next_requests()
