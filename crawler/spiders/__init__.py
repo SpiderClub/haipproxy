@@ -12,6 +12,7 @@ http://ip.baizhongsou.com/
 http://www.data5u.com/
 http://www.httpsdaili.com/
 http://www.ip181.com/
+http://www.xdaili.cn/ipagent/freeip/getFreeIps?page=1&rows=10
 http://www.ip3366.net/
 http://www.iphai.com/
 http://www.yun-daili.com/
@@ -28,7 +29,6 @@ http://www.mogumiao.com/
 
 website for ajax spider:
 http://www.goubanjia.com/
-http://www.xdaili.cn/freeproxy
 https://www.cool-proxy.net
 http://proxydb.net/
 
@@ -48,6 +48,7 @@ from .gfw_spider import GFWSpider
 from .ajax_gfw_spider import AjaxGFWSpider
 
 
+# todo find why 504 happens when crawling proxydb.net
 all_spiders = [
     CommonSpider, AjaxSpider,
     GFWSpider, AjaxGFWSpider

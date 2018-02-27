@@ -219,6 +219,7 @@ def crawler_start(usage, tasks):
     reactor.run()
 
 
+# todo add task option
 @click.command()
 @click.option('--internal', default=TTL_VALIDATED_RESOURCE, help='Updating frenquency of squid conf.')
 def squid_conf_update(internal):

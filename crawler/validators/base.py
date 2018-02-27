@@ -53,7 +53,6 @@ class BaseValidator:
         return False
 
     def parse_error(self, failure):
-        """"""
         request = failure.request
         proxy = request.meta.get('proxy')
         self.logger.error('proxy {} has been failed,{} is raised'.format(proxy, failure))
