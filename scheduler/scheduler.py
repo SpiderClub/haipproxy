@@ -219,13 +219,13 @@ def crawler_start(usage, tasks):
     reactor.run()
 
 
-# todo add task option
 @click.command()
+@click.option('--usage', default='https', help='Usage of squid')
 @click.option('--internal', default=TTL_VALIDATED_RESOURCE, help='Updating frenquency of squid conf.')
-def squid_conf_update(internal):
+def squid_conf_update(usage, internal):
     """Timertask for updating proxies for squid config file"""
     print('the updating task is starting...')
-    client = SquidClient('https')
+    client = SquidClient(usage)
     client.update_conf()
     schedule.every(internal).minutes.do(client.update_conf)
     while True:
