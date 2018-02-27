@@ -4,4 +4,5 @@ redis==2.10.6
 schedule==0.5.0
 scrapy-splash==0.7.2
 click==6.7
+service-identity==17.0.0
 
