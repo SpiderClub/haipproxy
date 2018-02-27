@@ -40,10 +40,8 @@ spiders.
 # Other important things
 - This project is highly dependent on redis,if you want to replace redis with another mq or database,
 just do it at your own risk
-- If there is no Great Fire Wall at your country,change `SPIDER_GFW_TASK` to `SPIDER_COMMON_TASK`, and 
-change `SPIDER_AJAX_GFW_TASK` to `SPIDER_AJAX_TASK` in [config/rules.py](config/rules.py).May be some 
-code for parsing pages should also changed in [common_spider.py](crawler/spiders/common_spider.py) and [ajax_spider.py](crawler/spiders/ajax_spider.py).
-If you don't want to crawlsome websites, set `enable=0`
+- If there is no Great Fire Wall at your country,set`proxy_mode=0` in both [gfw_spider.py](crawler/spiders/ajax_spider.py) and [ajax_gfw_spider.py](crawler/spiders/ajax_gfw_spider.py).
+If you don't want to crawl some websites, set `enable=0` in [rules.py](config/rules.py)
 - Issues and PRs are welcome
 - Just star it if it's useful to you
 
