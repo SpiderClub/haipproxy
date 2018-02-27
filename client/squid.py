@@ -12,10 +12,8 @@ from utils import (
     get_redis_conn, decode_all)
 from config.settings import (
     SQUID_BIN_PATH, SQUID_CONF_PATH,
-    SQUID_TEMPLATE_PATH, VALIDATED_HTTPS_QUEUE,
-    TTL_HTTPS_QUEUE, TTL_VALIDATED_RESOURCE,
-    SPEED_HTTPS_QUEUE, LONGEST_RESPONSE_TIME,
-    LOWEST_SCORE)
+    SQUID_TEMPLATE_PATH, TTL_VALIDATED_RESOURCE,
+    LONGEST_RESPONSE_TIME, LOWEST_SCORE)
 
 
 class SquidClient:
@@ -24,10 +22,13 @@ class SquidClient:
     other_confs = ['request_header_access Via deny all', 'request_header_access X-Forwarded-For deny all',
                    'request_header_access From deny all', 'never_direct allow all']
 
-    def __init__(self, resource_queue=None, verified_queue=None, speed_queue=None):
-        self.resource_queue = SCORE_MAPS.get(resource_queue) if resource_queue else VALIDATED_HTTPS_QUEUE
-        self.verified_queue = TTL_MAPS.get(verified_queue) if verified_queue else TTL_HTTPS_QUEUE
-        self.speed_queue = SPEED_MAPS.get(speed_queue) if speed_queue else SPEED_HTTPS_QUEUE
+    def __init__(self, task):
+        if task not in SCORE_MAPS.keys():
+            print('task value is invalid, https task will be used')
+            task = 'https'
+        self.score_queue = SCORE_MAPS.get(task)
+        self.ttl_queue = TTL_MAPS.get(task)
+        self.speed_queue = SPEED_MAPS.get(task)
         self.template_path = SQUID_TEMPLATE_PATH
         self.conf_path = SQUID_CONF_PATH
         # todo consider whether the batch size is neccessary
@@ -45,16 +46,16 @@ class SquidClient:
         conn = get_redis_conn()
         start_time = int(time.time()) - TTL_VALIDATED_RESOURCE * 60
         pipe = conn.pipeline(False)
-        pipe.zrevrangebyscore(self.resource_queue, '+inf', LOWEST_SCORE)
-        pipe.zrevrangebyscore(self.verified_queue, '+inf', start_time)
+        pipe.zrevrangebyscore(self.score_queue, '+inf', LOWEST_SCORE)
+        pipe.zrevrangebyscore(self.ttl_queue, '+inf', start_time)
         pipe.zrangebyscore(self.speed_queue, 0, 1000*LONGEST_RESPONSE_TIME)
-        scored_proxies, verified_proxies, speed_proxies = pipe.execute()
-        proxies = scored_proxies and verified_proxies and speed_proxies
+        scored_proxies, ttl_proxies, speed_proxies = pipe.execute()
+        proxies = scored_proxies and ttl_proxies and speed_proxies
+
         if not proxies:
-            proxies = scored_proxies if scored_proxies else verified_proxies
+            proxies = scored_proxies if scored_proxies else ttl_proxies
 
         proxies = decode_all(proxies)
-
         conts = list()
         with open(self.template_path, 'r') as fr, open(self.conf_path, 'w') as fw:
             conts.append(fr.read())
