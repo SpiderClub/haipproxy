@@ -4,13 +4,13 @@ Ajax gfw proxy ip crawler with scrapy-splash
 from config.settings import SPIDER_AJAX_GFW_TASK
 from ..redis_spiders import RedisAjaxSpider
 from ..items import ProxyUrlItem
-from .mixin import BaseSpider
+from .base import BaseSpider
 
 
 class AjaxGFWSpider(BaseSpider, RedisAjaxSpider):
     name = 'ajax_gfw'
     proxy_mode = 2
-    task_type = SPIDER_AJAX_GFW_TASK
+    task_queue = SPIDER_AJAX_GFW_TASK
 
     def parse(self, response):
         url = response.url

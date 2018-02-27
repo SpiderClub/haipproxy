@@ -5,15 +5,17 @@ spiders will parse response content according to the rules.
 from config.settings import (
     SPIDER_COMMON_TASK, SPIDER_AJAX_TASK,
     SPIDER_GFW_TASK, SPIDER_AJAX_GFW_TASK,
-    VALIDATED_HTTP_QUEUE, VALIDATED_HTTPS_QUEUE,
-    TEMP_HTTP_QUEUE, TEMP_HTTPS_QUEUE,
-    INIT_HTTP_QUEUE, TTL_HTTP_QUEUE,
+    INIT_HTTP_QUEUE, VALIDATED_HTTP_QUEUE,
+    VALIDATED_HTTPS_QUEUE, TEMP_HTTP_QUEUE,
+    TEMP_HTTPS_QUEUE, TTL_HTTP_QUEUE,
     TTL_HTTPS_QUEUE, SPEED_HTTPS_QUEUE,
-    SPEED_HTTP_QUEUE)
+    SPEED_HTTP_QUEUE, TEMP_WEIBO_QUEUE,
+    VALIDATED_WEIBO_QUEUE, TTL_WEIBO_QUEUE,
+    SPEED_WEIBO_QUEUE)
 
 
 __all__ = ['CRWALER_TASKS', 'VALIDATOR_TASKS', 'CRAWLER_TASK_MAPS',
-           'VALIDATOR_TASK_MAPS', 'RESOURCE_MAPS', 'VERIFIED_TIME_MAPS',
+           'TEMP_TASK_MAPS', 'SCORE_MAPS', 'TTL_MAPS',
            'SPEED_MAPS']
 
 
@@ -361,25 +363,30 @@ CRAWLER_TASK_MAPS = {
 }
 
 # validators will fetch proxies from the following queues
-VALIDATOR_TASK_MAPS = {
+TEMP_TASK_MAPS = {
     'init': INIT_HTTP_QUEUE,
     'http': TEMP_HTTP_QUEUE,
-    'https': TEMP_HTTPS_QUEUE
+    'https': TEMP_HTTPS_QUEUE,
+    'weibo': TEMP_WEIBO_QUEUE
 }
 
-# clients will fetch proxies from the following queues
-RESOURCE_MAPS = {
+# validator scheduler and clients will fetch proxies from the following queues
+SCORE_MAPS = {
     'http': VALIDATED_HTTP_QUEUE,
-    'https': VALIDATED_HTTPS_QUEUE
+    'https': VALIDATED_HTTPS_QUEUE,
+    'weibo': VALIDATED_WEIBO_QUEUE
 }
 
-# clients will fetch proxies from the following queues which are verified recently
-VERIFIED_TIME_MAPS = {
+# validator scheduler and clients will fetch proxies from the following queues which are verified recently
+TTL_MAPS = {
     'http': TTL_HTTP_QUEUE,
-    'https': TTL_HTTPS_QUEUE
+    'https': TTL_HTTPS_QUEUE,
+    'weibo': TTL_WEIBO_QUEUE
 }
 
 SPEED_MAPS = {
     'http': SPEED_HTTP_QUEUE,
-    'https': SPEED_HTTPS_QUEUE
+    'https': SPEED_HTTPS_QUEUE,
+    'weibo': SPEED_WEIBO_QUEUE
 }
+

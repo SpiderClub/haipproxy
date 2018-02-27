@@ -14,18 +14,18 @@ from scrapy.utils.project import get_project_settings
 from client import SquidClient
 from config.rules import (
     CRWALER_TASKS, VALIDATOR_TASKS,
-    CRAWLER_TASK_MAPS, VALIDATOR_TASK_MAPS)
+    CRAWLER_TASK_MAPS, TEMP_TASK_MAPS)
 from crawler.spiders import (
     CommonSpider, AjaxSpider,
     GFWSpider, AjaxGFWSpider)
 from crawler.validators import (
-    HttpBinInitValidator, HTTPValidator, HTTPSValidator)
+    HttpBinInitValidator, HttpValidator, HttpsValidator)
 from config.settings import (
     SPIDER_COMMON_TASK, SPIDER_AJAX_TASK,
     SPIDER_GFW_TASK, SPIDER_AJAX_GFW_TASK,
-    VALIDATOR_HTTP_TASK, VALIDATOR_HTTPS_TASK,
+    TEMP_HTTP_QUEUE, TEMP_HTTPS_QUEUE,
     TIMER_RECORDER, TTL_VALIDATED_RESOURCE)
-from utils.redis_util import (
+from utils import (
     get_redis_conn, acquire_lock,
     release_lock)
 
@@ -33,10 +33,10 @@ from utils.redis_util import (
 DEFAULT_CRAWLER_TASKS = [
     SPIDER_COMMON_TASK, SPIDER_AJAX_TASK,
     SPIDER_GFW_TASK, SPIDER_AJAX_GFW_TASK]
-DEFAULT_VALIDATORS_TASKS = [VALIDATOR_HTTP_TASK, VALIDATOR_HTTPS_TASK]
+DEFAULT_VALIDATORS_TASKS = [TEMP_HTTP_QUEUE, TEMP_HTTPS_QUEUE]
 
 DEFAULT_CRAWLERS = [CommonSpider, AjaxSpider, GFWSpider, AjaxGFWSpider]
-DEFAULT_VALIDATORS = [HttpBinInitValidator, HTTPValidator, HTTPSValidator]
+DEFAULT_VALIDATORS = [HttpBinInitValidator, HttpValidator, HttpsValidator]
 
 
 class BaseCase:
@@ -167,7 +167,7 @@ def scheduler_start(usage, task_types):
     """Start specified scheduler."""
     default_tasks = CRWALER_TASKS if usage == 'crawler' else VALIDATOR_TASKS
     default_allow_tasks = DEFAULT_CRAWLER_TASKS if usage == 'crawler' else DEFAULT_VALIDATORS_TASKS
-    maps = CRAWLER_TASK_MAPS if usage == 'crawler' else VALIDATOR_TASK_MAPS
+    maps = CRAWLER_TASK_MAPS if usage == 'crawler' else TEMP_TASK_MAPS
     SchedulerCls = CrawlerScheduler if usage == 'crawler' else ValidatorScheduler
     scheduler = SchedulerCls(usage, default_tasks)
 
@@ -194,7 +194,7 @@ def crawler_start(usage, tasks):
     There are four kinds of spiders: common, ajax, gfw, ajax_gfw.If you don't
     assign any tasks, all the spiders will run.
     """
-    maps = CRAWLER_TASK_MAPS if usage == 'crawler' else VALIDATOR_TASK_MAPS
+    maps = CRAWLER_TASK_MAPS if usage == 'crawler' else TEMP_TASK_MAPS
     origin_spiders = DEFAULT_CRAWLERS if usage == 'crawler' else DEFAULT_VALIDATORS
     if not tasks:
         spiders = origin_spiders

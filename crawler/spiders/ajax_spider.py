@@ -4,12 +4,12 @@ Ajax proxy ip crawler with scrapy-splash
 from config.settings import SPIDER_AJAX_TASK
 from ..redis_spiders import RedisAjaxSpider
 from ..items import ProxyUrlItem
-from .mixin import BaseSpider
+from .base import BaseSpider
 
 
 class AjaxSpider(BaseSpider, RedisAjaxSpider):
     name = 'ajax'
-    task_type = SPIDER_AJAX_TASK
+    task_queue = SPIDER_AJAX_TASK
 
     def parse(self, response):
         url = response.url

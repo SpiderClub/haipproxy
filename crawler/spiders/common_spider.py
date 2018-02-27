@@ -5,13 +5,13 @@ Basic proxy ip crawler.
 from config.settings import SPIDER_COMMON_TASK
 from ..redis_spiders import RedisSpider
 from ..items import ProxyUrlItem
-from .mixin import BaseSpider
+from .base import BaseSpider
 
 
 # notice multi inheritance order in python
 class CommonSpider(BaseSpider, RedisSpider):
     name = 'common'
-    task_type = SPIDER_COMMON_TASK
+    task_queue = SPIDER_COMMON_TASK
 
     def parse(self, response):
         url = response.url

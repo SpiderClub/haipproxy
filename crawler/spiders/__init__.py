@@ -47,4 +47,3 @@ from .ajax_spider import AjaxSpider
 from .gfw_spider import GFWSpider
 from .ajax_gfw_spider import AjaxGFWSpider
 
-# todo 有问题的 gather 66

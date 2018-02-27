@@ -20,7 +20,7 @@ class RedisMixin(object):
     keyword_encoding = 'utf-8'
     proxy_mode = 0
     # all the redis spiders fetch task from task_type queue
-    task_type = None
+    task_queue = None
 
     def start_requests(self):
         return self.next_requests()
@@ -36,7 +36,7 @@ class RedisMixin(object):
         fetch_one = self.redis_con.lpop
         found = 0
         while found < self.redis_batch_size:
-            data = fetch_one(self.task_type)
+            data = fetch_one(self.task_queue)
             if not data:
                 break
             url = data.decode()
@@ -45,7 +45,7 @@ class RedisMixin(object):
                 yield req
                 found += 1
 
-        self.logger.debug('Read {} requests from {}'.format(found, self.task_type))
+        self.logger.debug('Read {} requests from {}'.format(found, self.task_queue))
 
     def schedule_next_requests(self):
         for req in self.next_requests():
@@ -77,7 +77,7 @@ class RedisAjaxSpider(RedisSpider):
         fetch_one = self.redis_con.lpop
         found = 0
         while found < self.redis_batch_size:
-            data = fetch_one(self.task_type)
+            data = fetch_one(self.task_queue)
             if not data:
                 break
             url = data.decode()
@@ -93,7 +93,7 @@ class RedisAjaxSpider(RedisSpider):
                 yield req
                 found += 1
 
-        self.logger.debug('Read {} requests from {}'.format(found, self.task_type))
+        self.logger.debug('Read {} requests from {}'.format(found, self.task_queue))
 
 
 class ValidatorRedisSpider(RedisSpider):
@@ -103,7 +103,7 @@ class ValidatorRedisSpider(RedisSpider):
         self.redis_batch_size = VALIDATOR_FEED_SIZE
 
     def next_requests(self):
-        yield from self.next_requests_process(self.task_type)
+        yield from self.next_requests_process(self.task_queue)
 
     def next_requests_process(self, task_type):
         fetch_one = self.redis_con.lpop

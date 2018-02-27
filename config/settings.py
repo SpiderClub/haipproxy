@@ -87,21 +87,25 @@ VALIDATOR_FEED_SIZE = 50
 
 # they are just temp queues, come from init queue, in order to filter transparnt ip
 # todo use set other than list
-TEMP_HTTP_QUEUE = 'haipproxy:validator:http'
-TEMP_HTTPS_QUEUE = 'haipproxy:validator:https'
-TEMP_WEIBO_QUEUE = 'haipproxy:validator:weibo'
+TEMP_HTTP_QUEUE = 'haipproxy:http:temp'
+TEMP_HTTPS_QUEUE = 'haipproxy:https:temp'
+TEMP_WEIBO_QUEUE = 'haipproxy:weibo:temp'
 
 # valited queues are zsets.squid and other clients fetch ip resources from them.
-VALIDATED_HTTP_QUEUE = 'haipproxy:http:validated'
-VALIDATED_HTTPS_QUEUE = 'haipproxy:https:validated'
+VALIDATED_HTTP_QUEUE = 'haipproxy:validated:http'
+VALIDATED_HTTPS_QUEUE = 'haipproxy:validated:https'
+VALIDATED_WEIBO_QUEUE = 'haipproxy:validated:weibo'
 
+# time to life of proxy ip resources
 TTL_VALIDATED_RESOURCE = 2  # minutes
 TTL_HTTP_QUEUE = 'haipproxy:ttl:http'
 TTL_HTTPS_QUEUE = 'haipproxy:ttl:https'
+TTL_WEIBO_QUEUE = 'haipproxy:ttl:weibo'
 
 # queue for proxy speed
 SPEED_HTTP_QUEUE = 'haipproxy:speed:http'
 SPEED_HTTPS_QUEUE = 'haipproxy:speed:https'
+SPEED_WEIBO_QUEUE = 'haipproxy:speed:weibo'
 
 # squid settings on linux os
 # execute sudo chown -R $USER /etc/squid/ and

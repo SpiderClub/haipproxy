@@ -1,5 +1,5 @@
 """
-Useful mixin class for all the spiders.
+Useful base class for all the spiders.
 """
 import json
 import ipaddress

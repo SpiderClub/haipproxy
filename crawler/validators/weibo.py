@@ -1,16 +1,20 @@
 """
-We use this validator to filter ip that can access weibo
-initially score.
+We use this validator to filter ip that can access mobile weibo website.
 """
+from config.settings import (
+    TEMP_WEIBO_QUEUE, VALIDATED_WEIBO_QUEUE,
+    TTL_WEIBO_QUEUE, SPEED_WEIBO_QUEUE)
 from ..redis_spiders import ValidatorRedisSpider
-from .mixin import BaseValidator
+from .base import BaseValidator
 
 
 class WeiBoValidator(BaseValidator, ValidatorRedisSpider):
+    """This validator check the liveness of weibo proxy resources"""
     name = 'weibo'
     urls = [
-        'https://weibo.com'
+        'https://weibo.cn/'
     ]
-
-
-
+    task_queue = TEMP_WEIBO_QUEUE
+    score_queue = VALIDATED_WEIBO_QUEUE
+    ttl_queue = TTL_WEIBO_QUEUE
+    speed_queue = SPEED_WEIBO_QUEUE

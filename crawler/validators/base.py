@@ -1,15 +1,9 @@
 """
-Useful mixin class for all the validators.
+Useful base class for all the validators.
 """
-import time
-
 from twisted.internet.error import (
     TimeoutError, TCPTimedOutError)
 
-from config.settings import (
-    VALIDATED_HTTP_QUEUE, VALIDATED_HTTPS_QUEUE,
-    TTL_HTTPS_QUEUE, TTL_HTTP_QUEUE,
-    SPEED_HTTP_QUEUE, SPEED_HTTPS_QUEUE)
 from ..items import (
     ProxyScoreItem, ProxyVerifiedTimeItem,
     ProxySpeedItem)
@@ -17,6 +11,7 @@ from ..items import (
 
 class BaseValidator:
     """base validator for all the validators"""
+    name = 'base'
     init_score = 5
     # slow down each spider
     custom_settings = {
@@ -32,6 +27,13 @@ class BaseValidator:
         }
 
     }
+    # all the children validators must specify the following args
+    # unless you overwrite the set_item_queue() method
+    urls = None
+    task_queue = None
+    score_queue = None
+    ttl_queue = None
+    speed_queue = None
 
     def parse(self, response):
         proxy = response.meta.get('proxy')
@@ -63,21 +65,15 @@ class BaseValidator:
             yield item
 
     def set_item_queue(self, url, proxy, score, incr, speed=0):
-        proxy_item = ProxyScoreItem(url=proxy, score=score, incr=incr)
-        time_item = ProxyVerifiedTimeItem(url=proxy, verified_time=int(time.time()), incr=incr)
+        score_item = ProxyScoreItem(url=proxy, score=score, incr=incr)
+        ttl_item = ProxyVerifiedTimeItem(url=proxy, verified_time=int(time.time()), incr=incr)
         speed_item = ProxySpeedItem(url=proxy, response_time=speed, incr=incr)
-        # todo find a better way to distinguish each task queue,
-        # may split the set_item_queue method from basevalidator to each child validtor
-        if 'https' in url:
-            proxy_item['queue'] = VALIDATED_HTTPS_QUEUE
-            time_item['queue'] = TTL_HTTPS_QUEUE
-            speed_item['queue'] = SPEED_HTTPS_QUEUE
-        else:
-            proxy_item['queue'] = VALIDATED_HTTP_QUEUE
-            time_item['queue'] = TTL_HTTP_QUEUE
-            speed_item['queue'] = SPEED_HTTP_QUEUE
+        score_item['queue'] = self.score_queue
+        ttl_item['queue'] = self.ttl_queue
+        speed_item['queue'] = self.speed_queue
 
-        return proxy_item, time_item, speed_item
+        return score_item, ttl_item, speed_item
+
 
 
 

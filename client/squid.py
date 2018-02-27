@@ -6,16 +6,16 @@ import time
 import subprocess
 
 from config.rules import (
-    RESOURCE_MAPS, VERIFIED_TIME_MAPS,
+    SCORE_MAPS, TTL_MAPS,
     SPEED_MAPS)
 from utils import (
     get_redis_conn, decode_all)
 from config.settings import (
     SQUID_BIN_PATH, SQUID_CONF_PATH,
-    SQUID_TEMPLATE_PATH, PROXY_BATCH_SIZE,
-    VALIDATED_HTTPS_QUEUE, TTL_HTTPS_QUEUE,
-    TTL_VALIDATED_RESOURCE, SPEED_HTTPS_QUEUE,
-    LONGEST_RESPONSE_TIME, LOWEST_SCORE)
+    SQUID_TEMPLATE_PATH, VALIDATED_HTTPS_QUEUE,
+    TTL_HTTPS_QUEUE, TTL_VALIDATED_RESOURCE,
+    SPEED_HTTPS_QUEUE, LONGEST_RESPONSE_TIME,
+    LOWEST_SCORE)
 
 
 class SquidClient:
@@ -25,13 +25,12 @@ class SquidClient:
                    'request_header_access From deny all', 'never_direct allow all']
 
     def __init__(self, resource_queue=None, verified_queue=None, speed_queue=None):
-        self.resource_queue = RESOURCE_MAPS.get(resource_queue) if resource_queue else VALIDATED_HTTPS_QUEUE
-        self.verified_queue = VERIFIED_TIME_MAPS.get(verified_queue) if verified_queue else TTL_HTTPS_QUEUE
+        self.resource_queue = SCORE_MAPS.get(resource_queue) if resource_queue else VALIDATED_HTTPS_QUEUE
+        self.verified_queue = TTL_MAPS.get(verified_queue) if verified_queue else TTL_HTTPS_QUEUE
         self.speed_queue = SPEED_MAPS.get(speed_queue) if speed_queue else SPEED_HTTPS_QUEUE
         self.template_path = SQUID_TEMPLATE_PATH
         self.conf_path = SQUID_CONF_PATH
         # todo consider whether the batch size is neccessary
-        self.batch_size = PROXY_BATCH_SIZE
         if not SQUID_BIN_PATH:
             try:
                 r = subprocess.check_output('which squid', shell=True)
