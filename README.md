@@ -31,8 +31,12 @@ spiders.
   > python scheduler_booter.py --usage validator
 
 ### Dockerize
+- Install Docker
+
 - Install docker-compose
   > pip install -U docker-compose
+
+- Change`SPLASH_URL`and`REDIS_HOST`in [settings.py](config/settings.py)
 
 - Start all the containers using docker-compose
   > docker-compose up

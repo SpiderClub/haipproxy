@@ -40,8 +40,12 @@
    注意，*crawler*和*scheduler*有多种类型，并且每种类型对应有不同的任务队列，详细见[haipproxy中的任务类型及作用]()
    
 ### Dockerize
+- 安装Docker
+
 - 安装*docker-compose*
   > pip install -U docker-compose
+
+- 修改[settings.py](config/settings.py)中的`SPLASH_URL`和`REDIS_HOST`参数
 
 - 使用*docker-compose*启动各个应用组件
   > docker-compose up
