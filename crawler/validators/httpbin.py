@@ -4,6 +4,7 @@ initially score.
 """
 import time
 import json
+from json.decoder import JSONDecodeError
 
 import requests
 
@@ -46,7 +47,7 @@ class HttpBinInitValidator(BaseValidator, ValidatorRedisSpider):
             ip = json.loads(response.body_as_unicode()).get('origin')
             if self.origin_ip in ip:
                 return True
-        except AttributeError:
+        except (AttributeError, JSONDecodeError):
             return True
 
         return False
