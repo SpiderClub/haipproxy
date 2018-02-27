@@ -37,6 +37,9 @@ spiders.
 - Start all the containers using docker-compose
   > docker-compose up
 
+# WorkFlow
+![](static/workflow.png)
+
 # Other important things
 - This project is highly dependent on redis,if you want to replace redis with another mq or database,
 just do it at your own risk
