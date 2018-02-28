@@ -22,7 +22,7 @@ HTTPCACHE_ENABLED = False
 GFW_PROXY = 'http://127.0.0.1:8123'
 
 # splash settings.If you use docker-compose,SPLASH_URL = 'http://splash:8050'
-SPLASH_URL = 'http://127.0.0.1:8050'
+SPLASH_URL = 'http://splash:8050'
 
 # extension settings
 RETRY_ENABLED = False
@@ -50,9 +50,9 @@ LOG_LEVEL = 'DEBUG'
 # Custom settings of this project
 #####################################################################
 # redis settings.If you use docker-compose, REDIS_HOST = 'redis'
-REDIS_HOST = '127.0.0.1'
+REDIS_HOST = 'redis'
 REDIS_PORT = 6379
-REDIS_PASSWORD = ''
+REDIS_PASSWORD = '123456'
 DEFAULT_REDIS_DB = 0
 META_DATA_DB = 0
 
