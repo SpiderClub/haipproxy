@@ -29,6 +29,7 @@ class BaseValidator:
         }
 
     }
+    use_set = True
     # all the children validators must specify the following args
     # unless you overwrite the set_item_queue() method
     urls = None

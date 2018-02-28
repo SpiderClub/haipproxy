@@ -146,7 +146,7 @@ class ValidatorScheduler(BaseScheduler):
                     print('fetched no proxies from task {}'.format(task_name))
                     return None
 
-                pipe.rpush(task_queue, *proxies)
+                pipe.sadd(task_queue, *proxies)
                 pipe.hset(TIMER_RECORDER, task_name, now)
                 pipe.execute()
                 print('validator task {} has been stored into redis successfully'.format(task_name))

@@ -19,6 +19,8 @@ __all__ = ['RedisSpider', 'RedisAjaxSpider',
 class RedisMixin(object):
     keyword_encoding = 'utf-8'
     proxy_mode = 0
+    # if use_set=True, spider fetches data from set other than list
+    use_set = False
     # all the redis spiders fetch task from task_queue queue
     task_queue = None
 
@@ -33,7 +35,7 @@ class RedisMixin(object):
         crawler.signals.connect(self.spider_idle, signal=signals.spider_idle)
 
     def next_requests(self):
-        fetch_one = self.redis_con.lpop
+        fetch_one = self.redis_con.spop if self.use_set else self.redis_con.lpop
         found = 0
         while found < self.redis_batch_size:
             data = fetch_one(self.task_queue)
@@ -74,7 +76,7 @@ class RedisCrawlSpider(RedisMixin, CrawlSpider):
 
 class RedisAjaxSpider(RedisSpider):
     def next_requests(self):
-        fetch_one = self.redis_con.lpop
+        fetch_one = self.redis_con.spop if self.use_set else self.redis_con.lpop
         found = 0
         while found < self.redis_batch_size:
             data = fetch_one(self.task_queue)
@@ -106,7 +108,7 @@ class ValidatorRedisSpider(RedisSpider):
         yield from self.next_requests_process(self.task_queue)
 
     def next_requests_process(self, task_queue):
-        fetch_one = self.redis_con.lpop
+        fetch_one = self.redis_con.spop if self.use_set else self.redis_con.lpop
         found = 0
         while found < self.redis_batch_size:
             data = fetch_one(task_queue)

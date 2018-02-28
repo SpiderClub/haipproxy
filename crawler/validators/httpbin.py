@@ -31,6 +31,7 @@ class HttpBinInitValidator(BaseValidator, ValidatorRedisSpider):
         'http://httpbin.org/ip',
         'https://httpbin.org/ip',
     ]
+    use_set = False
     task_queue = INIT_HTTP_QUEUE
     https_tasks = ['https', 'weibo']
     http_tasks = ['http']

@@ -343,21 +343,21 @@ VALIDATOR_TASKS = [
         'name': 'http',
         'task_queue': TEMP_HTTP_QUEUE,
         'resource': VALIDATED_HTTP_QUEUE,
-        'internal': 2*60,  # 2 hours
+        'internal': 20,  # 2 hours
         'enable': 1,
     },
     {
         'name': 'https',
         'task_queue': TEMP_HTTPS_QUEUE,
         'resource': VALIDATED_HTTPS_QUEUE,
-        'internal': 2*60,  # 2 hours
+        'internal': 20,  # 2 hours
         'enable': 1,
     },
     {
         'name': 'weibo',
         'task_queue': TEMP_WEIBO_QUEUE,
         'resource': VALIDATED_WEIBO_QUEUE,
-        'internal': 2 * 60,  # 2 hours
+        'internal': 20,  # 2 hours
         'enable': 1,
     },
 ]
