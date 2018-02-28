@@ -12,4 +12,4 @@ RUN which pip3|xargs -i ln -s {} /usr/bin/pip
 COPY . /haipproxy
 WORKDIR /haipproxy
 RUN pip install -i https://pypi.douban.com/simple/ -r requirements.txt
-CMD ['python', 'crawler_booter.py', '--usage', 'crawler']
+CMD ['python', 'crawler_booter.py', '--usage', 'crawler', 'common']
