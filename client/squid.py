@@ -53,22 +53,29 @@ class SquidClient:
         proxies = scored_proxies and ttl_proxies and speed_proxies
 
         if not proxies:
-            proxies = scored_proxies if scored_proxies else ttl_proxies
+            proxies = scored_proxies and ttl_proxies
+
+        if not proxies:
+            proxies = ttl_proxies
 
         proxies = decode_all(proxies)
         conts = list()
         with open(self.template_path, 'r') as fr, open(self.conf_path, 'w') as fw:
-            conts.append(fr.read())
-
-            # if two proxies use the same ip and different ports and no name
-            # if assigned,cache_peer error will raise.
-            for index, proxy in enumerate(proxies):
-                _, ip_port = proxy.split('://')
-                ip, port = ip_port.split(':')
-                conts.append(self.default_conf_detail.format(ip, port, index))
-            conts.extend(self.other_confs)
-            conf = '\n'.join(conts)
-            fw.write(conf)
+            original_conf = fr.read()
+            if not proxies:
+                fw.write(original_conf)
+                print('no proxies got at this turn')
+            else:
+                conts.append(original_conf)
+                # if two proxies use the same ip and different ports and no name
+                # if assigned,cache_peer error will raise.
+                for index, proxy in enumerate(proxies):
+                    _, ip_port = proxy.split('://')
+                    ip, port = ip_port.split(':')
+                    conts.append(self.default_conf_detail.format(ip, port, index))
+                conts.extend(self.other_confs)
+                conf = '\n'.join(conts)
+                fw.write(conf)
 
         subprocess.call([self.squid_path, '-k', 'reconfigure'], shell=True)
         print('update squid conf successfully')
