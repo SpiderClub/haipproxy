@@ -31,7 +31,6 @@ class SquidClient:
         self.speed_queue = SPEED_MAPS.get(task)
         self.template_path = SQUID_TEMPLATE_PATH
         self.conf_path = SQUID_CONF_PATH
-        # todo consider whether the batch size is neccessary
         if not SQUID_BIN_PATH:
             try:
                 r = subprocess.check_output('which squid', shell=True)
@@ -76,6 +75,6 @@ class SquidClient:
                 conts.extend(self.other_confs)
                 conf = '\n'.join(conts)
                 fw.write(conf)
-
-        subprocess.call([self.squid_path, '-k', 'reconfigure'], shell=True)
+        # in docker, execute with shell will fail
+        subprocess.call([self.squid_path, '-k', 'reconfigure'], shell=False)
         print('update squid conf successfully')
