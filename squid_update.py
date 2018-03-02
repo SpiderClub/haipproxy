@@ -6,7 +6,7 @@ python squid_update.py
 
 The default usage value is 'https' and internal value is 5 minutes,
 use the following cmd if you want a different usage and updating internal
-python squid_update.py --usage weibo --internal 6
+sudo python squid_update.py --usage weibo --internal 6
 
 Notice that if you don't belong to admin group, you must run this script with sudo:
 sudo python squid_update.py
