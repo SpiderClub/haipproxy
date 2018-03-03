@@ -110,6 +110,6 @@ SQUID_TEMPLATE_PATH = '/etc/squid/squid.conf.backup'  # mac os /usr/local/etc/sq
 
 # client settings
 # client picks proxies which's response time is between 0 and 5 seconds
-LONGEST_RESPONSE_TIME = 5
+LONGEST_RESPONSE_TIME = 10
 # client picks proxies which's score is not less than 7
 LOWEST_SCORE = 7
