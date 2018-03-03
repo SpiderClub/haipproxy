@@ -6,6 +6,7 @@ import time
 from twisted.internet.error import (
     TimeoutError, TCPTimedOutError)
 
+from logger import validator_logger
 from ..items import (
     ProxyScoreItem, ProxyVerifiedTimeItem,
     ProxySpeedItem)
@@ -57,7 +58,7 @@ class BaseValidator:
     def parse_error(self, failure):
         request = failure.request
         proxy = request.meta.get('proxy')
-        self.logger.error('proxy {} has been failed,{} is raised'.format(proxy, failure))
+        validator_logger.error('proxy {} has been failed,{} is raised'.format(proxy, failure))
         if failure.check(TimeoutError, TCPTimedOutError):
             decr = -1
         else:

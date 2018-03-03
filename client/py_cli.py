@@ -3,6 +3,7 @@ This module privodes core algrithm to pick up proxy ip resources.
 """
 import time
 
+from logger import client_logger
 from utils import (
     get_redis_conn, decode_all)
 from config.rules import (
@@ -98,6 +99,7 @@ class ProxyFetcher:
             proxies = ttl_proxies
 
         proxies = decode_all(proxies)
+        client_logger.info('{} proxies have been fetched'.format(len(proxies)))
         self.pool.extend(proxies)
 
     def proxy_feedback(self, res, response_time=None):

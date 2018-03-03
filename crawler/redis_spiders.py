@@ -8,6 +8,8 @@ from scrapy.spiders import (
     Spider, CrawlSpider)
 from scrapy_splash import SplashRequest
 
+from logger import (
+    crawler_logger, validator_logger)
 from utils import get_redis_conn
 from config.settings import (
     VALIDATOR_FEED_SIZE, SPIDER_FEED_SIZE)
@@ -47,7 +49,7 @@ class RedisMixin(object):
                 yield req
                 found += 1
 
-        self.logger.debug('Read {} requests from {}'.format(found, self.task_queue))
+        crawler_logger.debug('Read {} requests from {}'.format(found, self.task_queue))
 
     def schedule_next_requests(self):
         for req in self.next_requests():
@@ -95,7 +97,7 @@ class RedisAjaxSpider(RedisSpider):
                 yield req
                 found += 1
 
-        self.logger.debug('Read {} requests from {}'.format(found, self.task_queue))
+        crawler_logger.debug('Read {} requests from {}'.format(found, self.task_queue))
 
 
 class ValidatorRedisSpider(RedisSpider):
@@ -120,8 +122,7 @@ class ValidatorRedisSpider(RedisSpider):
                               callback=self.parse, errback=self.parse_error)
                 yield req
                 found += 1
-
-        self.logger.debug('Read {} ip proxies from {}'.format(found, task_queue))
+        validator_logger.debug('Read {} ip proxies from {}'.format(found, task_queue))
 
     def parse_error(self, failure):
         raise NotImplementedError
