@@ -6,6 +6,7 @@ import time
 from twisted.internet.error import (
     TimeoutError, TCPTimedOutError)
 
+from logger import crawler_logger
 from ..items import (
     ProxyScoreItem, ProxyVerifiedTimeItem,
     ProxySpeedItem)
@@ -30,6 +31,7 @@ class BaseValidator:
 
     }
     use_set = True
+    success_key = ''
     # all the children validators must specify the following args
     # unless you overwrite the set_item_queue() method
     urls = None
@@ -45,8 +47,8 @@ class BaseValidator:
         transparent = self.is_transparent(response)
         if transparent:
             return
-
-        items = self.set_item_queue(url, proxy, self.init_score, 1, speed)
+        incr = 1 if self.is_ok(response) else '-inf'
+        items = self.set_item_queue(url, proxy, self.init_score, incr, speed)
         for item in items:
             yield item
 
@@ -56,7 +58,7 @@ class BaseValidator:
     def parse_error(self, failure):
         request = failure.request
         proxy = request.meta.get('proxy')
-        self.logger.error('proxy {} has been failed,{} is raised'.format(proxy, failure))
+        crawler_logger.error('proxy {} has been failed,{} is raised'.format(proxy, failure))
         if failure.check(TimeoutError, TCPTimedOutError):
             decr = -1
         else:
@@ -65,6 +67,9 @@ class BaseValidator:
         items = self.set_item_queue(request.url, proxy, self.init_score, decr)
         for item in items:
             yield item
+
+    def is_ok(self, response):
+        return self.success_key in response.text
 
     def set_item_queue(self, url, proxy, score, incr, speed=0):
         score_item = ProxyScoreItem(url=proxy, score=score, incr=incr)

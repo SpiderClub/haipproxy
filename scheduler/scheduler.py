@@ -12,6 +12,9 @@ from scrapy.utils.log import configure_logging
 from scrapy.utils.project import get_project_settings
 
 from client import SquidClient
+from logger import (
+    crawler_logger, scheduler_logger,
+    client_logger)
 from config.rules import (
     CRWALER_TASKS, VALIDATOR_TASKS,
     CRAWLER_TASK_MAPS, TEMP_TASK_MAPS)
@@ -110,7 +113,7 @@ class CrawlerScheduler(BaseScheduler):
                 pipe.lpush(task_queue, *urls)
                 pipe.hset(TIMER_RECORDER, task_name, now)
                 pipe.execute()
-                print('crawler task {} has been stored into redis successfully'.format(task_name))
+                scheduler_logger.info('crawler task {} has been stored into redis successfully'.format(task_name))
                 return True
             else:
                 return None
@@ -143,13 +146,13 @@ class ValidatorScheduler(BaseScheduler):
             r, proxies = pipe.execute()
             if not r or (now - int(r.decode('utf-8'))) >= internal * 60:
                 if not proxies:
-                    print('fetched no proxies from task {}'.format(task_name))
+                    scheduler_logger.warning('fetched no proxies from task {}'.format(task_name))
                     return None
 
                 pipe.sadd(task_queue, *proxies)
                 pipe.hset(TIMER_RECORDER, task_name, now)
                 pipe.execute()
-                print('validator task {} has been stored into redis successfully'.format(task_name))
+                scheduler_logger.info('validator task {} has been stored into redis successfully'.format(task_name))
                 return True
             else:
                 return None
@@ -162,6 +165,7 @@ class ValidatorScheduler(BaseScheduler):
 @click.argument('task_queues', nargs=-1)
 def scheduler_start(usage, task_queues):
     """Start specified scheduler."""
+    scheduler_logger.info('{} scheduler is starting...'.format(usage))
     default_tasks = CRWALER_TASKS if usage == 'crawler' else VALIDATOR_TASKS
     default_allow_tasks = DEFAULT_CRAWLER_TASKS if usage == 'crawler' else DEFAULT_VALIDATORS_TASKS
     maps = CRAWLER_TASK_MAPS if usage == 'crawler' else TEMP_TASK_MAPS
@@ -174,7 +178,7 @@ def scheduler_start(usage, task_queues):
         for task_queue in task_queues:
             allow_task_queue = maps.get(task_queue)
             if not allow_task_queue:
-                print('scheduler task {} is invalid task, the allowed tasks are {}'.format(
+                scheduler_logger.warning('scheduler task {} is an invalid task, the allowed tasks are {}'.format(
                     task_queue, list(maps.keys())))
                 continue
             scheduler.task_queues.append(allow_task_queue)
@@ -202,11 +206,12 @@ def crawler_start(usage, tasks):
             for case in cases:
                 if case.check(task, maps):
                     spiders.append(case.spider)
+                    break
             else:
-                print('spider task {} is invalid task, the allowed tasks are {}'.format(
+                crawler_logger.warning('spider task {} is an invalid task, the allowed tasks are {}'.format(
                     task, list(maps.keys())))
     if not spiders:
-        print('no spider starts up, please check your task input')
+        crawler_logger.warning('no spider starts up, please check your task input')
         return
 
     settings = get_project_settings()
@@ -224,7 +229,7 @@ def crawler_start(usage, tasks):
 @click.option('--internal', default=TTL_VALIDATED_RESOURCE, help='Updating frenquency of squid conf.')
 def squid_conf_update(usage, internal):
     """Timertask for updating proxies for squid config file"""
-    print('the updating task is starting...')
+    client_logger.info('the updating task is starting...')
     client = SquidClient(usage)
     client.update_conf()
     schedule.every(internal).minutes.do(client.update_conf)

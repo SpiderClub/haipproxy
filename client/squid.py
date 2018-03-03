@@ -5,6 +5,7 @@ Squid Client for spiders.
 import time
 import subprocess
 
+from logger import client_logger
 from config.rules import (
     SCORE_MAPS, TTL_MAPS,
     SPEED_MAPS)
@@ -24,7 +25,7 @@ class SquidClient:
 
     def __init__(self, task):
         if task not in SCORE_MAPS.keys():
-            print('task value is invalid, https task will be used')
+            client_logger.warning('task value is invalid, https task will be used')
             task = 'https'
         self.score_queue = SCORE_MAPS.get(task)
         self.ttl_queue = TTL_MAPS.get(task)
@@ -36,8 +37,8 @@ class SquidClient:
                 r = subprocess.check_output('which squid', shell=True)
                 self.squid_path = r.decode().strip()
             except subprocess.CalledProcessError:
-                print('no squid is installed on this machine, or the installed dir '
-                      'is not contained in environment path')
+                client_logger.warning('no squid is installed on this machine, or the installed dir is not '
+                                      'contained in environment path')
         else:
             self.squid_path = SQUID_BIN_PATH
 
@@ -47,7 +48,7 @@ class SquidClient:
         pipe = conn.pipeline(False)
         pipe.zrevrangebyscore(self.score_queue, '+inf', LOWEST_SCORE)
         pipe.zrevrangebyscore(self.ttl_queue, '+inf', start_time)
-        pipe.zrangebyscore(self.speed_queue, 0, 1000*LONGEST_RESPONSE_TIME)
+        pipe.zrangebyscore(self.speed_queue, 0, 1000 * LONGEST_RESPONSE_TIME)
         scored_proxies, ttl_proxies, speed_proxies = pipe.execute()
         proxies = scored_proxies and ttl_proxies and speed_proxies
 
@@ -63,7 +64,7 @@ class SquidClient:
             original_conf = fr.read()
             if not proxies:
                 fw.write(original_conf)
-                print('no proxies got at this turn')
+                client_logger.info('no proxies got at this turn')
             else:
                 conts.append(original_conf)
                 # if two proxies use the same ip and different ports and no name
@@ -77,4 +78,4 @@ class SquidClient:
                 fw.write(conf)
         # in docker, execute with shell will fail
         subprocess.call([self.squid_path, '-k', 'reconfigure'], shell=False)
-        print('update squid conf successfully')
+        client_logger.info('update squid conf successfully')
