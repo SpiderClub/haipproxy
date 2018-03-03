@@ -362,6 +362,13 @@ VALIDATOR_TASKS = [
         'internal': 20,
         'enable': 1,
     },
+    {
+        'name': 'zhihu',
+        'task_queue': TEMP_ZHIHU_QUEUE,
+        'resource': VALIDATED_ZHIHU_QUEUE,
+        'internal': 20,
+        'enable': 1,
+    },
 ]
 
 # crawlers will fetch tasks from the following queues

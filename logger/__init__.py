@@ -12,7 +12,7 @@ log_dir = os.path.dirname(os.path.dirname(__file__))+'/logs'
 if not os.path.exists(log_dir):
     os.mkdir(log_dir)
 
-log_path = os.path.join(log_dir, 'haiproxy.log')
+log_path = os.path.join(log_dir, 'haipproxy.log')
 
 log_config = {
     'version': 1.0,

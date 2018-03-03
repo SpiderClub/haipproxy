@@ -7,12 +7,15 @@ from scrapy.exceptions import DontCloseSpider
 from scrapy.spiders import (
     Spider, CrawlSpider)
 from scrapy_splash import SplashRequest
+from scrapy.utils.log import configure_logging
 
 from logger import crawler_logger
 from utils import get_redis_conn
 from config.settings import (
     VALIDATOR_FEED_SIZE, SPIDER_FEED_SIZE)
 
+
+configure_logging(install_root_handler=True)
 __all__ = ['RedisSpider', 'RedisAjaxSpider',
            'RedisCrawlSpider', 'ValidatorRedisSpider']
 
