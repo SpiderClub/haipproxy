@@ -50,7 +50,7 @@ LOG_LEVEL = 'DEBUG'
 # Custom settings of this project
 #####################################################################
 # redis settings.If you use docker-compose, REDIS_HOST = 'redis'
-REDIS_HOST = 'redis'
+REDIS_HOST = '127.0.0.1'
 REDIS_PORT = 6379
 REDIS_PASSWORD = '123456'
 DEFAULT_REDIS_DB = 0
@@ -84,22 +84,26 @@ VALIDATOR_FEED_SIZE = 50
 TEMP_HTTP_QUEUE = 'haipproxy:http:temp'
 TEMP_HTTPS_QUEUE = 'haipproxy:https:temp'
 TEMP_WEIBO_QUEUE = 'haipproxy:weibo:temp'
+TEMP_ZHIHU_QUEUE = 'haipproxy:zhihu:temp'
 
 # valited queues are zsets.squid and other clients fetch ip resources from them.
 VALIDATED_HTTP_QUEUE = 'haipproxy:validated:http'
 VALIDATED_HTTPS_QUEUE = 'haipproxy:validated:https'
 VALIDATED_WEIBO_QUEUE = 'haipproxy:validated:weibo'
+VALIDATED_ZHIHU_QUEUE = 'haipproxy:validated:zhihu'
 
 # time to life of proxy ip resources
 TTL_VALIDATED_RESOURCE = 2  # minutes
 TTL_HTTP_QUEUE = 'haipproxy:ttl:http'
 TTL_HTTPS_QUEUE = 'haipproxy:ttl:https'
 TTL_WEIBO_QUEUE = 'haipproxy:ttl:weibo'
+TTL_ZHIHU_QUEUE = 'haipproxy:ttl:zhihu'
 
 # queue for proxy speed
 SPEED_HTTP_QUEUE = 'haipproxy:speed:http'
 SPEED_HTTPS_QUEUE = 'haipproxy:speed:https'
 SPEED_WEIBO_QUEUE = 'haipproxy:speed:weibo'
+SPEED_ZHIHU_QUEUE = 'haipproxy:speed:zhihu'
 
 # squid settings on linux os
 # execute sudo chown -R $USER /etc/squid/ and
