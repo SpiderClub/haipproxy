@@ -4,7 +4,7 @@
 
 *Crawler*分为代理抓取和校验，两者实现思想类似，主要使用Scrapy的`spider_idle`信号和`DontCloseSpider`异常来阻止Scrapy在没有数据的时候关闭，灵感来自[scrapy-redis](https://github.com/rmax/scrapy-redis)。为了方便阐述，我画了一张包含各个组件的流程图，如下
 
-![haipproxy workflow](http://upload-images.jianshu.io/upload_images/1514374-db149b25fd68fd52.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![haipproxy workflow](../static/workflow.png)
 
 - 启动调度器，包括代理爬虫调度器和校验爬虫调度器。调度器会读取[rules.py](https://github.com/ResolveWang/haipproxy/blob/master/config/rules.py)中待抓取的网站，将其编排成任务存入各个任务队列中
 - 启动各个爬虫，包括IP抓取和校验程序。项目中爬虫和调度器都是高可用的，可以根据实际情况进行分布式部署，无需改动代码。由于本文的目标不是写成该项目的详细使用文档，所以省略了如指定启动爬虫类型和调度器类型的介绍
