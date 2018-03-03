@@ -1,31 +1,40 @@
+# the code is some copied from https://github.com/windcode/zhihu-crawler-people
+
 import json
 import time
 from multiprocessing import Pool
 
-import redis
 from bs4 import BeautifulSoup as BS
 
+from utils import get_redis_conn
 from examples.zhihu_people.crawler import Crawler
 
 per_page = 20
-info_max_process_num = 50  # 50
-list_max_process_num = 10  # 10
+info_max_process_num = 50
+list_max_process_num = 10
 host = 'https://www.zhihu.com'
-waiting_set = 'info:seeds:to_crawl'
-seeds_all = 'info:seeds:all'
-info_set = 'info:user'
+waiting_set = 'zhihu:seeds:to_crawl'
+seeds_all = 'zhihu:seeds:all'
+info_set = 'zhihu:info:user'
+
+
+# 未考虑线程安全
+common_crawler = Crawler()
 
 
 def init_db():
-    redis_client = redis.Redis(host='127.0.0.1', port=6379, password='123456', db=0)
+    redis_client = get_redis_conn(db=1)
     return redis_client
 
 
-def get_info(crawler, url_token):
+def get_info(url_token):
     """获取某用户的个人信息"""
     url = '%s/people/%s/answers' % (host, url_token)
-    html = crawler.get(url)
+    html = common_crawler.get(url)
     print('正在解析用户页面HTML……')
+    if not html:
+        return
+
     s = BS(html, 'html.parser')
 
     # 获得该用户藏在主页面中的json格式数据集
@@ -46,9 +55,8 @@ def get_per_followers(url_token, page, sum_page):
     """抓取 follower 列表的每一页"""
     print('正在抓取第 %d/%d 页……' % (page, sum_page))
     followers = list()
-    crawler = Crawler()
     url = '%s/people/%s/followers?page=%d' % (host, url_token, page)
-    html = crawler.get(url)
+    html = common_crawler.get(url)
     s = BS(html, 'html.parser')
 
     # 获得当前页的所有关注用户
@@ -89,19 +97,19 @@ def get_followers(url_token, follower_count):
     # 等待所有进程请求执行完毕
     pool.join()
     end_time = time.clock()
-    print('所有进程抓取完毕')
+    # print('所有进程抓取完毕')
     total_time = float(end_time - start_time)
-    print('总用时 : %f s' % total_time)
-    print('平均每个进程用时 : %f s' % (total_time / sum_page))
+    # print('总用时 : %f s' % total_time)
+    # print('平均每个进程用时 : %f s' % (total_time / sum_page))
 
     # 获取抓取结果
-    print('获取抓取结果……')
+    # print('获取抓取结果……')
     follower_list = []
     for result in results:
         follower_list += result.get()
 
-    print('抓取到的用户 %s 的关注列表总人数为 %d 人！' % (url_token, len(follower_list)))
-    print(follower_list)
+    # print('抓取到的用户 %s 的关注列表总人数为 %d 人！' % (url_token, len(follower_list)))
+    # print(follower_list)
     return follower_list
 
 
@@ -109,15 +117,14 @@ def start():
     redis_client = init_db()
     # 待抓取节点集合是否为空
     while not redis_client.scard(waiting_set):
-        print('待抓取集合为空...')
-        time.sleep(5)
+        # print('待抓取集合为空...')
+        time.sleep(1)
 
     # 从待抓取节点集合随机取出一个节点
     url_token = redis_client.spop(waiting_set).decode()
     # 抓取节点代表用户的个人主页
     print('正在抓取用户 %s 的个人信息……' % url_token)
-    crawler = Crawler()
-    user = get_info(crawler, url_token)
+    user = get_info(url_token)
     redis_client.sadd(info_set, user)
     # 开始抓取该用户 follower 列表
     print('开始抓取该用户的粉丝列表……')
@@ -135,15 +142,15 @@ def start():
             redis_client.sadd(seeds_all, follower)
             push_success_num += 1
 
-    print('向待抓取节点集合中添加了 %d 人！' % push_success_num)
-    print('目前待抓取节点集合中有 %d 人' % redis_client.scard(waiting_set))
-
-    print('将用户 %s 放入列表抓取成功节点集合' % url_token)
-    print('用户 %s 关注列表抓取完毕' % url_token)
+    # print('向待抓取节点集合中添加了 %d 人！' % push_success_num)
+    # print('目前待抓取节点集合中有 %d 人' % redis_client.scard(waiting_set))
+    #
+    # print('将用户 %s 放入列表抓取成功节点集合' % url_token)
+    # print('用户 %s 关注列表抓取完毕' % url_token)
 
 
 if __name__ == '__main__':
-    init_seeds = ['liu-meng-yuan-72-95']
+    init_seeds = ['excited-vczh', 'resolvewang']
     redis_conn = init_db()
     redis_conn.sadd(waiting_set, *init_seeds)
     redis_conn.sadd(seeds_all, *init_seeds)
