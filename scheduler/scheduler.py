@@ -205,6 +205,7 @@ def crawler_start(usage, tasks):
             for case in cases:
                 if case.check(task, maps):
                     spiders.append(case.spider)
+                    break
             else:
                 crawler_logger.warning('spider task {} is invalid task, the allowed tasks are {}'.format(
                     task, list(maps.keys())))

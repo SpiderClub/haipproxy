@@ -56,7 +56,7 @@ log_config = {
         },
         'other_logger': {
             'handlers': ['file'],
-            'level': 'info',
+            'level': 'INFO',
         }
     }
 }
