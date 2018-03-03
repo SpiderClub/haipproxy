@@ -3,7 +3,7 @@ This module privodes core algrithm to pick up proxy ip resources.
 """
 import time
 
-from logger import client_logger
+# from logger import client_logger
 from utils import (
     get_redis_conn, decode_all)
 from config.rules import (
@@ -76,30 +76,30 @@ class ProxyFetcher:
         """
         # todo consider aysnc or multi thread
         proxy = None
+        self.refresh()
         for handler in self.handlers:
             if handler.strategy == self.strategy:
                 proxy = handler.get_proxies_by_stragery(self.pool)
-        self.refresh()
         return proxy
 
     def get_proxies(self):
         """core algrithm to get proxies from redis"""
         start_time = int(time.time()) - TTL_VALIDATED_RESOURCE * 60
+
         pipe = self.conn.pipeline(False)
         pipe.zrevrangebyscore(self.score_queue, '+inf', LOWEST_SCORE)
         pipe.zrevrangebyscore(self.ttl_queue, '+inf', start_time)
         pipe.zrangebyscore(self.speed_queue, 0, 1000*LONGEST_RESPONSE_TIME)
         scored_proxies, ttl_proxies, speed_proxies = pipe.execute()
         proxies = scored_proxies and ttl_proxies and speed_proxies
+        if not proxies or len(proxies) < self.length*2:
+            proxies = (ttl_proxies and speed_proxies) or scored_proxies
 
-        if not proxies:
-            proxies = scored_proxies and ttl_proxies
-
-        if not proxies:
-            proxies = ttl_proxies
-
+        if not proxies or len(proxies) < self.length*2:
+            proxies = ttl_proxies or scored_proxies
         proxies = decode_all(proxies)
-        client_logger.info('{} proxies have been fetched'.format(len(proxies)))
+        # client_logger.info('{} proxies have been fetched'.format(len(proxies)))
+        print('{} proxies have been fetched'.format(len(proxies)))
         self.pool.extend(proxies)
 
     def proxy_feedback(self, res, response_time=None):
@@ -110,6 +110,9 @@ class ProxyFetcher:
         """
         if res == 'failure':
             self.delete_proxy(self.pool[0])
+            return
+
+        # prevent from using proxy with slow speed always
         if self.strategy == 'greedy' and self.fast_response*1000 < response_time:
             self.pool[0], self.pool[-1] = self.pool[-1], self.pool[0]
 
