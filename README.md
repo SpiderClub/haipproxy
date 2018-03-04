@@ -90,6 +90,29 @@
 # 工作流程
 ![](static/workflow.png)
 
+# 效果测试
+以单机模式部署`haipproxy`，以知乎为目标请求站点，以每一万条为统计结果，实测抓取效果如下
+
+|请求量|时间|耗时|IP负载策略|客户端|
+|-----|----|---|---------|-----|
+|0|2018/03/03 22:03|0|greedy|[py_cli](client/py_cli.py)|
+|10000|2018/03/03 11:03|1 hour|greedy|[py_cli](client/py_cli.py)|
+|20000|2018/03/04 00:08|2 hours|greedy|[py_cli](client/py_cli.py)|
+|30000|2018/03/04 01:02|3 hours|greedy|[py_cli](client/py_cli.py)|
+|40000|2018/03/04 02:15|4 hours|greedy|[py_cli](client/py_cli.py)|
+|50000|2018/03/04 03:03|5 hours|greedy|[py_cli](client/py_cli.py)|
+|60000|2018/03/04 05:18|7 hours|greedy|[py_cli](client/py_cli.py)|
+|70000|2018/03/04 07:11|9 hours|greedy|[py_cli](client/py_cli.py)|
+|80000|2018/03/04 08:43|11 hours|greedy|[py_cli](client/py_cli.py)|
+
+
+可见`haipporxy`的代理效果还算不错，在开始的时候可以达到`1w/hour`的请求量，几个小时候请求量请求量
+降为了`5k/hour`。降低的结果可能有两个: (1)知乎校验器在把`Init Queue`中的代理消费完之后，由于是定
+时任务，所以导致某段时间内新鲜的IP空缺。而免费IP大多数都是短效的，所以这段时间出现了IP的空缺;(2)由于
+我们采用的是`greedy`模式调用IP，它的调用策略是: 高质量代理IP会一直被调用直至该代理IP不能用或者被封，
+而低应速度IP会轮询调用。这也可能导致高质量IP的空缺。可见IP校验和调用策略还有很大的优化空间。
+
+测试代码见[examples/zhihu](examples/zhihu/zhihu_spider.py)
 
 # 同类项目参考
 本项目参考了Github上开源的各个爬虫代理的实现，感谢他们的付出，下面是笔者参考的所有项目，排名不分先后。
