@@ -90,6 +90,9 @@
 # 工作流程
 ![](static/workflow.png)
 
+# 开发者文档
+为了方便用户针对自身需求进行定制化，`haipproxy`提供了丰富的文档支持。所以文档详见[项目wiki](https://github.com/SpiderClub/haipproxy/wiki)
+
 # 效果测试
 以单机模式部署`haipproxy`和[测试代码](examples/zhihu/zhihu_spider.py)，以知乎为目标请求站点，
 每一万条成功请求为统计结果，实测抓取效果如下
