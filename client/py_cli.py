@@ -48,7 +48,8 @@ class GreedyStrategy(Strategy):
 
 
 class ProxyFetcher:
-    def __init__(self, usage, strategy='robin', length=10, fast_response=5):
+    def __init__(self, usage, strategy='robin', length=10,
+                 fast_response=5, redis_args=None):
         """
         :param usage: one of SCORE_MAPS's keys, such as https
         :param length: if total available proxies are less than length,
@@ -57,6 +58,7 @@ class ProxyFetcher:
         one of ['robin', 'greedy']
         :param fast_response: if you use greedy strategy, if will be needed to
         decide whether a proxy ip should continue to be used
+        :param redis_args: redis connetion args, it's a dict, the keys include host, port, db and password
         """
         self.score_queue = SCORE_MAPS.get(usage)
         self.ttl_queue = TTL_MAPS.get(usage)
@@ -67,7 +69,10 @@ class ProxyFetcher:
         self.length = length
         self.fast_response = fast_response
         self.handlers = [RobinStrategy(), GreedyStrategy()]
-        self.conn = get_redis_conn()
+        if isinstance(redis_args, dict):
+            self.conn = get_redis_conn(**redis_args)
+        else:
+            self.conn = get_redis_conn()
 
     def get_proxy(self):
         """
@@ -101,6 +106,7 @@ class ProxyFetcher:
         # client_logger.info('{} proxies have been fetched'.format(len(proxies)))
         print('{} proxies have been fetched'.format(len(proxies)))
         self.pool.extend(proxies)
+        return self.pool
 
     def proxy_feedback(self, res, response_time=None):
         """
