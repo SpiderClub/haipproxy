@@ -77,18 +77,21 @@ print(fetcher.get_proxies()) # or print(fetcher.pool)
   > pip install -U docker-compose
 
 - Change`SPLASH_URL`and`REDIS_HOST`in [settings.py](config/settings.py)
-
+  ```python3
+  SPLASH_URL = 'http://splash:8050'
+  REDIS_HOST = 'redis'
+  ```
 - Start all the containers using docker-compose
   > docker-compose up
 
 - Use [py_cli](client/py_cli.py) or Squid to get available proxy ips.
-```python3
-from client.py_cli import ProxyFetcher
-args = dict(host='127.0.0.1', port=6379, password='123456', db=0)
-fetcher = ProxyFetcher('https', strategy='greedy', length=5, redis_args=args)
-print(fetcher.get_proxy())
-print(fetcher.get_proxies()) # or print(fetcher.pool)
-```
+  ```python3
+  from client.py_cli import ProxyFetcher
+  args = dict(host='127.0.0.1', port=6379, password='123456', db=0)
+  fetcher = ProxyFetcher('https', strategy='greedy', length=5, redis_args=args)
+  print(fetcher.get_proxy())
+  print(fetcher.get_proxies()) # or print(fetcher.pool)
+  ```
 
 or 
 
