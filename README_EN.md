@@ -15,10 +15,9 @@ spiders.
 
 # Quick start
 
+## Standalone
 
-### Standalone
-
-#### Server
+### Server
 - Install Python3 and Redis Server
 - Change redis args of the project *[config/settings.py](config/settings.py)* according to redis conf,such as `REDIS_HOST`,`REDIS_PASSWORD`
 - Install [scrapy-splash](https://github.com/scrapy-plugins/scrapy-splash) and change `SPLASH_URL` in *[config/settings.py](config/settings.py)*
@@ -34,7 +33,24 @@ spiders.
   > python scheduler_booter.py --usage validator
 
 
-#### Client(Here we use squid)
+### Client
+`haipproxy` provides both [py client](client/py_cli.py) and [squid proxy](squid_update.py) for your spiders.Any clients about any languages are welcome!
+
+#### Python Client
+```python3
+from client.py_cli import ProxyFetcher
+# args are used to connect redis, if args is None, redis args in settings.py will be used
+args = dict(host='127.0.0.1', port=6379, password='123456', db=0)
+# https is used for common proxy.If you want to crawl a customized website, you'd better 
+# write a customized ip validator according to zhihu validator
+fetcher = ProxyFetcher('https', strategy='greedy', length=5, redis_args=args)
+# get one proxy ip
+print(fetcher.get_proxy())
+# get available proxy ip list
+print(fetcher.get_proxies()) # or print(fetcher.pool)
+```
+
+#### Using squid as proxy server
 - Install squid,copy it's conf as a backup and then start squid, take *ubuntu* for example
    > sudo apt-get install squid
    
@@ -54,7 +70,7 @@ spiders.
   print(resp.text)
   ```
 
-### Dockerize
+## Dockerize
 - Install Docker
 
 - Install docker-compose
@@ -65,13 +81,23 @@ spiders.
 - Start all the containers using docker-compose
   > docker-compose up
 
-- Send requests with squid proxies
-  ```python3
-  import requests
-  proxies = {'https': 'http://127.0.0.1:3128'}
-  resp = requests.get('https://httpbin.org/ip', proxies=proxies)
-  print(resp.text)
-  ```
+- Use [py_cli](client/py_cli.py) or Squid to get available proxy ips.
+```python3
+from client.py_cli import ProxyFetcher
+args = dict(host='127.0.0.1', port=6379, password='123456', db=0)
+fetcher = ProxyFetcher('https', strategy='greedy', length=5, redis_args=args)
+print(fetcher.get_proxy())
+print(fetcher.get_proxies()) # or print(fetcher.pool)
+```
+
+or 
+
+```python3
+import requests
+proxies = {'https': 'http://127.0.0.1:3128'}
+resp = requests.get('https://httpbin.org/ip', proxies=proxies)
+print(resp.text)
+```
 
 # WorkFlow
 ![](static/workflow.png)
@@ -79,8 +105,9 @@ spiders.
 # Other important things
 - This project is highly dependent on redis,if you want to replace redis with another mq or database,
 just do it at your own risk
-- If there is no Great Fire Wall at your country,set`proxy_mode=0` in both [gfw_spider.py](crawler/spiders/ajax_spider.py) and [ajax_gfw_spider.py](crawler/spiders/ajax_gfw_spider.py).
+- If there is no Great Fire Wall at your country,set`proxy_mode=0` in both [gfw_spider.py](crawler/spiders/gfw_spider.py) and [ajax_gfw_spider.py](crawler/spiders/ajax_gfw_spider.py).
 If you don't want to crawl some websites, set `enable=0` in [rules.py](config/rules.py)
+- Becase of the Great Fire Wall in China, some proxy ip may can't be used to crawl some websites.You can extend the proxy pool by yourself in [spiders](crawler/spiders)
 - Issues and PRs are welcome
 - Just star it if it's useful to you
 
