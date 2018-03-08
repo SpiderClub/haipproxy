@@ -77,7 +77,10 @@ print(fetcher.get_proxies()) # or print(fetcher.pool)
   > pip install -U docker-compose
 
 - 修改[settings.py](config/settings.py)中的`SPLASH_URL`和`REDIS_HOST`参数
-
+  ```python3
+  SPLASH_URL = 'http://splash:8050'
+  REDIS_HOST = 'redis'
+  ```
 - 使用*docker-compose*启动各个应用组件
   > docker-compose up
 

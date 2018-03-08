@@ -77,18 +77,21 @@ print(fetcher.get_proxies()) # or print(fetcher.pool)
   > pip install -U docker-compose
 
 - Change`SPLASH_URL`and`REDIS_HOST`in [settings.py](config/settings.py)
-
+  ```python3
+  SPLASH_URL = 'http://splash:8050'
+  REDIS_HOST = 'redis'
+  ```
 - Start all the containers using docker-compose
   > docker-compose up
 
 - Use [py_cli](client/py_cli.py) or Squid to get available proxy ips.
-```python3
-from client.py_cli import ProxyFetcher
-args = dict(host='127.0.0.1', port=6379, password='123456', db=0)
-fetcher = ProxyFetcher('https', strategy='greedy', length=5, redis_args=args)
-print(fetcher.get_proxy())
-print(fetcher.get_proxies()) # or print(fetcher.pool)
-```
+  ```python3
+  from client.py_cli import ProxyFetcher
+  args = dict(host='127.0.0.1', port=6379, password='123456', db=0)
+  fetcher = ProxyFetcher('https', strategy='greedy', length=5, redis_args=args)
+  print(fetcher.get_proxy())
+  print(fetcher.get_proxies()) # or print(fetcher.pool)
+  ```
 
 or 
 
@@ -107,9 +110,24 @@ print(resp.text)
 just do it at your own risk
 - If there is no Great Fire Wall at your country,set`proxy_mode=0` in both [gfw_spider.py](crawler/spiders/gfw_spider.py) and [ajax_gfw_spider.py](crawler/spiders/ajax_gfw_spider.py).
 If you don't want to crawl some websites, set `enable=0` in [rules.py](config/rules.py)
-- Becase of the Great Fire Wall in China, some proxy ip may can't be used to crawl some websites.You can extend the proxy pool by yourself in [spiders](crawler/spiders)
+- Becase of the Great Fire Wall in China, some proxy ip may can't be used to crawl some websites such as Google.You can extend the proxy pool by yourself in [spiders](crawler/spiders)
 - Issues and PRs are welcome
 - Just star it if it's useful to you
+
+# Test Result
+Here are test results for crawling https://zhihu.com using `haipproxy`.Source Code can be seen [here](examples/zhihu)
+
+|requests|time|cost|strategy|client|
+|-----|----|---|---------|-----|
+|0|2018/03/03 22:03|0|greedy|[py_cli](client/py_cli.py)|
+|10000|2018/03/03 11:03|1 hour|greedy|[py_cli](client/py_cli.py)|
+|20000|2018/03/04 00:08|2 hours|greedy|[py_cli](client/py_cli.py)|
+|30000|2018/03/04 01:02|3 hours|greedy|[py_cli](client/py_cli.py)|
+|40000|2018/03/04 02:15|4 hours|greedy|[py_cli](client/py_cli.py)|
+|50000|2018/03/04 03:03|5 hours|greedy|[py_cli](client/py_cli.py)|
+|60000|2018/03/04 05:18|7 hours|greedy|[py_cli](client/py_cli.py)|
+|70000|2018/03/04 07:11|9 hours|greedy|[py_cli](client/py_cli.py)|
+|80000|2018/03/04 08:43|11 hours|greedy|[py_cli](client/py_cli.py)|
 
 # Reference
 Thanks to all the contributors of the following projects.
