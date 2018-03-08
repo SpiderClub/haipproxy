@@ -14,6 +14,9 @@ from config.settings import (
     LOWEST_SCORE, DATA_ALL)
 
 
+__all__ = ['ProxyFetcher']
+
+
 class Strategy:
     strategy = None
 
