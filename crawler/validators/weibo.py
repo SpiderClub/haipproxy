@@ -18,3 +18,4 @@ class WeiBoValidator(BaseValidator, ValidatorRedisSpider):
     score_queue = VALIDATED_WEIBO_QUEUE
     ttl_queue = TTL_WEIBO_QUEUE
     speed_queue = SPEED_WEIBO_QUEUE
+    success_key = '微博广场'
