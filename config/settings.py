@@ -51,14 +51,14 @@ LOG_FILE = 'logs/haipproxy.log'
 # Custom settings of this project
 #####################################################################
 # redis settings.If you use docker-compose, REDIS_HOST = 'redis'
-REDIS_HOST = '127.0.0.1'
+REDIS_HOST = 'redis'
 REDIS_PORT = 6379
 REDIS_PASSWORD = '123456'
 DEFAULT_REDIS_DB = 0
 META_DATA_DB = 0
 
 # scheduler settings
-TIMER_RECORDER = 'haipproxy:schduler:task'
+TIMER_RECORDER = 'haipproxy:scheduler:task'
 LOCKER_PREFIX = 'haipproxy:lock:'
 
 # proxies crawler's settings
@@ -117,4 +117,4 @@ SQUID_TEMPLATE_PATH = '/etc/squid/squid.conf.backup'  # mac os /usr/local/etc/sq
 # client picks proxies which's response time is between 0 and 5 seconds
 LONGEST_RESPONSE_TIME = 10
 # client picks proxies which's score is not less than 7
-LOWEST_SCORE = 7
+LOWEST_SCORE = 6

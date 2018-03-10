@@ -338,39 +338,6 @@ CRWALER_TASKS = [
     },
 ]
 
-
-# validator scheduler will fetch tasks from task queue and store into resource
-VALIDATOR_TASKS = [
-    {
-        'name': 'http',
-        'task_queue': TEMP_HTTP_QUEUE,
-        'resource': VALIDATED_HTTP_QUEUE,
-        'internal': 20,  # 20 minutes
-        'enable': 1,
-    },
-    {
-        'name': 'https',
-        'task_queue': TEMP_HTTPS_QUEUE,
-        'resource': VALIDATED_HTTPS_QUEUE,
-        'internal': 20,
-        'enable': 1,
-    },
-    {
-        'name': 'weibo',
-        'task_queue': TEMP_WEIBO_QUEUE,
-        'resource': VALIDATED_WEIBO_QUEUE,
-        'internal': 20,
-        'enable': 1,
-    },
-    {
-        'name': 'zhihu',
-        'task_queue': TEMP_ZHIHU_QUEUE,
-        'resource': VALIDATED_ZHIHU_QUEUE,
-        'internal': 20,
-        'enable': 1,
-    },
-]
-
 # crawlers will fetch tasks from the following queues
 CRAWLER_TASK_MAPS = {
     'common': SPIDER_COMMON_TASK,
@@ -378,6 +345,38 @@ CRAWLER_TASK_MAPS = {
     'gfw': SPIDER_GFW_TASK,
     'ajax_gfw': SPIDER_AJAX_GFW_TASK
 }
+
+# validator scheduler will fetch tasks from resource queue and store into task queue
+VALIDATOR_TASKS = [
+    {
+        'name': 'http',
+        'task_queue': TEMP_HTTP_QUEUE,
+        'resource': VALIDATED_HTTP_QUEUE,
+        'internal': 5,  # 20 minutes
+        'enable': 1,
+    },
+    {
+        'name': 'https',
+        'task_queue': TEMP_HTTPS_QUEUE,
+        'resource': VALIDATED_HTTPS_QUEUE,
+        'internal': 5,
+        'enable': 1,
+    },
+    {
+        'name': 'weibo',
+        'task_queue': TEMP_WEIBO_QUEUE,
+        'resource': VALIDATED_WEIBO_QUEUE,
+        'internal': 5,
+        'enable': 1,
+    },
+    {
+        'name': 'zhihu',
+        'task_queue': TEMP_ZHIHU_QUEUE,
+        'resource': VALIDATED_ZHIHU_QUEUE,
+        'internal': 5,
+        'enable': 1,
+    },
+]
 
 # validators will fetch proxies from the following queues
 TEMP_TASK_MAPS = {
