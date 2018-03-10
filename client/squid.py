@@ -1,35 +1,27 @@
 """
 Squid Client for spiders.
 """
-
-import time
 import subprocess
 
 from logger import client_logger
-from config.rules import (
-    SCORE_MAPS, TTL_MAPS,
-    SPEED_MAPS)
-from utils import (
-    get_redis_conn, decode_all)
+from utils import get_redis_conn
 from config.settings import (
     SQUID_BIN_PATH, SQUID_CONF_PATH,
-    SQUID_TEMPLATE_PATH, TTL_VALIDATED_RESOURCE,
-    LONGEST_RESPONSE_TIME, LOWEST_SCORE)
+    SQUID_TEMPLATE_PATH)
+from .core import IPFetcherMixin
 
 
-class SquidClient:
+__all__ = ['SquidClient']
+
+
+class SquidClient(IPFetcherMixin):
     default_conf_detail = "cache_peer {} parent {} 0 no-query weighted-round-robin weight=1 " \
                           "connect-fail-limit=2 allow-miss max-conn=5 name=proxy-{}"
     other_confs = ['request_header_access Via deny all', 'request_header_access X-Forwarded-For deny all',
                    'request_header_access From deny all', 'never_direct allow all']
 
     def __init__(self, task):
-        if task not in SCORE_MAPS.keys():
-            client_logger.warning('task value is invalid, https task will be used')
-            task = 'https'
-        self.score_queue = SCORE_MAPS.get(task)
-        self.ttl_queue = TTL_MAPS.get(task)
-        self.speed_queue = SPEED_MAPS.get(task)
+        super().__init__(task)
         self.template_path = SQUID_TEMPLATE_PATH
         self.conf_path = SQUID_CONF_PATH
         if not SQUID_BIN_PATH:
@@ -44,21 +36,7 @@ class SquidClient:
 
     def update_conf(self):
         conn = get_redis_conn()
-        start_time = int(time.time()) - TTL_VALIDATED_RESOURCE * 60
-        pipe = conn.pipeline(False)
-        pipe.zrevrangebyscore(self.score_queue, '+inf', LOWEST_SCORE)
-        pipe.zrevrangebyscore(self.ttl_queue, '+inf', start_time)
-        pipe.zrangebyscore(self.speed_queue, 0, 1000 * LONGEST_RESPONSE_TIME)
-        scored_proxies, ttl_proxies, speed_proxies = pipe.execute()
-        proxies = scored_proxies and ttl_proxies and speed_proxies
-
-        if not proxies:
-            proxies = scored_proxies and ttl_proxies
-
-        if not proxies:
-            proxies = ttl_proxies
-
-        proxies = decode_all(proxies)
+        proxies = self.get_available_proxies(conn)
         conts = list()
         with open(self.template_path, 'r') as fr, open(self.conf_path, 'w') as fw:
             original_conf = fr.read()
