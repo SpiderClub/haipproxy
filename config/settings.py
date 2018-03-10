@@ -118,3 +118,6 @@ SQUID_TEMPLATE_PATH = '/etc/squid/squid.conf.backup'  # mac os /usr/local/etc/sq
 LONGEST_RESPONSE_TIME = 10
 # client picks proxies which's score is not less than 7
 LOWEST_SCORE = 6
+# if the total num of proxies fetched is less than LOWES_TOTAL_PROXIES, haipproxy will fetch more
+# more proxies with lower quality
+LOWEST_TOTAL_PROXIES = 10
