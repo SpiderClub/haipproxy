@@ -16,12 +16,12 @@ from config.settings import (
     SPEED_ZHIHU_QUEUE)
 
 
-__all__ = ['CRWALER_TASKS', 'VALIDATOR_TASKS', 'CRAWLER_TASK_MAPS',
+__all__ = ['CRAWLER_TASKS', 'VALIDATOR_TASKS', 'CRAWLER_TASK_MAPS',
            'TEMP_TASK_MAPS', 'SCORE_MAPS', 'TTL_MAPS',
            'SPEED_MAPS']
 
 
-CRWALER_TASKS = [
+CRAWLER_TASKS = [
     {
         'name': 'mogumiao',
         'resource': ['http://www.mogumiao.com/proxy/free/listFreeIp',
@@ -93,24 +93,6 @@ CRWALER_TASKS = [
         'resource': ['http://ip.baizhongsou.com/'],
         'task_queue': SPIDER_COMMON_TASK,
         'internal': 30,
-        'enable': 1
-    },
-    {
-        # there are some problems using crawlspider, so we use basic spider
-        'name': 'coderbusy',
-        'resource': ['https://proxy.coderbusy.com/'] +
-                    ['https://proxy.coderbusy.com/classical/https-ready.aspx?page=%s' % i for i in range(1, 21)] +
-                    ['https://proxy.coderbusy.com/classical/post-ready.aspx?page=%s' % i for i in range(1, 21)] +
-                    ['https://proxy.coderbusy.com/classical/anonymous-type/anonymous.aspx?page=%s'
-                     % i for i in range(1, 6)] +
-                    ['https://proxy.coderbusy.com/classical/anonymous-type/highanonymous.aspx?page=%s'
-                     % i for i in range(1, 6)] +
-                    ['https://proxy.coderbusy.com/classical/country/cn.aspx?page=%s' % i for i in range(1, 21)] +
-                    ['https://proxy.coderbusy.com/classical/country/us.aspx?page=%s' % i for i in range(1, 11)] +
-                    ['https://proxy.coderbusy.com/classical/country/id.aspx?page=%s' % i for i in range(1, 6)] +
-                    ['https://proxy.coderbusy.com/classical/country/ru.aspx?page=%s' % i for i in range(1, 6)],
-        'task_queue': SPIDER_COMMON_TASK,
-        'internal': 2 * 60,
         'enable': 1
     },
     {
@@ -241,6 +223,24 @@ CRWALER_TASKS = [
         ],
         'task_queue': SPIDER_COMMON_TASK,
         'internal': 60,
+        'enable': 1,
+    },
+    {
+        # there are some problems using crawlspider, so we use basic spider
+        'name': 'coderbusy',
+        'resource': ['https://proxy.coderbusy.com/'] +
+                    ['https://proxy.coderbusy.com/classical/https-ready.aspx?page=%s' % i for i in range(1, 21)] +
+                    ['https://proxy.coderbusy.com/classical/post-ready.aspx?page=%s' % i for i in range(1, 21)] +
+                    ['https://proxy.coderbusy.com/classical/anonymous-type/anonymous.aspx?page=%s'
+                     % i for i in range(1, 6)] +
+                    ['https://proxy.coderbusy.com/classical/anonymous-type/highanonymous.aspx?page=%s'
+                     % i for i in range(1, 6)] +
+                    ['https://proxy.coderbusy.com/classical/country/cn.aspx?page=%s' % i for i in range(1, 21)] +
+                    ['https://proxy.coderbusy.com/classical/country/us.aspx?page=%s' % i for i in range(1, 11)] +
+                    ['https://proxy.coderbusy.com/classical/country/id.aspx?page=%s' % i for i in range(1, 6)] +
+                    ['https://proxy.coderbusy.com/classical/country/ru.aspx?page=%s' % i for i in range(1, 6)],
+        'task_queue': SPIDER_AJAX_TASK,
+        'internal': 2 * 60,
         'enable': 1,
     },
     {

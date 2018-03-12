@@ -18,7 +18,7 @@ class Crawler:
     def __init__(self, proxy_mode=1, retries=5):
         self.proxy_mode = proxy_mode
         self.retries = retries
-        self.fetcher = ProxyFetcher('zhihu', strategy='greedy', length=5)
+        self.fetcher = ProxyFetcher('zhihu', strategy='greedy')
         self.conn = get_redis_conn(db=1)
 
     def get(self, url):

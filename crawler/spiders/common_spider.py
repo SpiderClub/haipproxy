@@ -27,8 +27,6 @@ class CommonSpider(BaseSpider, RedisSpider):
             items = self.parse_common(response, infos_pos=4)
         elif self.exists(url, 'baizhongsou', 'atomintersoft'):
             items = self.parse_common(response, split_detail=True)
-        elif self.exists(url, 'coderbusy'):
-            items = self.parse_common(response, ip_pos=1, port_pos=2, extract_protocol=False)
         elif self.exists(url, 'data5u'):
             items = self.parse_common(response, pre_extract='//ul[contains(@class, "l2")]', infos_pos=0,
                                       detail_rule='span li::text')

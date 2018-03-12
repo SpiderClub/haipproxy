@@ -3,7 +3,7 @@ Squid Client for spiders.
 """
 import subprocess
 
-from logger import client_logger
+# from logger import client_logger
 from utils import get_redis_conn
 from config.settings import (
     SQUID_BIN_PATH, SQUID_CONF_PATH,
@@ -29,8 +29,9 @@ class SquidClient(IPFetcherMixin):
                 r = subprocess.check_output('which squid', shell=True)
                 self.squid_path = r.decode().strip()
             except subprocess.CalledProcessError:
-                client_logger.warning('no squid is installed on this machine, or the installed dir is not '
-                                      'contained in environment path')
+                # client_logger.warning('no squid is installed on this machine, or the installed dir is not '
+                #                       'contained in environment path')
+                pass
         else:
             self.squid_path = SQUID_BIN_PATH
 
@@ -42,7 +43,7 @@ class SquidClient(IPFetcherMixin):
             original_conf = fr.read()
             if not proxies:
                 fw.write(original_conf)
-                client_logger.info('no proxies got at this turn')
+                # client_logger.info('no proxies got at this turn')
             else:
                 conts.append(original_conf)
                 # if two proxies use the same ip and different ports and no name
@@ -56,4 +57,4 @@ class SquidClient(IPFetcherMixin):
                 fw.write(conf)
         # in docker, execute with shell will fail
         subprocess.call([self.squid_path, '-k', 'reconfigure'], shell=False)
-        client_logger.info('update squid conf successfully')
+        # client_logger.info('update squid conf successfully')

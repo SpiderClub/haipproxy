@@ -98,6 +98,7 @@ def start():
     redis_client = init_db()
     while not redis_client.scard(waiting_set):
         # block if there is no seed in waitting_set
+        print('no seeds in waiting set {}'.format(waiting_set))
         time.sleep(0.1)
 
     # fetch seeds from waitting_set
@@ -112,16 +113,17 @@ def start():
     except (TypeError, AttributeError):
         return
 
-    push_success_num = 0
     for follower in follower_list:
         if not redis_client.sismember(seeds_all, follower):
-            redis_client.sadd(waiting_set, follower)
-            redis_client.sadd(seeds_all, follower)
-            push_success_num += 1
+            pipe = redis_client.pipeline(False)
+            pipe.sadd(waiting_set, follower)
+            pipe.sadd(seeds_all, follower)
+            pipe.execute()
+    print("user {}'s info has being crawled".format(url_token))
 
 
 if __name__ == '__main__':
-    init_seeds = ['excited-vczh', 'resolvewang']
+    init_seeds = ['resolvewang', 'excited-vczh']
     redis_conn = init_db()
     redis_conn.sadd(waiting_set, *init_seeds)
     redis_conn.sadd(seeds_all, *init_seeds)

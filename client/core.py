@@ -3,7 +3,7 @@ This module provide core codes for picking up proxies
 """
 import time
 
-from logger import client_logger
+# from logger import client_logger
 from utils import decode_all
 from config.rules import (
     SCORE_MAPS, TTL_MAPS,
@@ -16,7 +16,7 @@ from config.settings import (
 class IPFetcherMixin:
     def __init__(self, usage):
         if usage not in SCORE_MAPS.keys():
-            client_logger.warning('task value is invalid, https task will be used')
+            # client_logger.warning('task value is invalid, https task will be used')
             usage = 'https'
         self.score_queue = SCORE_MAPS.get(usage)
         self.ttl_queue = TTL_MAPS.get(usage)
