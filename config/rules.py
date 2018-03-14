@@ -16,12 +16,12 @@ from config.settings import (
     SPEED_ZHIHU_QUEUE)
 
 
-__all__ = ['CRWALER_TASKS', 'VALIDATOR_TASKS', 'CRAWLER_TASK_MAPS',
+__all__ = ['CRAWLER_TASKS', 'VALIDATOR_TASKS', 'CRAWLER_TASK_MAPS',
            'TEMP_TASK_MAPS', 'SCORE_MAPS', 'TTL_MAPS',
            'SPEED_MAPS']
 
 
-CRWALER_TASKS = [
+CRAWLER_TASKS = [
     {
         'name': 'mogumiao',
         'resource': ['http://www.mogumiao.com/proxy/free/listFreeIp',
@@ -93,24 +93,6 @@ CRWALER_TASKS = [
         'resource': ['http://ip.baizhongsou.com/'],
         'task_queue': SPIDER_COMMON_TASK,
         'internal': 30,
-        'enable': 1
-    },
-    {
-        # there are some problems using crawlspider, so we use basic spider
-        'name': 'coderbusy',
-        'resource': ['https://proxy.coderbusy.com/'] +
-                    ['https://proxy.coderbusy.com/classical/https-ready.aspx?page=%s' % i for i in range(1, 21)] +
-                    ['https://proxy.coderbusy.com/classical/post-ready.aspx?page=%s' % i for i in range(1, 21)] +
-                    ['https://proxy.coderbusy.com/classical/anonymous-type/anonymous.aspx?page=%s'
-                     % i for i in range(1, 6)] +
-                    ['https://proxy.coderbusy.com/classical/anonymous-type/highanonymous.aspx?page=%s'
-                     % i for i in range(1, 6)] +
-                    ['https://proxy.coderbusy.com/classical/country/cn.aspx?page=%s' % i for i in range(1, 21)] +
-                    ['https://proxy.coderbusy.com/classical/country/us.aspx?page=%s' % i for i in range(1, 11)] +
-                    ['https://proxy.coderbusy.com/classical/country/id.aspx?page=%s' % i for i in range(1, 6)] +
-                    ['https://proxy.coderbusy.com/classical/country/ru.aspx?page=%s' % i for i in range(1, 6)],
-        'task_queue': SPIDER_COMMON_TASK,
-        'internal': 2 * 60,
         'enable': 1
     },
     {
@@ -244,6 +226,24 @@ CRWALER_TASKS = [
         'enable': 1,
     },
     {
+        # there are some problems using crawlspider, so we use basic spider
+        'name': 'coderbusy',
+        'resource': ['https://proxy.coderbusy.com/'] +
+                    ['https://proxy.coderbusy.com/classical/https-ready.aspx?page=%s' % i for i in range(1, 21)] +
+                    ['https://proxy.coderbusy.com/classical/post-ready.aspx?page=%s' % i for i in range(1, 21)] +
+                    ['https://proxy.coderbusy.com/classical/anonymous-type/anonymous.aspx?page=%s'
+                     % i for i in range(1, 6)] +
+                    ['https://proxy.coderbusy.com/classical/anonymous-type/highanonymous.aspx?page=%s'
+                     % i for i in range(1, 6)] +
+                    ['https://proxy.coderbusy.com/classical/country/cn.aspx?page=%s' % i for i in range(1, 21)] +
+                    ['https://proxy.coderbusy.com/classical/country/us.aspx?page=%s' % i for i in range(1, 11)] +
+                    ['https://proxy.coderbusy.com/classical/country/id.aspx?page=%s' % i for i in range(1, 6)] +
+                    ['https://proxy.coderbusy.com/classical/country/ru.aspx?page=%s' % i for i in range(1, 6)],
+        'task_queue': SPIDER_AJAX_TASK,
+        'internal': 2 * 60,
+        'enable': 1,
+    },
+    {
         'name': 'proxydb',
         'resource': ['http://proxydb.net/?offset=%s' % (15 * i) for i in range(20)],
         'task_queue': SPIDER_AJAX_TASK,
@@ -338,39 +338,6 @@ CRWALER_TASKS = [
     },
 ]
 
-
-# validator scheduler will fetch tasks from task queue and store into resource
-VALIDATOR_TASKS = [
-    {
-        'name': 'http',
-        'task_queue': TEMP_HTTP_QUEUE,
-        'resource': VALIDATED_HTTP_QUEUE,
-        'internal': 20,  # 20 minutes
-        'enable': 1,
-    },
-    {
-        'name': 'https',
-        'task_queue': TEMP_HTTPS_QUEUE,
-        'resource': VALIDATED_HTTPS_QUEUE,
-        'internal': 20,
-        'enable': 1,
-    },
-    {
-        'name': 'weibo',
-        'task_queue': TEMP_WEIBO_QUEUE,
-        'resource': VALIDATED_WEIBO_QUEUE,
-        'internal': 20,
-        'enable': 1,
-    },
-    {
-        'name': 'zhihu',
-        'task_queue': TEMP_ZHIHU_QUEUE,
-        'resource': VALIDATED_ZHIHU_QUEUE,
-        'internal': 20,
-        'enable': 1,
-    },
-]
-
 # crawlers will fetch tasks from the following queues
 CRAWLER_TASK_MAPS = {
     'common': SPIDER_COMMON_TASK,
@@ -378,6 +345,38 @@ CRAWLER_TASK_MAPS = {
     'gfw': SPIDER_GFW_TASK,
     'ajax_gfw': SPIDER_AJAX_GFW_TASK
 }
+
+# validator scheduler will fetch tasks from resource queue and store into task queue
+VALIDATOR_TASKS = [
+    {
+        'name': 'http',
+        'task_queue': TEMP_HTTP_QUEUE,
+        'resource': VALIDATED_HTTP_QUEUE,
+        'internal': 5,  # 20 minutes
+        'enable': 1,
+    },
+    {
+        'name': 'https',
+        'task_queue': TEMP_HTTPS_QUEUE,
+        'resource': VALIDATED_HTTPS_QUEUE,
+        'internal': 5,
+        'enable': 1,
+    },
+    {
+        'name': 'weibo',
+        'task_queue': TEMP_WEIBO_QUEUE,
+        'resource': VALIDATED_WEIBO_QUEUE,
+        'internal': 5,
+        'enable': 1,
+    },
+    {
+        'name': 'zhihu',
+        'task_queue': TEMP_ZHIHU_QUEUE,
+        'resource': VALIDATED_ZHIHU_QUEUE,
+        'internal': 5,
+        'enable': 1,
+    },
+]
 
 # validators will fetch proxies from the following queues
 TEMP_TASK_MAPS = {

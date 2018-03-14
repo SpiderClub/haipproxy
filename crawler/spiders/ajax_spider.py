@@ -17,6 +17,8 @@ class AjaxSpider(BaseSpider, RedisAjaxSpider):
             items = self.parse_goubanjia(response)
         elif self.exists(url, 'proxydb'):
             items = self.parse_common(response, detail_rule='a::text', split_detail=True)
+        elif self.exists(url, 'coderbusy'):
+            items = self.parse_common(response, ip_pos=1, port_pos=2, extract_protocol=False)
         elif self.exists(url, 'cool-proxy'):
             items = self.parse_common(response, infos_pos=1, infos_end=-1)
         else:

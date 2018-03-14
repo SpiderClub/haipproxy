@@ -22,7 +22,7 @@ HTTPCACHE_ENABLED = False
 GFW_PROXY = 'http://127.0.0.1:8123'
 
 # splash settings.If you use docker-compose,SPLASH_URL = 'http://splash:8050'
-SPLASH_URL = 'http://splash:8050'
+SPLASH_URL = 'http://127.0.0.1:8050'
 
 # extension settings
 RETRY_ENABLED = False
@@ -44,7 +44,7 @@ SPIDER_MIDDLEWARES = {
 
 # scrapy log settings
 LOG_LEVEL = 'DEBUG'
-LOG_FILE = 'logs/haipproxy.log'
+# LOG_FILE = 'logs/haipproxy.log'
 
 
 #####################################################################
@@ -58,7 +58,7 @@ DEFAULT_REDIS_DB = 0
 META_DATA_DB = 0
 
 # scheduler settings
-TIMER_RECORDER = 'haipproxy:schduler:task'
+TIMER_RECORDER = 'haipproxy:scheduler:task'
 LOCKER_PREFIX = 'haipproxy:lock:'
 
 # proxies crawler's settings
@@ -117,4 +117,7 @@ SQUID_TEMPLATE_PATH = '/etc/squid/squid.conf.backup'  # mac os /usr/local/etc/sq
 # client picks proxies which's response time is between 0 and 5 seconds
 LONGEST_RESPONSE_TIME = 10
 # client picks proxies which's score is not less than 7
-LOWEST_SCORE = 7
+LOWEST_SCORE = 6
+# if the total num of proxies fetched is less than LOWES_TOTAL_PROXIES, haipproxy will fetch more
+# more proxies with lower quality
+LOWEST_TOTAL_PROXIES = 5

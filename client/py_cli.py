@@ -1,17 +1,10 @@
 """
 This module privodes core algrithm to pick up proxy ip resources.
 """
-import time
-
-# from logger import client_logger
-from utils import (
-    get_redis_conn, decode_all)
-from config.rules import (
-    SCORE_MAPS, TTL_MAPS,
-    SPEED_MAPS)
+from utils import get_redis_conn
 from config.settings import (
-    TTL_VALIDATED_RESOURCE, LONGEST_RESPONSE_TIME,
-    LOWEST_SCORE, DATA_ALL)
+    DATA_ALL, LOWEST_TOTAL_PROXIES)
+from .core import IPFetcherMixin
 
 
 __all__ = ['ProxyFetcher']
@@ -50,12 +43,10 @@ class GreedyStrategy(Strategy):
         return pool[0]
 
 
-class ProxyFetcher:
-    def __init__(self, usage, strategy='robin', length=10,
-                 fast_response=5, redis_args=None):
+class ProxyFetcher(IPFetcherMixin):
+    def __init__(self, usage, strategy='robin', fast_response=5, redis_args=None):
         """
         :param usage: one of SCORE_MAPS's keys, such as https
-        :param length: if total available proxies are less than length,
         you must refresh pool
         :param strategy: the load balance of proxy ip, the value is
         one of ['robin', 'greedy']
@@ -63,13 +54,10 @@ class ProxyFetcher:
         decide whether a proxy ip should continue to be used
         :param redis_args: redis connetion args, it's a dict, the keys include host, port, db and password
         """
-        self.score_queue = SCORE_MAPS.get(usage)
-        self.ttl_queue = TTL_MAPS.get(usage)
-        self.speed_queue = SPEED_MAPS.get(usage)
+        super().__init__(usage)
         self.strategy = strategy
         # pool is a queue, which is FIFO
         self.pool = list()
-        self.length = length
         self.fast_response = fast_response
         self.handlers = [RobinStrategy(), GreedyStrategy()]
         if isinstance(redis_args, dict):
@@ -91,21 +79,7 @@ class ProxyFetcher:
         return proxy
 
     def get_proxies(self):
-        """core algrithm to get proxies from redis"""
-        start_time = int(time.time()) - TTL_VALIDATED_RESOURCE * 60
-
-        pipe = self.conn.pipeline(False)
-        pipe.zrevrangebyscore(self.score_queue, '+inf', LOWEST_SCORE)
-        pipe.zrevrangebyscore(self.ttl_queue, '+inf', start_time)
-        pipe.zrangebyscore(self.speed_queue, 0, 1000*LONGEST_RESPONSE_TIME)
-        scored_proxies, ttl_proxies, speed_proxies = pipe.execute()
-        proxies = scored_proxies and ttl_proxies and speed_proxies
-        if not proxies or len(proxies) < self.length*2:
-            proxies = (ttl_proxies and speed_proxies) or scored_proxies
-
-        if not proxies or len(proxies) < self.length*2:
-            proxies = ttl_proxies or scored_proxies
-        proxies = decode_all(proxies)
+        proxies = self.get_available_proxies(self.conn)
         # client_logger.info('{} proxies have been fetched'.format(len(proxies)))
         print('{} proxies have been fetched'.format(len(proxies)))
         self.pool.extend(proxies)
@@ -126,7 +100,7 @@ class ProxyFetcher:
             self.pool[0], self.pool[-1] = self.pool[-1], self.pool[0]
 
     def refresh(self):
-        if len(self.pool) < self.length:
+        if len(self.pool) < LOWEST_TOTAL_PROXIES:
             self.get_proxies()
 
     def delete_proxy(self, proxy):
