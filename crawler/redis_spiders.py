@@ -94,7 +94,6 @@ class RedisAjaxSpider(RedisSpider):
                     'await': 2,
                     'timeout': 90
                 },
-                endpoint='render.html'
             )
             if req:
                 yield req

@@ -15,25 +15,10 @@ class GFWSpider(CommonSpider):
     proxy_mode = 2
     task_queue = SPIDER_GFW_TASK
 
-    def parse(self, response):
-        url = response.url
-        if self.exists(url, 'cn-proxy'):
-            items = self.parse_common(response, pre_extract='//tbody/tr', infos_pos=0)
-        elif self.exists(url, 'proxylistplus'):
-            protocols = None
-            if self.exists(url, 'SSL'):
-                protocols = ['https']
-            items = self.parse_common(response, pre_extract='//tr[contains(@class, "cells")]',
-                                      infos_end=-1, protocols=protocols)
-        elif self.exists(url, 'gatherproxy'):
-            items = self.parse_gather_proxy(response)
-        elif self.exists(url, 'xroxy'):
-            items = self.parse_xroxy(response)
-        else:
-            items = self.parse_common(response)
-
-        for item in items:
-            yield item
+    def __init__(self):
+        super().__init__()
+        self.parser_maps.setdefault('xroxy', self.parse_xroxy)
+        self.parser_maps.setdefault('gather_proxy', self.parse_gather_proxy)
 
     def parse_gather_proxy(self, response):
         items = list()

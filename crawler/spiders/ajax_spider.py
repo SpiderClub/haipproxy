@@ -11,21 +11,9 @@ class AjaxSpider(BaseSpider, RedisAjaxSpider):
     name = 'ajax'
     task_queue = SPIDER_AJAX_TASK
 
-    def parse(self, response):
-        url = response.url
-        if self.exists(url, 'goubanjia'):
-            items = self.parse_goubanjia(response)
-        elif self.exists(url, 'proxydb'):
-            items = self.parse_common(response, detail_rule='a::text', split_detail=True)
-        elif self.exists(url, 'coderbusy'):
-            items = self.parse_common(response, ip_pos=1, port_pos=2, extract_protocol=False)
-        elif self.exists(url, 'cool-proxy'):
-            items = self.parse_common(response, infos_pos=1, infos_end=-1)
-        else:
-            items = self.parse_common(response)
-
-        for item in items:
-            yield item
+    def __init__(self):
+        super().__init__()
+        self.parser_maps.setdefault('goubanjia', self.parse_goubanjia)
 
     def parse_goubanjia(self, response):
         infos = response.xpath('//tr')[1:]
