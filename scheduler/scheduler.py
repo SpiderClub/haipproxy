@@ -62,8 +62,8 @@ class BaseScheduler:
 
     def schedule_with_delay(self):
         for task in self.tasks:
-            internal = task.get('internal')
-            schedule.every(internal).minutes.do(self.schedule_task_with_lock, task)
+            interval = task.get('interval')
+            schedule.every(interval).minutes.do(self.schedule_task_with_lock, task)
         while True:
             schedule.run_pending()
             time.sleep(1)
@@ -98,7 +98,7 @@ class CrawlerScheduler(BaseScheduler):
 
         conn = get_redis_conn()
         task_name = task.get('name')
-        internal = task.get('internal')
+        interval = task.get('interval')
         urls = task.get('resource')
         lock_indentifier = acquire_lock(conn, task_name)
         if not lock_indentifier:
@@ -109,7 +109,7 @@ class CrawlerScheduler(BaseScheduler):
             now = int(time.time())
             pipe.hget(TIMER_RECORDER, task_name)
             r = pipe.execute()[0]
-            if not r or (now - int(r.decode('utf-8'))) >= internal * 60:
+            if not r or (now - int(r.decode('utf-8'))) >= interval * 60:
                 pipe.lpush(task_queue, *urls)
                 pipe.hset(TIMER_RECORDER, task_name, now)
                 pipe.execute()
@@ -132,7 +132,7 @@ class ValidatorScheduler(BaseScheduler):
             return None
 
         conn = get_redis_conn()
-        internal = task.get('internal')
+        interval = task.get('interval')
         task_name = task.get('name')
         resource_queue = task.get('resource')
         lock_indentifier = acquire_lock(conn, task_name)
@@ -144,7 +144,7 @@ class ValidatorScheduler(BaseScheduler):
             pipe.hget(TIMER_RECORDER, task_name)
             pipe.zrevrangebyscore(resource_queue, '+inf', '-inf')
             r, proxies = pipe.execute()
-            if not r or (now - int(r.decode('utf-8'))) >= internal * 60:
+            if not r or (now - int(r.decode('utf-8'))) >= interval * 60:
                 if not proxies:
                     # scheduler_logger.warning('fetched no proxies from task {}'.format(task_name))
                     print('fetched no proxies from task {}'.format(task_name))
@@ -231,13 +231,13 @@ def crawler_start(usage, tasks):
 
 @click.command()
 @click.option('--usage', default='https', help='Usage of squid')
-@click.option('--internal', default=TTL_VALIDATED_RESOURCE, help='Updating frenquency of squid conf.')
-def squid_conf_update(usage, internal):
+@click.option('--interval', default=TTL_VALIDATED_RESOURCE, help='Updating frenquency of squid conf.')
+def squid_conf_update(usage, interval):
     """Timertask for updating proxies for squid config file"""
     # client_logger.info('the updating task is starting...')
     client = SquidClient(usage)
     client.update_conf()
-    schedule.every(internal).minutes.do(client.update_conf)
+    schedule.every(interval).minutes.do(client.update_conf)
     while True:
         schedule.run_pending()
         time.sleep(1)
