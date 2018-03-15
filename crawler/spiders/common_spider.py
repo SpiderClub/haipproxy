@@ -13,68 +13,29 @@ class CommonSpider(BaseSpider, RedisSpider):
     name = 'common'
     task_queue = SPIDER_COMMON_TASK
 
-    def parse(self, response):
-        url = response.url
-        if self.exists(url, 'kxdaili'):
-            items = self.parse_common(response)
-        elif self.exists(url, 'kuaidaili'):
-            items = self.parse_common(response, infos_pos=4)
-        elif self.exists(url, 'xdaili'):
-            items = self.parse_json(response, detail_rule=['RESULT', 'rows'])
-        elif self.exists(url, 'mogumiao'):
-            items = self.parse_json(response, detail_rule=['msg'])
-        elif self.exists(url, '66ip'):
-            items = self.parse_common(response, infos_pos=4)
-        elif self.exists(url, 'baizhongsou', 'atomintersoft'):
-            items = self.parse_common(response, split_detail=True)
-        elif self.exists(url, 'data5u'):
-            items = self.parse_common(response, pre_extract='//ul[contains(@class, "l2")]', infos_pos=0,
-                                      detail_rule='span li::text')
-        elif self.exists(url, 'httpsdaili', 'yun-daili'):
-            items = self.parse_common(response, pre_extract='//tr[contains(@class, "odd")]', infos_pos=0)
-        elif self.exists(url, 'ab57', 'proxylists'):
-            items = self.parse_raw_text(response)
-        elif self.exists(url, 'rmccurdy'):
-            items = self.parse_raw_text(response, delimiter='\n')
-        elif self.exists(url, 'my-proxy'):
-            protocols = None
-            if self.exists(url, 'socks-4'):
-                protocols = ['socks4']
-            if self.exists(url, 'socks-5'):
-                protocols = ['socks5']
-            items = self.parse_my_proxy(response, pre_extract='.list ::text',
-                                        redundancy='#', protocols=protocols)
-        elif self.exists(url, 'us-proxy', 'free-proxy', 'sslproxies', 'socks-proxy'):
-            protocols = None
-            if self.exists(url, 'sslproxies'):
-                protocols = ['https']
-            items = self.parse_common(response, pre_extract='//tbody//tr', infos_pos=0, protocols=protocols)
-        elif self.exists(url, 'mrhinkydink'):
-            items = self.parse_common(response, pre_extract_method='css', pre_extract='.text', infos_pos=1)
-        else:
-            items = self.parse_common(response)
+    def __init__(self):
+        super().__init__()
+        self.parser_maps.setdefault('myproxy', self.parse_my_proxy)
 
-        for item in items:
-            yield item
+    def parse_my_proxy(self, response):
+        protocols = None
+        if self.exists(response.url, 'socks-4'):
+            protocols = ['socks4']
+        if self.exists(response.url, 'socks-5'):
+            protocols = ['socks5']
 
-    def parse_my_proxy(self, response, pre_extract='.list ::text', redundancy=None, protocols=None):
         items = list()
-        infos = response.css(pre_extract).extract()
+        infos = response.css('.list ::text').extract()
         for info in infos:
             if ':' not in info:
                 continue
-            if redundancy:
-                pos = info.find(redundancy)
-                if pos != -1:
-                    info = info[:info.find(redundancy)]
-
+            pos = info.find('#')
+            if pos != -1:
+                info = info[:info.find('#')]
             ip, port = info.split(':')
             protocols = self.default_protocols if not protocols else protocols
             for protocol in protocols:
                 items.append(ProxyUrlItem(url=self.construct_proxy_url(protocol, ip, port)))
         return items
-
-
-
 
 

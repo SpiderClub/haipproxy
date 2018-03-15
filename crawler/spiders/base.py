@@ -4,6 +4,7 @@ Useful base class for all the spiders.
 import json
 import ipaddress
 
+from config.rules import CRAWLER_TASKS
 from ..items import ProxyUrlItem
 
 
@@ -17,6 +18,29 @@ class BaseSpider:
             'crawler.pipelines.ProxyIPPipeline': 200,
         }
     }
+
+    def __init__(self):
+        self.parser_maps = {
+            'common': self.parse_common,
+            'json': self.parse_json,
+            'text': self.parse_raw_text,
+        }
+
+    def parse(self, response):
+        url = response.url
+        items = list()
+        for task in CRAWLER_TASKS:
+            if self.exists(url, task['name']):
+                parse_type = task['parse_type']
+                func = self.parser_maps.get(parse_type)
+                parse_rule = task.get('parse_rule')
+                if parse_rule:
+                    items = func(response, **parse_rule)
+                else:
+                    items = func(response)
+
+        for item in items:
+            yield item
 
     def parse_common(self, response, pre_extract_method='xpath',
                      pre_extract='//tr', infos_pos=1, infos_end=None,

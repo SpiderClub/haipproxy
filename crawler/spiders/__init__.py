@@ -33,6 +33,7 @@ http://proxydb.net/
 https://proxy.coderbusy.com/
 
 website for gfw spider:
+https://free-proxy-list.net/
 http://cn-proxy.com/
 http://www.xroxy.com/
 
@@ -42,14 +43,21 @@ http://www.cnproxy.com/
 http://free-proxy.cz/en/
 
 """
+# todo find why 504 happens when crawling proxydb.net
 from .common_spider import CommonSpider
 from .ajax_spider import AjaxSpider
 from .gfw_spider import GFWSpider
 from .ajax_gfw_spider import AjaxGFWSpider
+from .base import BaseSpider
 
 
-# todo find why 504 happens when crawling proxydb.net
+__all__ = ['CommonSpider', 'AjaxSpider',
+           'GFWSpider', 'AjaxGFWSpider',
+           'BaseSpider', 'all_spiders']
+
+
 all_spiders = [
     CommonSpider, AjaxSpider,
-    GFWSpider, AjaxGFWSpider
+    GFWSpider, AjaxGFWSpider,
 ]
+
