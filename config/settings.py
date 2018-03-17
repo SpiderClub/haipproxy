@@ -53,7 +53,7 @@ LOG_LEVEL = 'DEBUG'
 # redis settings.If you use docker-compose, REDIS_HOST = 'redis'
 REDIS_HOST = '127.0.0.1'
 REDIS_PORT = 6379
-REDIS_PASSWORD = '123456'
+REDIS_PASSWORD = ''
 DEFAULT_REDIS_DB = 0
 META_DATA_DB = 0
 
