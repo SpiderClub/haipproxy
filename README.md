@@ -14,6 +14,8 @@
 
 # Quick start
 
+注意，代码请在[release](https://github.com/SpiderClub/haipproxy/releases)列表中下载，**master**分支的代码不保证能稳定运行
+
 ## 单机部署
 
 ### 服务端

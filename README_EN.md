@@ -15,6 +15,9 @@ spiders.
 
 # Quick start
 
+Please go to [release](https://github.com/SpiderClub/haipproxy/releases) to download the source code,
+the master is unstable.
+
 ## Standalone
 
 ### Server
