@@ -15,6 +15,9 @@ spiders.
 
 # Quick start
 
+Please go to [release](https://github.com/SpiderClub/haipproxy/releases) to download the source code,
+the master is unstable.
+
 ## Standalone
 
 ### Server
@@ -43,7 +46,7 @@ from client.py_cli import ProxyFetcher
 args = dict(host='127.0.0.1', port=6379, password='123456', db=0)
 # https is used for common proxy.If you want to crawl a customized website, you'd better 
 # write a customized ip validator according to zhihu validator
-fetcher = ProxyFetcher('https', strategy='greedy', length=5, redis_args=args)
+fetcher = ProxyFetcher('https', strategy='greedy', redis_args=args)
 # get one proxy ip
 print(fetcher.get_proxy())
 # get available proxy ip list

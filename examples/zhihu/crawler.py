@@ -36,13 +36,13 @@ class Crawler:
                 resp = requests.get(url, headers=self.headers, proxies=proxy, timeout=self.timeout)
                 end = time.time() * 1000
                 if '安全验证' in resp.text:
-                    self.fetcher.proxy_feedback('failure')
+                    self.fetcher.proxy_feedback('failure', proxy)
                     tries += 1
                     continue
                 else:
                     print('Request succeeded! The proxy is {}'.format(proxy))
                     # if you use greedy strategy, you must feedback
-                    self.fetcher.proxy_feedback('success', int(end-start))
+                    self.fetcher.proxy_feedback('success', proxy, int(end-start))
                     # not considering transaction
                     self.conn.incr(self.success_req, 1)
                     self.conn.rpush(self.cur_time, int(end/1000))
@@ -50,6 +50,6 @@ class Crawler:
             except Exception as e:
                 print(e)
                 # it's important to feedback, otherwise you may use the bad proxy next time
-                self.fetcher.proxy_feedback('failure')
+                self.fetcher.proxy_feedback('failure', proxy)
             tries += 1
         return None

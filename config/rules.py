@@ -226,6 +226,7 @@ CRAWLER_TASKS = [
         'name': 'httpsdaili.com',
         'resource': ['http://www.httpsdaili.com/?stype=1&page=%s' % i for i in range(1, 8)],
         'task_queue': SPIDER_COMMON_TASK,
+        'parse_type': 'common',
         'parse_rule': {
             'pre_extract_method': 'xpath',
             'pre_extract': '//tr[contains(@class, "odd")]',
