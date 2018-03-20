@@ -34,7 +34,7 @@ class IPFetcherMixin:
 
         proxies = scored_proxies & ttl_proxies & speed_proxies
         if not proxies or len(proxies) < LOWEST_TOTAL_PROXIES*2:
-            proxies = (ttl_proxies & speed_proxies) | scored_proxies
+            proxies = ttl_proxies & speed_proxies
         if not proxies or len(proxies) < LOWEST_TOTAL_PROXIES*2:
             proxies = ttl_proxies | scored_proxies
         proxies = decode_all(proxies)
