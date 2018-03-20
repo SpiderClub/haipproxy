@@ -9,7 +9,6 @@ from config.settings import (
     DATA_ALL, LOWEST_TOTAL_PROXIES)
 from .core import IPFetcherMixin
 
-
 __all__ = ['ProxyFetcher']
 
 lock = threading.RLock()
@@ -28,6 +27,16 @@ class Strategy:
         """
         raise NotImplementedError
 
+    def process_feedback(self, pool, res, proxy, **kwargs):
+        """
+        :param pool: ProxyFetcher's pool
+        :param res: success or failure
+        :param proxy: proxy ip
+        :param kwargs: response time or expected response time
+        :return: None
+        """
+        raise NotImplementedError
+
 
 class RobinStrategy(Strategy):
     def __init__(self):
@@ -37,9 +46,18 @@ class RobinStrategy(Strategy):
     def get_proxies_by_stragery(self, pool):
         if not pool:
             return None
+
         proxy = pool.pop(0)
         pool.append(proxy)
         return proxy
+
+    def process_feedback(self, pool, res, proxy, **kwargs):
+        if res == 'failure':
+            if pool[-1] == proxy:
+                with lock:
+                    if pool[-1] == proxy:
+                        pool.pop()
+        return
 
 
 class GreedyStrategy(Strategy):
@@ -50,6 +68,19 @@ class GreedyStrategy(Strategy):
         if not pool:
             return None
         return pool[0]
+
+    def process_feedback(self, pool, res, proxy, **kwargs):
+        if res == 'failure':
+            if pool[0] == proxy:
+                with lock:
+                    if pool[0] == proxy:
+                        pool.pop(0)
+            return
+        expected_time = kwargs.get('expected')
+        real_time = kwargs.get('real')
+        if expected_time * 1000 < real_time:
+            pool.pop(0)
+            pool.append(proxy)
 
 
 class ProxyFetcher(IPFetcherMixin):
@@ -106,20 +137,11 @@ class ProxyFetcher(IPFetcherMixin):
         :param proxy: proxy ip
         :param response_time: the response time using current proxy ip
         """
-        if res == 'failure':
-            lock.acquire()
-            if proxy == self.pool[0]:
-                self.pool.pop(0)
-            elif proxy == self.pool[-1]:
-                self.pool.pop()
-            self.delete_proxy(proxy)
-            lock.release()
-            return
-
-        # if the proxy response time is too long, add it to the tail of the list
-        if self.strategy == 'greedy' and self.fast_response*1000 < response_time:
-            self.pool.pop(0)
-            self.pool.append(proxy)
+        for handler in self.handlers:
+            if handler.strategy == self.strategy:
+                handler.process_feedback(self.pool, res,
+                                         proxy, real=response_time,
+                                         expected=self.fast_response)
 
     def refresh(self):
         if len(self.pool) < LOWEST_TOTAL_PROXIES:
@@ -136,6 +158,6 @@ class ProxyFetcher(IPFetcherMixin):
     def _refresh_periodically(self):
         """refresh self.pool periodically.Check 10 times in a second"""
         while True:
-            if len(self.pool) < int(2*LOWEST_TOTAL_PROXIES):
+            if len(self.pool) < int(2 * LOWEST_TOTAL_PROXIES):
                 self.get_proxies()
             time.sleep(0.2)
