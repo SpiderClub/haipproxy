@@ -57,7 +57,7 @@ print(fetcher.get_proxies()) # or print(fetcher.pool)
 - Install squid,copy it's conf as a backup and then start squid, take *ubuntu* for example
    > sudo apt-get install squid
    
-   > sudo sed -i 's/http_access deny all/http_access allow all/g'
+   > sudo sed -i 's/http_access deny all/http_access allow all/g' /etc/squid/squid.conf
    
    > sudo cp /etc/squid/squid.conf /etc/squid/squid.conf.backup
    
