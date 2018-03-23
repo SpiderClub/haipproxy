@@ -56,7 +56,7 @@ print(fetcher.get_proxies()) # or print(fetcher.pool)
 - 安装squid，备份squid的配置文件并且启动squid，以ubuntu为例
   > sudo apt-get install squid
 
-  > sudo sed -i 's/http_access deny all/http_access allow all/g'
+  > sudo sed -i 's/http_access deny all/http_access allow all/g' /etc/squid/squid.conf
 
   > sudo cp /etc/squid/squid.conf /etc/squid/squid.conf.backup
 
