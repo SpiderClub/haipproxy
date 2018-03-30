@@ -4,15 +4,19 @@ services:
     image: redis
     command: >
       --requirepass 123456
+    ports:
+      - "6379:6379"
   splash:
     image: scrapinghub/splash
+    ports:
+      - "8050:8050"
   haipproxy:
     image: registry.cn-hangzhou.aliyuncs.com/weakiwi/haipproxy-alpine-image:stable
     command: sh run.sh
     volumes:
       - .:/haipproxy
     ports:
-      - "3128"
+      - "3128:3128"
     links:
       - redis
       - splash
