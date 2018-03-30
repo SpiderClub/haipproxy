@@ -11,7 +11,7 @@ services:
     ports:
       - "8050:8050"
   haipproxy:
-    build: .
+    image: registry.cn-hangzhou.aliyuncs.com/weakiwi/haipproxy-alpine-image
     command: sh run.sh
     volumes:
       - .:/haipproxy
