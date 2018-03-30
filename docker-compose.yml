@@ -7,7 +7,7 @@ services:
   splash:
     image: scrapinghub/splash
   haipproxy:
-    image: registry.cn-hangzhou.aliyuncs.com/weakiwi/haipproxy-alpine-image
+          image: registry.cn-hangzhou.aliyuncs.com/weakiwi/haipproxy-alpine-image:stable
     command: sh run.sh
     volumes:
       - .:/haipproxy
