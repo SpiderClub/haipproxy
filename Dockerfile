@@ -21,7 +21,7 @@ RUN sed -i 's/http_access deny all/http_access allow all/g' /etc/squid/squid.con
 #RUN apt install python3 python3-pip -yq
 #RUN which python3|xargs -i ln -s {} /usr/bin/python
 #RUN which pip3|xargs -i ln -s {} /usr/bin/pip
-COPY . /haipproxy
+#COPY . /haipproxy
 WORKDIR /haipproxy
 RUN pip3 install --upgrade pip && pip3 install -i https://pypi.douban.com/simple/ -r requirements.txt 
 CMD ['python3', 'crawler_booter.py', '--usage', 'crawler', 'common']
