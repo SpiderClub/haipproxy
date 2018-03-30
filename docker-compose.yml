@@ -12,7 +12,7 @@ services:
     volumes:
       - .:/haipproxy
     ports:
-      - "3128:3128"
+      - "3128"
     links:
       - redis
       - splash
