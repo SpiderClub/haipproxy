@@ -2,10 +2,10 @@ version: "2.0"
 services:
   redis:
     image: redis
-    command: >
-      --requirepass 123456
     ports:
       - "6379:6379"
+    command: >
+      --requirepass 123456
   splash:
     image: scrapinghub/splash
     ports:
