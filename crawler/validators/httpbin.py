@@ -1,6 +1,6 @@
 """
-We use this validator to filter transparent ips, and give the ip resources a
-initially score.
+We use this validator to filter transparent ips, and give the ip resources an
+initial score.
 """
 import time
 import json
@@ -25,7 +25,7 @@ from .base import BaseValidator
 
 
 class HttpBinInitValidator(BaseValidator, ValidatorRedisSpider):
-    """This validator do initially work for ip resources"""
+    """This validator does initial work for ip resources"""
     name = 'init'
     urls = [
         'http://httpbin.org/ip',
@@ -70,7 +70,7 @@ class HttpBinInitValidator(BaseValidator, ValidatorRedisSpider):
 
 
 class HttpValidator(BaseValidator, ValidatorRedisSpider):
-    """This validator check the liveness of http proxy resources"""
+    """This validator checks the liveness of http proxy resources"""
     name = 'http'
     urls = [
         'http://httpbin.org/ip',
@@ -82,7 +82,7 @@ class HttpValidator(BaseValidator, ValidatorRedisSpider):
 
 
 class HttpsValidator(BaseValidator, ValidatorRedisSpider):
-    """This validator check the liveness of https proxy resources"""
+    """This validator checks the liveness of https proxy resources"""
     name = 'https'
     urls = [
         'https://httpbin.org/ip',
@@ -91,18 +91,3 @@ class HttpsValidator(BaseValidator, ValidatorRedisSpider):
     score_queue = VALIDATED_HTTPS_QUEUE
     ttl_queue = TTL_HTTPS_QUEUE
     speed_queue = SPEED_HTTPS_QUEUE
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -1,5 +1,5 @@
 """
-This module provide fake ua for all spiders.
+This module provides fake ua for all spiders.
 """
 import random
 

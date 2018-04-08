@@ -1,5 +1,5 @@
 """
-This module provide basic distributed spider, inspired by scrapy-redis
+This module provides basic distributed spider, inspired by scrapy-redis
 """
 from scrapy import signals
 from scrapy.http import Request
@@ -105,6 +105,7 @@ class RedisAjaxSpider(RedisSpider):
 
 class ValidatorRedisSpider(RedisSpider):
     """Scrapy only supports https and http proxy"""
+
     def setup_redis(self, crawler):
         super().setup_redis(crawler)
         self.redis_batch_size = VALIDATOR_FEED_SIZE
@@ -130,4 +131,3 @@ class ValidatorRedisSpider(RedisSpider):
 
     def parse_error(self, failure):
         raise NotImplementedError
-

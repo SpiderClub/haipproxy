@@ -58,7 +58,7 @@ class BaseValidator:
     def parse_error(self, failure):
         request = failure.request
         proxy = request.meta.get('proxy')
-        # crawler_logger.error('proxy {} has been failed,{} is raised'.format(proxy, failure))
+        # crawler_logger.error('proxy {} has failed, {} is raised'.format(proxy, failure))
         print('proxy {} has been failed,{} is raised'.format(proxy, failure))
         if failure.check(TimeoutError, TCPTimedOutError):
             decr = -1
@@ -81,9 +81,3 @@ class BaseValidator:
         speed_item['queue'] = self.speed_queue
 
         return score_item, ttl_item, speed_item
-
-
-
-
-
-

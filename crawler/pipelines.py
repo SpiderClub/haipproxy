@@ -60,7 +60,7 @@ class ProxyCommonPipeline(BasePipeline):
         if score is None:
             self.redis_con.zadd(item['queue'], item['score'], item['url'])
         else:
-            # delete ip resource when score < 1 or error happends
+            # delete ip resource when score < 1 or error happens
             if item['incr'] == '-inf' or (item['incr'] < 0 and score <= 1):
                 pipe = self.redis_con.pipeline(True)
                 pipe.srem(DATA_ALL, item['url'])
@@ -71,7 +71,7 @@ class ProxyCommonPipeline(BasePipeline):
             elif item['incr'] > 0 and score < 10:
                 self.redis_con.zincrby(item['queue'], item['url'], 1)
             elif item['incr'] > 0 and score >= 10:
-                incr = round(10/score, 2)
+                incr = round(10 / score, 2)
                 self.redis_con.zincrby(item['queue'], item['url'], incr)
 
     def _process_verified_item(self, item, spider):

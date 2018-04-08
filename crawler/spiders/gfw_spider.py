@@ -1,6 +1,5 @@
 """
 Proxy spider for the websites blocked by gfw.
-
 """
 import re
 import json
@@ -54,10 +53,3 @@ class GFWSpider(CommonSpider):
                         items.append(ProxyUrlItem(url=self.construct_proxy_url('https', ip, port)))
 
         return items
-
-
-
-
-
-
-
