@@ -13,9 +13,11 @@ NEWSPIDER_MODULE = 'crawler'
 ROBOTSTXT_OBEY = False
 COOKIES_ENABLED = False
 DOWNLOAD_TIMEOUT = 30
+
 # to aviod infinite recursion
 DEPTH_LIMIT = 100
 CONCURRENT_REQUESTS = 50
+
 # don't filter anything, also can set dont_filter=True in Request objects
 DUPEFILTER_CLASS = 'scrapy.dupefilters.BaseDupeFilter'
 HTTPCACHE_ENABLED = False
@@ -33,7 +35,8 @@ DOWNLOADER_MIDDLEWARES = {
     'crawler.middlewares.UserAgentMiddleware': 543,
     'crawler.middlewares.ProxyMiddleware': 543,
     'scrapy_splash.SplashCookiesMiddleware': 723,
-    # it should be before than HttpProxyMiddleware
+
+    # it should be prior to HttpProxyMiddleware
     'scrapy_splash.SplashMiddleware': 725,
     'scrapy.downloadermiddlewares.httpcompression.HttpCompressionMiddleware': 810,
 }
@@ -50,6 +53,7 @@ LOG_LEVEL = 'DEBUG'
 #####################################################################
 # Custom settings of this project
 #####################################################################
+
 # redis settings.If you use docker-compose, REDIS_HOST = 'redis'
 REDIS_HOST = 'redis'
 REDIS_PORT = 6379
@@ -70,10 +74,12 @@ SPIDER_AJAX_GFW_TASK = 'haipproxy:spider:ajax_gfw'
 
 # data_all is a set , it's a dupefilter
 DATA_ALL = 'haipproxy:all'
+
 # the data flow is init queue->validated_queue->validator_queue(temp)->validated_queue(score queue)->
 # ttl_queue, speed_qeuue -> clients
 # http_queue is a list, it's used to store initially http/https proxy resourecs
 INIT_HTTP_QUEUE = 'haipproxy:init:http'
+
 # socks proxy resources container
 INIT_SOCKS4_QUEUE = 'haipproxy:init:socks4'
 INIT_SOCKS5_QUEUE = 'haipproxy:init:socks5'
@@ -114,10 +120,13 @@ SQUID_CONF_PATH = '/etc/squid/squid.conf'  # mac os '/usr/local/etc/squid.conf'
 SQUID_TEMPLATE_PATH = '/etc/squid/squid.conf.backup'  # mac os /usr/local/etc/squid.conf.backup
 
 # client settings
+
 # client picks proxies which's response time is between 0 and 5 seconds
 LONGEST_RESPONSE_TIME = 10
+
 # client picks proxies which's score is not less than 7
 LOWEST_SCORE = 6
+
 # if the total num of proxies fetched is less than LOWES_TOTAL_PROXIES, haipproxy will fetch more
 # more proxies with lower quality
 LOWEST_TOTAL_PROXIES = 5

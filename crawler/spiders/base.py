@@ -1,5 +1,5 @@
 """
-Useful base class for all the spiders.
+Useful base class for all spiders.
 """
 import json
 import ipaddress
@@ -50,10 +50,10 @@ class BaseSpider:
         """
         Common response parser
         :param response: scrapy response
-        :param pre_extract_method: extracting method for extract all infos, xpath is default value
+        :param pre_extract_method: extracting method for extracting all infos, xpath is the default value
         :param pre_extract: pre parsing rule for extracing all infos
         :param infos_pos: pos for extracting infos
-        :param infos_end: end pos for extracting infos,it value should be smaller than 0
+        :param infos_end: end pos for extracting infos, its value should be smaller than 0
         :param detail_rule: rule for extracting ip and port block, css selector is used here
         :param ip_pos: ip index
         :param port_pos: port index
@@ -101,7 +101,7 @@ class BaseSpider:
         :param response: scrapy response
         :param detail_rule: json parser rules, its type is list
         :param ip_key: ip extractor
-        :param port_key: port extrator
+        :param port_key: port extractor
         :return: ip infos
         """
         infos = json.loads(response.body.decode('utf-8'))
@@ -185,15 +185,12 @@ class BaseSpider:
         return True
 
     def construct_proxy_url(self, scheme, ip, port):
-        """construct proxy urls so spiders can directly use them"""
+        """construct proxy urls, so spiders can use them directly"""
         return '{}://{}:{}'.format(scheme, ip, port)
 
     def exists(self, url, *flags):
-        """check whether the flag in url or not"""
+        """check whether the flag of the url is set or not"""
         for flag in flags:
             if flag in url:
                 return True
         return False
-
-
-

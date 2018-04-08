@@ -9,7 +9,7 @@ from .base import BaseValidator
 
 
 class ZhiHuValidator(BaseValidator, ValidatorRedisSpider):
-    """This validator check the liveness of zhihu proxy resources"""
+    """This validator checks the liveness of zhihu proxy resources"""
     name = 'zhihu'
     urls = [
         'https://www.zhihu.com/question/47464143'
@@ -19,4 +19,3 @@ class ZhiHuValidator(BaseValidator, ValidatorRedisSpider):
     ttl_queue = TTL_ZHIHU_QUEUE
     speed_queue = SPEED_ZHIHU_QUEUE
     success_key = '爬虫'
-

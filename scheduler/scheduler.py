@@ -52,9 +52,9 @@ class BaseScheduler:
     def __init__(self, name, tasks, task_queues=None):
         """
         init function for schedulers.
-        :param name: scheduler name, generally the value is usage of the scheduler
+        :param name: scheduler name, generally the value is used by the scheduler
         :param tasks: tasks in config.rules
-        :param task_queues: for crawler, the value is task_queue,while for validator, it's task name
+        :param task_queues: for crawler, the value is task_queue, while for validator, it's task name
         """
         self.name = name
         self.tasks = tasks
@@ -124,7 +124,7 @@ class CrawlerScheduler(BaseScheduler):
 class ValidatorScheduler(BaseScheduler):
     def schedule_task_with_lock(self, task):
         """Validator scheduler filters tasks according to task name
-        since it's task name stands for task type"""
+        since its task name stands for task type"""
         if not task.get('enable'):
             return None
         task_queue = task.get('task_queue')
@@ -196,8 +196,8 @@ def scheduler_start(usage, task_queues):
 @click.argument('tasks', nargs=-1)
 def crawler_start(usage, tasks):
     """Start specified spiders or validators from cmd with scrapy core api.
-    There are four kinds of spiders: common, ajax, gfw, ajax_gfw.If you don't
-    assign any tasks, all the spiders will run.
+    There are four kinds of spiders: common, ajax, gfw, ajax_gfw. If you don't
+    assign any tasks, all these spiders will run.
     """
     maps = CRAWLER_TASK_MAPS if usage == 'crawler' else TEMP_TASK_MAPS
     origin_spiders = DEFAULT_CRAWLERS if usage == 'crawler' else DEFAULT_VALIDATORS

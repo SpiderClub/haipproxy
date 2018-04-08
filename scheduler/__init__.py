@@ -1,5 +1,5 @@
 """
-This module provides scheduler for spiders,validators and squid client.
+This module provides scheduler for spiders, validators and squid client.
 """
 
 from .scheduler import (

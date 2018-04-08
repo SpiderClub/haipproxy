@@ -9,7 +9,7 @@ from .base import BaseValidator
 
 
 class WeiBoValidator(BaseValidator, ValidatorRedisSpider):
-    """This validator check the liveness of weibo proxy resources"""
+    """This validator checks the liveness of weibo proxy resources"""
     name = 'weibo'
     urls = [
         'https://weibo.cn/'

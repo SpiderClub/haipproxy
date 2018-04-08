@@ -1,7 +1,7 @@
 """
 This module is used to update squid conf periodically.
 
-If you belongs to admin group,you can start the task using the following cmd:
+If you belong to admin group, you can start the task using the following cmd:
 python squid_update.py
 
 The default usage value is 'https' and interval value is 5 minutes,

@@ -1,6 +1,5 @@
 """
 Basic proxy ip crawler.
-
 """
 from config.settings import SPIDER_COMMON_TASK
 from ..redis_spiders import RedisSpider
@@ -37,5 +36,3 @@ class CommonSpider(BaseSpider, RedisSpider):
             for protocol in protocols:
                 items.append(ProxyUrlItem(url=self.construct_proxy_url(protocol, ip, port)))
         return items
-
-

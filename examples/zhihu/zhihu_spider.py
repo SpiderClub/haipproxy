@@ -1,4 +1,4 @@
-# the code is some copied from https://github.com/windcode/zhihu-crawler-people
+# the code is partially copied from https://github.com/windcode/zhihu-crawler-people
 
 import json
 import time
@@ -97,11 +97,11 @@ def get_followers(url_token, follower_count):
 def start():
     redis_client = init_db()
     while not redis_client.scard(waiting_set):
-        # block if there is no seed in waitting_set
+        # block if there is no seed in waiting_set
         print('no seeds in waiting set {}'.format(waiting_set))
         time.sleep(0.1)
 
-    # fetch seeds from waitting_set
+    # fetch seeds from waiting_set
     url_token = redis_client.spop(waiting_set).decode()
 
     print("crawling %s's user info……" % url_token)
