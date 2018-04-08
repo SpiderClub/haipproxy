@@ -1,5 +1,5 @@
 """
-This module is used to start multi spiders or validators from ide or cmd.
+This module is used to start multi spiders or validators from IDE or cmd.
 
 All the startup args can be found in config/rules.py, including:
 CRAWLER_TASK_MAPS, VALIDATOR_TASK_MAPS
@@ -10,7 +10,7 @@ python crawler_booter.py --usage crawler
 If you want to start only common spider and ajax proxy spider, run:
 python crawler_booter.py --usage crawler common ajax
 
-While if you want to start all the validators, run:
+If you want to start all the validators, run:
 python crawler_booter.py --usage validator
 
 If you just want to start init and https validator, run:

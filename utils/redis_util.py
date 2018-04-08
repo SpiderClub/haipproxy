@@ -17,7 +17,7 @@ def get_redis_conn(**kwargs):
 
 
 def acquire_lock(conn, lock_name, acquire_timeout=10, lock_timeout=10):
-    """inspired by book 'redis in action' """
+    """inspired by the book 'redis in action' """
     identifier = str(uuid.uuid4())
     lock_name = LOCKER_PREFIX + lock_name
     end = time.time() + acquire_timeout
