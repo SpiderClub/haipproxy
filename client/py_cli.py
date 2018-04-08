@@ -1,5 +1,5 @@
 """
-This module privodes core algrithm to pick up proxy ip resources.
+This module provides core algrithm to pick up proxy ip resources.
 """
 import time
 import threading
@@ -90,9 +90,9 @@ class ProxyFetcher(IPFetcherMixin):
         you must refresh pool
         :param strategy: the load balance of proxy ip, the value is
         one of ['robin', 'greedy']
-        :param fast_response: if you use greedy strategy, if will be needed to
+        :param fast_response: if you use greedy strategy, it will be needed to
         decide whether a proxy ip should continue to be used
-        :param redis_args: redis connetion args, it's a dict, the keys
+        :param redis_args: redis connetion args, it's a dict, whose keys
         include host, port, db and password
         """
         # if there are multi parent classes, super is only used for the first parent according to MRO
@@ -112,7 +112,7 @@ class ProxyFetcher(IPFetcherMixin):
 
     def get_proxy(self):
         """
-        get one available proxy from redis, if not any, None is returned
+        get one available proxy from redis, if there's none, None is returned
         :return:
         """
         proxy = None
@@ -123,7 +123,7 @@ class ProxyFetcher(IPFetcherMixin):
         return proxy
 
     def get_proxies(self):
-        # the older proxies will not be droped
+        # the older proxies will not be dropped
         proxies = self.get_available_proxies(self.conn)
         # client_logger.info('{} proxies have been fetched'.format(len(proxies)))
         print('{} proxies have been fetched'.format(len(proxies)))
@@ -156,7 +156,7 @@ class ProxyFetcher(IPFetcherMixin):
         pipe.execute()
 
     def _refresh_periodically(self):
-        """refresh self.pool periodically.Check 10 times in a second"""
+        """refresh self.pool periodically, checking rate is 10 times/second"""
         while True:
             if len(self.pool) < int(2 * LOWEST_TOTAL_PROXIES):
                 self.get_proxies()

@@ -47,7 +47,7 @@ class SquidClient(IPFetcherMixin):
             else:
                 conts.append(original_conf)
                 # if two proxies use the same ip and different ports and no name
-                # if assigned,cache_peer error will raise.
+                # is assigned, cache_peer error will raise.
                 for index, proxy in enumerate(proxies):
                     _, ip_port = proxy.split('://')
                     ip, port = ip_port.split(':')
@@ -57,4 +57,4 @@ class SquidClient(IPFetcherMixin):
                 fw.write(conf)
         # in docker, execute with shell will fail
         subprocess.call([self.squid_path, '-k', 'reconfigure'], shell=False)
-        # client_logger.info('update squid conf successfully')
+        # client_logger.info('Squid conf is successfully updated')

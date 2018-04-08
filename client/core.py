@@ -1,5 +1,5 @@
 """
-This module provide core codes for picking up proxies
+This module provides core code for picking up proxies
 """
 import time
 
@@ -33,9 +33,9 @@ class IPFetcherMixin:
         scored_proxies, ttl_proxies, speed_proxies = set(scored_proxies), set(ttl_proxies), set(speed_proxies)
 
         proxies = scored_proxies & ttl_proxies & speed_proxies
-        if not proxies or len(proxies) < LOWEST_TOTAL_PROXIES*2:
+        if not proxies or len(proxies) < LOWEST_TOTAL_PROXIES * 2:
             proxies = ttl_proxies & speed_proxies
-        if not proxies or len(proxies) < LOWEST_TOTAL_PROXIES*2:
+        if not proxies or len(proxies) < LOWEST_TOTAL_PROXIES * 2:
             proxies = ttl_proxies | scored_proxies
         proxies = decode_all(proxies)
 
