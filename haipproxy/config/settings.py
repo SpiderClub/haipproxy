@@ -55,6 +55,7 @@ LOG_LEVEL = 'DEBUG'
 #####################################################################
 
 # redis settings.If you use docker-compose, REDIS_HOST = 'redis'
+# if some value is empty, set like this: key = ''
 REDIS_HOST = '127.0.0.1'
 REDIS_PORT = 6379
 REDIS_PASSWORD = '123456'
@@ -130,3 +131,5 @@ LOWEST_SCORE = 6
 # if the total num of proxies fetched is less than LOWES_TOTAL_PROXIES, haipproxy will fetch more
 # more proxies with lower quality
 LOWEST_TOTAL_PROXIES = 5
+
+ORIGIN_IP = ''

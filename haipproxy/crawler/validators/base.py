@@ -26,7 +26,7 @@ class BaseValidator:
             'haipproxy.crawler.middlewares.RequestEndProfileMiddleware': 500,
         },
         'ITEM_PIPELINES': {
-            'crawler.pipelines.ProxyCommonPipeline': 200,
+            'haipproxy.crawler.pipelines.ProxyCommonPipeline': 200,
         }
 
     }

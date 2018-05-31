@@ -47,7 +47,7 @@ CRAWLER_TASKS = [
             'port_key': 'port',
         },
         'interval': 10,
-        'enable': 1,
+        'enable': 0,
     },
     {
         'name': 'xicidaili.com',

@@ -12,7 +12,6 @@ http://ip.baizhongsou.com/
 http://www.data5u.com/
 http://www.httpsdaili.com/
 http://www.ip181.com/
-http://www.xdaili.cn/ipagent/freeip/getFreeIps?page=1&rows=10
 http://www.ip3366.net/
 http://www.iphai.com/
 http://www.yun-daili.com/

@@ -16,7 +16,7 @@ from haipproxy.config.settings import (
     TEMP_HTTPS_QUEUE, VALIDATED_HTTP_QUEUE,
     VALIDATED_HTTPS_QUEUE, TTL_HTTP_QUEUE,
     TTL_HTTPS_QUEUE, SPEED_HTTP_QUEUE,
-    SPEED_HTTPS_QUEUE)
+    SPEED_HTTPS_QUEUE, ORIGIN_IP)
 from ..redis_spiders import ValidatorRedisSpider
 from ..items import (
     ProxyScoreItem, ProxyVerifiedTimeItem,
@@ -25,7 +25,10 @@ from .base import BaseValidator
 
 
 class HttpBinInitValidator(BaseValidator, ValidatorRedisSpider):
-    """This validator does initial work for ip resources"""
+    """This validator does initial work for ip resources.
+    　　It will filter transparent ip and store proxies in http_task
+       and https_tasks
+    """
     name = 'init'
     urls = [
         'http://httpbin.org/ip',
@@ -33,12 +36,16 @@ class HttpBinInitValidator(BaseValidator, ValidatorRedisSpider):
     ]
     use_set = False
     task_queue = INIT_HTTP_QUEUE
+    # specified tasks according to VALIDORTOR_TASKS in rules.py
     https_tasks = ['https', 'weibo', 'zhihu']
     http_tasks = ['http']
 
     def __init__(self):
         super().__init__()
-        self.origin_ip = requests.get(self.urls[1]).json().get('origin')
+        if ORIGIN_IP:
+            self.origin_ip = ORIGIN_IP
+        else:
+            self.origin_ip = requests.get(self.urls[1]).json().get('origin')
 
     def is_transparent(self, response):
         """filter transparent ip resources"""
