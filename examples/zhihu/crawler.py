@@ -1,8 +1,8 @@
 import time
 import requests
 
-from client import ProxyFetcher
-from utils import get_redis_conn
+from haipproxy.client import ProxyFetcher
+from haipproxy.utils import get_redis_conn
 
 
 class Crawler:

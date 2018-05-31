@@ -4,8 +4,8 @@ Squid Client for spiders.
 import subprocess
 
 # from logger import client_logger
-from utils import get_redis_conn
-from config.settings import (
+from ..utils import get_redis_conn
+from ..config.settings import (
     SQUID_BIN_PATH, SQUID_CONF_PATH,
     SQUID_TEMPLATE_PATH)
 from .core import IPFetcherMixin

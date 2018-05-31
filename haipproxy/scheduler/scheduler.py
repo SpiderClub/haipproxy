@@ -11,21 +11,21 @@ from scrapy.crawler import CrawlerRunner
 from scrapy.utils.log import configure_logging
 from scrapy.utils.project import get_project_settings
 
-from client import SquidClient
+from ..client import SquidClient
 # from logger import (
 #     crawler_logger, scheduler_logger,
 #     client_logger)
-from config.rules import (
+from ..config.rules import (
     CRAWLER_TASKS, VALIDATOR_TASKS,
     CRAWLER_TASK_MAPS, TEMP_TASK_MAPS)
-from crawler.spiders import all_spiders
-from crawler.validators import all_validators
-from config.settings import (
+from ..crawler.spiders import all_spiders
+from ..crawler.validators import all_validators
+from ..config.settings import (
     SPIDER_COMMON_TASK, SPIDER_AJAX_TASK,
     SPIDER_GFW_TASK, SPIDER_AJAX_GFW_TASK,
     TEMP_HTTP_QUEUE, TEMP_HTTPS_QUEUE,
     TIMER_RECORDER, TTL_VALIDATED_RESOURCE)
-from utils import (
+from ..utils import (
     get_redis_conn, acquire_lock,
     release_lock)
 
@@ -35,7 +35,7 @@ DEFAULT_CRAWLER_TASKS = [
     SPIDER_GFW_TASK, SPIDER_AJAX_GFW_TASK]
 DEFAULT_VALIDATORS_TASKS = [TEMP_HTTP_QUEUE, TEMP_HTTPS_QUEUE]
 
-DEFAULT_CRAWLERS = all_spiders
+DEFAULT_CRAWLERS = all_spiders[0:1]
 DEFAULT_VALIDATORS = all_validators
 
 

@@ -22,8 +22,8 @@ class BaseValidator:
         'CONCURRENT_REQUESTS_PER_DOMAIN': 50,
         'RETRY_ENABLED': False,
         'DOWNLOADER_MIDDLEWARES': {
-            'crawler.middlewares.RequestStartProfileMiddleware': 500,
-            'crawler.middlewares.RequestEndProfileMiddleware': 500,
+            'haipproxy.crawler.middlewares.RequestStartProfileMiddleware': 500,
+            'haipproxy.crawler.middlewares.RequestEndProfileMiddleware': 500,
         },
         'ITEM_PIPELINES': {
             'crawler.pipelines.ProxyCommonPipeline': 200,

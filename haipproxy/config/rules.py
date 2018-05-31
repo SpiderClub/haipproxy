@@ -2,7 +2,7 @@
 Spider rules.Scheduler will provide crawling tasks according to the rules and
 spiders will parse response content according to the rules.
 """
-from config.settings import (
+from ..config.settings import (
     SPIDER_COMMON_TASK, SPIDER_AJAX_TASK,
     SPIDER_GFW_TASK, SPIDER_AJAX_GFW_TASK,
     INIT_HTTP_QUEUE, VALIDATED_HTTP_QUEUE,
@@ -724,7 +724,7 @@ CRAWLER_TASKS = [
     },
 ]
 
-# crawlers will fetch tasks from the following queues
+# crawler will fetch tasks from the following queues
 CRAWLER_TASK_MAPS = {
     'common': SPIDER_COMMON_TASK,
     'ajax': SPIDER_AJAX_TASK,

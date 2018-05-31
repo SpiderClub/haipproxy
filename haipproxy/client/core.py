@@ -4,11 +4,11 @@ This module provides core code for picking up proxies
 import time
 
 # from logger import client_logger
-from utils import decode_all
-from config.rules import (
+from ..utils import decode_all
+from ..config.rules import (
     SCORE_MAPS, TTL_MAPS,
     SPEED_MAPS)
-from config.settings import (
+from ..config.settings import (
     TTL_VALIDATED_RESOURCE, LONGEST_RESPONSE_TIME,
     LOWEST_SCORE, LOWEST_TOTAL_PROXIES)
 

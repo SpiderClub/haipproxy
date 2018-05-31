@@ -6,8 +6,8 @@ Settings for global.
 #####################################################################
 # scrapy basic info
 BOT_NAME = 'haiproxy'
-SPIDER_MODULES = ['crawler.spiders', 'crawler.validators']
-NEWSPIDER_MODULE = 'crawler'
+SPIDER_MODULES = ['haipproxy.crawler.spiders', 'haipproxy.crawler.validators']
+NEWSPIDER_MODULE = 'haipproxy.crawler'
 
 # downloader settings
 ROBOTSTXT_OBEY = False
@@ -32,8 +32,8 @@ TELNETCONSOLE_ENABLED = False
 
 
 DOWNLOADER_MIDDLEWARES = {
-    'crawler.middlewares.UserAgentMiddleware': 543,
-    'crawler.middlewares.ProxyMiddleware': 543,
+    'haipproxy.crawler.middlewares.UserAgentMiddleware': 543,
+    'haipproxy.crawler.middlewares.ProxyMiddleware': 543,
     'scrapy_splash.SplashCookiesMiddleware': 723,
 
     # it should be prior to HttpProxyMiddleware
@@ -55,7 +55,7 @@ LOG_LEVEL = 'DEBUG'
 #####################################################################
 
 # redis settings.If you use docker-compose, REDIS_HOST = 'redis'
-REDIS_HOST = 'redis'
+REDIS_HOST = '127.0.0.1'
 REDIS_PORT = 6379
 REDIS_PASSWORD = '123456'
 DEFAULT_REDIS_DB = 0

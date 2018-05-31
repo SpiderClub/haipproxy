@@ -4,7 +4,7 @@ Useful base class for all spiders.
 import json
 import ipaddress
 
-from config.rules import CRAWLER_TASKS
+from haipproxy.config.rules import CRAWLER_TASKS
 from ..items import ProxyUrlItem
 
 
@@ -15,7 +15,7 @@ class BaseSpider:
         'CONCURRENT_REQUESTS_PER_DOMAIN': 1,
         'DOWNLOAD_DELAY': 3,
         'ITEM_PIPELINES': {
-            'crawler.pipelines.ProxyIPPipeline': 200,
+            'haipproxy.crawler.pipelines.ProxyIPPipeline': 200,
         }
     }
 

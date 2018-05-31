@@ -1,7 +1,7 @@
 """
 We use this validator to filter ip that can access mobile weibo website.
 """
-from config.settings import (
+from haipproxy.config.settings import (
     TEMP_WEIBO_QUEUE, VALIDATED_WEIBO_QUEUE,
     TTL_WEIBO_QUEUE, SPEED_WEIBO_QUEUE)
 from ..redis_spiders import ValidatorRedisSpider

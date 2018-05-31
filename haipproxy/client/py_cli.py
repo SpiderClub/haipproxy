@@ -1,11 +1,11 @@
 """
-This module provides core algrithm to pick up proxy ip resources.
+python client for haipproxy
 """
 import time
 import threading
 
-from utils import get_redis_conn
-from config.settings import (
+from ..utils import get_redis_conn
+from ..config.settings import (
     DATA_ALL, LOWEST_TOTAL_PROXIES)
 from .core import IPFetcherMixin
 
@@ -148,7 +148,7 @@ class ProxyFetcher(IPFetcherMixin):
             self.get_proxies()
 
     def delete_proxy(self, proxy):
-        pipe = self.conn.pipeline(True)
+        pipe = self.conn.pipeline()
         pipe.srem(DATA_ALL, proxy)
         pipe.zrem(self.score_queue, proxy)
         pipe.zrem(self.speed_queue, proxy)

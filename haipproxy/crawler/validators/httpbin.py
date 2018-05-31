@@ -8,10 +8,10 @@ from json.decoder import JSONDecodeError
 
 import requests
 
-from config.rules import (
+from haipproxy.config.rules import (
     SPEED_MAPS, TTL_MAPS,
     SCORE_MAPS)
-from config.settings import (
+from haipproxy.config.settings import (
     INIT_HTTP_QUEUE, TEMP_HTTP_QUEUE,
     TEMP_HTTPS_QUEUE, VALIDATED_HTTP_QUEUE,
     VALIDATED_HTTPS_QUEUE, TTL_HTTP_QUEUE,

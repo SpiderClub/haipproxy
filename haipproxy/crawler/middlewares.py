@@ -3,7 +3,7 @@ scrapy middlerwares for both downloader and spider
 """
 import time
 
-from config.settings import GFW_PROXY
+from ..config.settings import GFW_PROXY
 from .user_agents import FakeChromeUA
 
 

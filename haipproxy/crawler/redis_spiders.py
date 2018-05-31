@@ -6,12 +6,12 @@ from scrapy.http import Request
 from scrapy.exceptions import DontCloseSpider
 from scrapy.spiders import (
     Spider, CrawlSpider)
-from scrapy_splash import SplashRequest
+from scrapy_splash.request import SplashRequest
 # from scrapy.utils.log import configure_logging
 
 # from logger import crawler_logger
-from utils import get_redis_conn
-from config.settings import (
+from ..utils import get_redis_conn
+from ..config.settings import (
     VALIDATOR_FEED_SIZE, SPIDER_FEED_SIZE)
 
 

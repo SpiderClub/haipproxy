@@ -1,7 +1,7 @@
 """
 We use this validator to filter ip that can access mobile zhihu website.
 """
-from config.settings import (
+from haipproxy.config.settings import (
     TEMP_ZHIHU_QUEUE, VALIDATED_ZHIHU_QUEUE,
     TTL_ZHIHU_QUEUE, SPEED_ZHIHU_QUEUE)
 from ..redis_spiders import ValidatorRedisSpider

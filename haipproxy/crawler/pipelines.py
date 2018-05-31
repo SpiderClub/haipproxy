@@ -4,14 +4,14 @@ scrapy pipelines for storing proxy ip infos.
 from twisted.internet.threads import deferToThread
 from scrapy.exceptions import DropItem
 
-from utils import get_redis_conn
-from .items import (
-    ProxyScoreItem, ProxyVerifiedTimeItem,
-    ProxySpeedItem)
-from config.settings import (
+from ..utils import get_redis_conn
+from ..config.settings import (
     META_DATA_DB, DATA_ALL,
     INIT_HTTP_QUEUE, INIT_SOCKS4_QUEUE,
     INIT_SOCKS5_QUEUE)
+from .items import (
+    ProxyScoreItem, ProxyVerifiedTimeItem,
+    ProxySpeedItem)
 
 
 class BasePipeline:

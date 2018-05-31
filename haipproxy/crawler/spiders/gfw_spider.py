@@ -4,7 +4,7 @@ Proxy spider for the websites blocked by gfw.
 import re
 import json
 
-from config.settings import SPIDER_GFW_TASK
+from haipproxy.config.settings import SPIDER_GFW_TASK
 from ..items import ProxyUrlItem
 from .common_spider import CommonSpider
 

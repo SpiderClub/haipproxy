@@ -1,7 +1,7 @@
 """
 Ajax gfw proxy ip crawler with scrapy-splash
 """
-from config.settings import SPIDER_AJAX_GFW_TASK
+from haipproxy.config.settings import SPIDER_AJAX_GFW_TASK
 from ..redis_spiders import RedisAjaxSpider
 from ..items import ProxyUrlItem
 from .base import BaseSpider
