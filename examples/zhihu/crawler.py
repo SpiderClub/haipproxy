@@ -14,11 +14,17 @@ class Crawler:
                       '(KHTML, like Gecko) Chrome/57.0.2987.133 Safari/537.36',
         'Host': 'www.zhihu.com'
     }
+    redis_args = {
+        'host': '127.0.0.1',
+        'port': 6379,
+        'password': '123456',
+        'db': 0
+    }
 
     def __init__(self, retries=5):
         self.retries = retries
         self.fetcher = ProxyFetcher('zhihu', strategy='greedy')
-        self.conn = get_redis_conn(db=1)
+        self.conn = get_redis_conn(**self.redis_args)
         self.scheme = 'https'
 
     def get(self, url):

@@ -168,10 +168,17 @@ def scheduler_start(usage, task_queues):
     """Start specified scheduler."""
     # scheduler_logger.info('{} scheduler is starting...'.format(usage))
     print('{} scheduler is starting...'.format(usage))
-    default_tasks = CRAWLER_TASKS if usage == 'crawler' else VALIDATOR_TASKS
-    default_allow_tasks = DEFAULT_CRAWLER_TASKS if usage == 'crawler' else DEFAULT_VALIDATORS_TASKS
-    maps = CRAWLER_TASK_MAPS if usage == 'crawler' else TEMP_TASK_MAPS
-    SchedulerCls = CrawlerScheduler if usage == 'crawler' else ValidatorScheduler
+    if usage == 'crawler':
+        default_tasks = CRAWLER_TASKS
+        default_allow_tasks = DEFAULT_CRAWLER_TASKS
+        maps = CRAWLER_TASK_MAPS
+        SchedulerCls = CrawlerScheduler
+    else:
+        default_tasks = VALIDATOR_TASKS
+        default_allow_tasks = DEFAULT_VALIDATORS_TASKS
+        maps = TEMP_TASK_MAPS
+        SchedulerCls = ValidatorScheduler
+
     scheduler = SchedulerCls(usage, default_tasks)
 
     if not task_queues:
@@ -199,8 +206,13 @@ def crawler_start(usage, tasks):
     There are four kinds of spiders: common, ajax, gfw, ajax_gfw. If you don't
     assign any tasks, all these spiders will run.
     """
-    maps = CRAWLER_TASK_MAPS if usage == 'crawler' else TEMP_TASK_MAPS
-    origin_spiders = DEFAULT_CRAWLERS if usage == 'crawler' else DEFAULT_VALIDATORS
+    if usage == 'crawler':
+        maps = CRAWLER_TASK_MAPS
+        origin_spiders = DEFAULT_CRAWLERS
+    else:
+        maps = TEMP_TASK_MAPS
+        origin_spiders = DEFAULT_VALIDATORS
+
     if not tasks:
         spiders = origin_spiders
     else:

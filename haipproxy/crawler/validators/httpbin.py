@@ -36,8 +36,10 @@ class HttpBinInitValidator(BaseValidator, ValidatorRedisSpider):
     ]
     use_set = False
     task_queue = INIT_HTTP_QUEUE
-    # specified tasks according to VALIDORTOR_TASKS in rules.py
-    https_tasks = ['https', 'weibo', 'zhihu']
+    # https_tasks = ['https']
+    # distribute proxies to each queue, according to
+    # VALIDORTOR_TASKS in rules.py
+    https_tasks = ['weibo']
     http_tasks = ['http']
 
     def __init__(self):
@@ -63,6 +65,7 @@ class HttpBinInitValidator(BaseValidator, ValidatorRedisSpider):
     def set_item_queue(self, url, proxy, score, incr, speed=0):
         items = list()
         tasks = self.https_tasks if 'https' in url else self.http_tasks
+        # todo set proxy to tmp_queue
         for task in tasks:
             score_item = ProxyScoreItem(url=proxy, score=score, incr=incr)
             ttl_item = ProxyVerifiedTimeItem(url=proxy, verified_time=int(time.time()), incr=incr)

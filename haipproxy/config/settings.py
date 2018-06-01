@@ -24,18 +24,19 @@ HTTPCACHE_ENABLED = False
 GFW_PROXY = 'http://127.0.0.1:8123'
 
 # splash settings.If you use docker-compose,SPLASH_URL = 'http://splash:8050'
-SPLASH_URL = 'http://splash:8050'
+SPLASH_URL = 'http://127.0.0.1:8050'
 
 # extension settings
 RETRY_ENABLED = False
 TELNETCONSOLE_ENABLED = False
 
 
+UserAgentMiddleware = 'haipproxy.crawler.middlewares.UserAgentMiddleware'
+ProxyMiddleware = 'haipproxy.crawler.middlewares.ProxyMiddleware'
 DOWNLOADER_MIDDLEWARES = {
-    'haipproxy.crawler.middlewares.UserAgentMiddleware': 543,
-    'haipproxy.crawler.middlewares.ProxyMiddleware': 543,
+    UserAgentMiddleware: 543,
+    ProxyMiddleware: 543,
     'scrapy_splash.SplashCookiesMiddleware': 723,
-
     # it should be prior to HttpProxyMiddleware
     'scrapy_splash.SplashMiddleware': 725,
     'scrapy.downloadermiddlewares.httpcompression.HttpCompressionMiddleware': 810,
@@ -131,5 +132,5 @@ LOWEST_SCORE = 6
 # if the total num of proxies fetched is less than LOWES_TOTAL_PROXIES, haipproxy will fetch more
 # more proxies with lower quality
 LOWEST_TOTAL_PROXIES = 5
-
+# if config
 ORIGIN_IP = ''
