@@ -60,8 +60,7 @@ LOG_LEVEL = 'DEBUG'
 REDIS_HOST = '127.0.0.1'
 REDIS_PORT = 6379
 REDIS_PASSWORD = '123456'
-DEFAULT_REDIS_DB = 0
-META_DATA_DB = 0
+REDIS_DB = 3
 
 # scheduler settings
 TIMER_RECORDER = 'haipproxy:scheduler:task'
@@ -134,3 +133,21 @@ LOWEST_SCORE = 6
 LOWEST_TOTAL_PROXIES = 5
 # if config
 ORIGIN_IP = ''
+
+#####################################################################
+# monitor and bug trace
+#####################################################################
+
+# sentry for error tracking, for more information see
+# https://github.com/getsentry/sentry
+# disable it by setting USE_SENTRY = False
+USE_SENTRY = True
+SENTRY_DSN = 'http://82c130028fa942f29add1e0aa0ff9cbd:' \
+             'cffa174304d248b9aa2bdb385d3b01b8@127.0.0.1:9000/6'
+
+# prometheus for monitoring, for more information see
+# https://github.com/prometheus/prometheus
+# disable it by setting use_prom = False
+USE_PROM = False
+EXPORTER_LISTEN_HOST = '0.0.0.0'
+EXPORTER_LISTEN_PORT = 8000

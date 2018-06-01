@@ -3,7 +3,12 @@ scrapy middlerwares for both downloader and spider
 """
 import time
 
-from ..config.settings import GFW_PROXY
+from ..exceptions import (
+    HttpError, DownloadException
+)
+from ..config.settings import (
+    GFW_PROXY, USE_SENTRY)
+from ..utils.err_trace import client
 from .user_agents import FakeChromeUA
 
 
@@ -44,3 +49,27 @@ class RequestEndProfileMiddleware(object):
         speed = int(time.time() * 1000) - request.meta['start']
         request.meta['speed'] = speed
         return response
+
+
+class ErrorTraceMiddleware(object):
+    def process_response(self, request, response, spider):
+        if response.status >= 400:
+            reason = 'error http code {} for {}'.format(response.status, request.url)
+            self._faillog(request, HttpError, reason, spider)
+        return response
+
+    def process_exception(self, request, exception, spider):
+        self._faillog(request, DownloadException, exception, spider)
+        return
+
+    def _faillog(self, request, exc, reason, spider):
+        if USE_SENTRY:
+            try:
+                raise exc
+            except Exception:
+                message = 'error occurs when downloading {}'.format(request.url)
+                client.captureException(message=message)
+        else:
+            print(reason)
+
+

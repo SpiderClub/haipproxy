@@ -4,14 +4,14 @@ import time
 import redis
 
 from haipproxy.config.settings import (
-    REDIS_HOST, REDIS_PORT, DEFAULT_REDIS_DB,
+    REDIS_HOST, REDIS_PORT, REDIS_DB,
     REDIS_PASSWORD, LOCKER_PREFIX)
 
 
 def get_redis_conn(**kwargs):
     host = kwargs.get('host', REDIS_HOST)
     port = kwargs.get('port', REDIS_PORT)
-    db = kwargs.get('db', DEFAULT_REDIS_DB)
+    db = kwargs.get('db', REDIS_DB)
     password = kwargs.get('password', REDIS_PASSWORD)
     return redis.StrictRedis(host, port, db, password)
 
