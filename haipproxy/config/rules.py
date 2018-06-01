@@ -37,12 +37,13 @@ CRAWLER_TASKS = [
         'enable': 1,
     },
     {
+        # now we can't get proxies from it,but it required by ip181
         'name': 'xdaili.cn',
         'resource': ['http://www.xdaili.cn:80/ipagent/freeip/getFreeIps?page=1&rows=10'],
         'task_queue': SPIDER_COMMON_TASK,
         'parse_type': 'json',
         'parse_rule': {
-            'detail_rule': ['RESULT', 'rows'],
+            'detail_rule': ['RESULT'],
             'ip_key': 'ip',
             'port_key': 'port',
         },
@@ -223,6 +224,7 @@ CRAWLER_TASKS = [
         'enable': 1,
     },
     {
+        # can not access
         'name': 'httpsdaili.com',
         'resource': ['http://www.httpsdaili.com/?stype=1&page=%s' % i for i in range(1, 8)],
         'task_queue': SPIDER_COMMON_TASK,
@@ -240,12 +242,12 @@ CRAWLER_TASKS = [
             'protocols': None
         },
         'interval': 3 * 60,
-        'enable': 1,
+        'enable': 0,
     },
     {
         'name': 'ip181.com',
         'resource': ['http://www.ip181.com/'] +
-                    ['http://www.ip181.com/daili/%s.html' % i for i in range(1, 4)],
+                    ['http://www.ip181.com/daili/%s.html' % i for i in range(1, 20)],
         'task_queue': SPIDER_COMMON_TASK,
         'parse_type': 'common',
         'parse_rule': {
