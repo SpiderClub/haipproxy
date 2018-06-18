@@ -10,7 +10,8 @@ import requests
 
 from haipproxy.config.rules import (
     SPEED_MAPS, TTL_MAPS,
-    SCORE_MAPS)
+    SCORE_MAPS, HTTP_TASKS,
+    HTTPS_TASKS)
 from haipproxy.config.settings import (
     INIT_HTTP_QUEUE, TEMP_HTTP_QUEUE,
     TEMP_HTTPS_QUEUE, VALIDATED_HTTP_QUEUE,
@@ -39,8 +40,8 @@ class HttpBinInitValidator(BaseValidator, ValidatorRedisSpider):
     # https_tasks = ['https']
     # distribute proxies to each queue, according to
     # VALIDORTOR_TASKS in rules.py
-    https_tasks = ['weibo']
-    http_tasks = ['http']
+    https_tasks = HTTPS_TASKS
+    http_tasks = HTTP_TASKS
 
     def __init__(self):
         super().__init__()

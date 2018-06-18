@@ -775,6 +775,11 @@ TEMP_TASK_MAPS = {
     'zhihu': TEMP_ZHIHU_QUEUE
 }
 
+# target website that use http protocol
+HTTP_TASKS = ['http']
+
+# target website that use https protocol
+HTTPS_TASKS = ['https', 'zhihu', 'weibo']
 
 # todo the three maps may be combined in one map
 # validator scheduler and clients will fetch proxies from the following queues
