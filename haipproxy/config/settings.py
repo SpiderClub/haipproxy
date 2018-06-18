@@ -131,7 +131,7 @@ LOWEST_SCORE = 6
 # if the total num of proxies fetched is less than LOWES_TOTAL_PROXIES, haipproxy will fetch more
 # more proxies with lower quality
 LOWEST_TOTAL_PROXIES = 5
-# if config
+# if no origin ip is given, request will be sent to https://httpbin.org/ip
 ORIGIN_IP = ''
 
 #####################################################################
