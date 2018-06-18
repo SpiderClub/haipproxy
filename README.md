@@ -4,10 +4,9 @@
 本项目所采集的IP资源都来自互联网，愿景是为大型爬虫项目提供一个**高可用低延迟的高匿IP代理池**。
 
 # Features
-- 快速抓取代理IP
-- IP抓取和提取精准
-- IP来源丰富
-- 优良的IP校验器，并且容易根据自身需要扩展
+- 代理源丰富
+- 代理抓取提取精准
+- 代理校验易于扩展
 - 支持分布式部署
 - 架构设计灵活
 - MIT授权协议
@@ -34,7 +33,7 @@
   > python scheduler_booter.py --usage validator
 
 ### 客户端
-近日不断有同学问，如何获取该项目中可用的代理IP列表。`haipproxy`提供代理的方式并不是通过`web api`来提供，而是通过具体的客户端来提供。
+近日不断有同学问，如何获取该项目中可用的代理IP列表。`haipproxy`提供代理的方式并不是通过`api api`来提供，而是通过具体的客户端来提供。
 目前支持的是[Python客户端](client/py_cli.py)和语言无关的[squid二级代理](client/squid.py)
 
 #### python客户端调用示例 
@@ -130,13 +129,12 @@ print(fetcher.get_proxies()) # or print(fetcher.pool)
 
 测试代码见[examples/zhihu](examples/zhihu/zhihu_spider.py)
 
-# 如何贡献
-- 欢迎给项目提新feature
-- 如果发现项目某些环节有问题，欢迎提issue或者PR
-- 代理IP校验和筛选的策略仍有优化的空间，欢迎大家交流探讨
-- 如果你发现了比较好的代理网站，欢迎分享
+# 捐赠作者
+开源不易，如果本项目对您有用，不妨进行小额捐赠，以支持项目的持续维护
 
-# 同类项目参考
+![](./static/donate.jpg)
+
+# 同类项目
 本项目参考了Github上开源的各个爬虫代理的实现，感谢他们的付出，下面是笔者参考的所有项目，排名不分先后。
 
 [dungproxy](https://github.com/virjar/dungproxy)
@@ -157,3 +155,6 @@ print(fetcher.get_proxies()) # or print(fetcher.pool)
 
 [proxy_pool](https://github.com/lujqme/proxy_pool)
 
+[ProxyPool](https://github.com/fengzhizi715/ProxyPool)
+
+[scylla](https://github.com/imWildCat/scylla)
