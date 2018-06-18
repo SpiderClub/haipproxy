@@ -12,7 +12,7 @@ class BaseSpider:
     default_protocols = ['http']
     # slow down each spider
     custom_settings = {
-        'CONCURRENT_REQUESTS_PER_DOMAIN': 1,
+        'CONCURRENT_REQUESTS_PER_DOMAIN': 5,
         'DOWNLOAD_DELAY': 3,
         'EXTENSIONS': {
             'haipproxy.crawler.extensions.FailLogger': 500,
