@@ -31,9 +31,10 @@ setup(
     packages=[
         'haipproxy',
         'haipproxy.client',
+        'haipproxy.config',
         'haipproxy.utils'
     ],
-    install_requires=read_requirements('requirements.txt'),
+    install_requires=read_requirements('requirements-cli.txt'),
     include_package_data=True,
     license="MIT",
     keywords=['proxy', 'client', 'haipproxy'],

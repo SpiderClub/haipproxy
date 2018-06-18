@@ -1,8 +1,3 @@
-graft docs
-graft src
-graft tests
-graft example-project
-
 include *.in
 include *.ini
 include *.rst
