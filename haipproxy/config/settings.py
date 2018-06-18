@@ -100,7 +100,7 @@ VALIDATED_HTTPS_QUEUE = 'haipproxy:validated:https'
 VALIDATED_WEIBO_QUEUE = 'haipproxy:validated:weibo'
 VALIDATED_ZHIHU_QUEUE = 'haipproxy:validated:zhihu'
 
-# time to life of proxy ip resources
+# time to live of proxy ip resources
 TTL_VALIDATED_RESOURCE = 2  # minutes
 TTL_HTTP_QUEUE = 'haipproxy:ttl:http'
 TTL_HTTPS_QUEUE = 'haipproxy:ttl:https'
@@ -122,10 +122,10 @@ SQUID_TEMPLATE_PATH = '/etc/squid/squid.conf.backup'  # mac os /usr/local/etc/sq
 
 # client settings
 
-# client picks proxies which's response time is between 0 and 5 seconds
+# client picks proxies which's response time is between 0 and LONGEST_RESPONSE_TIME seconds
 LONGEST_RESPONSE_TIME = 10
 
-# client picks proxies which's score is not less than 7
+# client picks proxies which's score is not less than LOWEST_SCORE
 LOWEST_SCORE = 6
 
 # if the total num of proxies fetched is less than LOWES_TOTAL_PROXIES, haipproxy will fetch more
@@ -142,8 +142,7 @@ ORIGIN_IP = ''
 # https://github.com/getsentry/sentry
 # disable it by setting USE_SENTRY = False
 USE_SENTRY = True
-SENTRY_DSN = 'http://82c130028fa942f29add1e0aa0ff9cbd:' \
-             'cffa174304d248b9aa2bdb385d3b01b8@127.0.0.1:9000/6'
+SENTRY_DSN = 'http://009f7f5f50794deeb24791a39b86f254:56a9a5f5d3fc42a18bf87aa4341f8f3f@127.0.0.1:9000/2'
 
 # prometheus for monitoring, for more information see
 # https://github.com/prometheus/prometheus
