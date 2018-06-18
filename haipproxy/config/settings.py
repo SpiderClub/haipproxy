@@ -60,7 +60,7 @@ LOG_LEVEL = 'DEBUG'
 REDIS_HOST = '127.0.0.1'
 REDIS_PORT = 6379
 REDIS_PASSWORD = '123456'
-REDIS_DB = 3
+REDIS_DB = 0
 
 # scheduler settings
 TIMER_RECORDER = 'haipproxy:scheduler:task'
@@ -142,11 +142,10 @@ ORIGIN_IP = ''
 # https://github.com/getsentry/sentry
 # disable it by setting USE_SENTRY = False
 USE_SENTRY = True
-SENTRY_DSN = 'http://009f7f5f50794deeb24791a39b86f254:56a9a5f5d3fc42a18bf87aa4341f8f3f@127.0.0.1:9000/2'
+SENTRY_DSN = 'http://82c130028fa942f29add1e0aa0ff9cbd:cffa174304d248b9aa2bdb385d3b01b8@127.0.0.1:9000/6'
 
 # prometheus for monitoring, for more information see
 # https://github.com/prometheus/prometheus
-# disable it by setting use_prom = False
-USE_PROM = False
+# you have to config prometheus first if you want to monitor haipproxy status
 EXPORTER_LISTEN_HOST = '0.0.0.0'
-EXPORTER_LISTEN_PORT = 8000
+EXPORTER_LISTEN_PORT = 7001
