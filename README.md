@@ -100,8 +100,8 @@ print(fetcher.get_proxies()) # or print(fetcher.pool)
 ![](static/workflow.png)
 
 # 效果测试
-以单机模式部署`haipproxy`和[测试代码](examples/zhihu/zhihu_spider.py)，以知乎为目标请求站点，
-每一万条成功请求为统计结果，实测抓取效果如下
+以单机模式部署`haipproxy`和[测试代码](examples/zhihu/zhihu_spider.py)，以知乎为目标请求站点，实测抓取效果如下
+
 ![](./static/zhihu.png)
 
 测试代码见[examples/zhihu](examples/zhihu/zhihu_spider.py)
@@ -111,9 +111,12 @@ print(fetcher.get_proxies()) # or print(fetcher.pool)
 进行业务埋点对项目各个维度进行监测，以提高项目的鲁棒性
 
 项目使用[Sentry](https://sentry.io/welcome/)作`Bug Trace`工具，通过Sentry可以很容易跟踪项目健康情况
+
 ![](./static/bug_trace.jpg)
 
+
 使用[Prometheus](https://prometheus.io/)+[Grafana](https://grafana.com/)做业务监控，了解项目当前状态
+
 ![](./static/monitor.png)
 
 # 捐赠作者
