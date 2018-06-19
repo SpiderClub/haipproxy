@@ -18,4 +18,4 @@ class ZhiHuValidator(BaseValidator, ValidatorRedisSpider):
     score_queue = VALIDATED_ZHIHU_QUEUE
     ttl_queue = TTL_ZHIHU_QUEUE
     speed_queue = SPEED_ZHIHU_QUEUE
-    success_key = '爬虫'
+    success_key = '安全验证'
