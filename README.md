@@ -1,17 +1,17 @@
-# HAipproxy
+# 高可用IP代理池
 [README](README_EN.md)　｜　[中文文档](README.md)
 
 本项目所采集的IP资源都来自互联网，愿景是为大型爬虫项目提供一个**高可用低延迟的高匿IP代理池**。
 
-# Features
-- 代理源丰富
+# 项目亮点
+- 代理来源丰富
 - 代理抓取提取精准
-- 代理校验易于扩展
-- 支持分布式部署
-- 架构设计灵活
-- MIT授权协议
+- 代理校验严格合理
+- 监控完备，鲁棒性强
+- 架构灵活，便于扩展
+- 各个组件分布式部署
 
-# Quick start
+# 快速开始
 
 注意，代码请在[release](https://github.com/SpiderClub/haipproxy/releases)列表中下载，**master**分支的代码不保证能稳定运行
 
@@ -99,35 +99,22 @@ print(fetcher.get_proxies()) # or print(fetcher.pool)
 # 工作流程
 ![](static/workflow.png)
 
-# 开发者文档
-为了方便用户针对自身需求进行定制化，`haipproxy`提供了丰富的文档支持。所有文档详见[项目wiki](https://github.com/SpiderClub/haipproxy/wiki)
-
 # 效果测试
 以单机模式部署`haipproxy`和[测试代码](examples/zhihu/zhihu_spider.py)，以知乎为目标请求站点，
 每一万条成功请求为统计结果，实测抓取效果如下
-
-|请求量|时间|耗时|IP负载策略|客户端|
-|-----|----|---|---------|-----|
-|0|2018/03/03 22:03|0|greedy|[py_cli](client/py_cli.py)|
-|10000|2018/03/03 11:03|1 hour|greedy|[py_cli](client/py_cli.py)|
-|20000|2018/03/04 00:08|2 hours|greedy|[py_cli](client/py_cli.py)|
-|30000|2018/03/04 01:02|3 hours|greedy|[py_cli](client/py_cli.py)|
-|40000|2018/03/04 02:15|4 hours|greedy|[py_cli](client/py_cli.py)|
-|50000|2018/03/04 03:03|5 hours|greedy|[py_cli](client/py_cli.py)|
-|60000|2018/03/04 05:18|7 hours|greedy|[py_cli](client/py_cli.py)|
-|70000|2018/03/04 07:11|9 hours|greedy|[py_cli](client/py_cli.py)|
-|80000|2018/03/04 08:43|11 hours|greedy|[py_cli](client/py_cli.py)|
-
-
-可见`haipporxy`的代理效果还算不错，在开始的时候可以达到`1w/hour`的请求量，几个小时候请求量请求量
-降为了`5k/hour`。降低的结果可能有三个: (1)随着数据量的增大,Redis的性能受到了一定的影响(2)知乎校验
-器在把`Init Queue`中的代理消费完之后，由于是定时任务，所以导致某段时间内新鲜的IP空缺。而免费IP大多
-数都是短效的，所以这段时间出现了IP的空缺;(3)由于我们采用的是`greedy`模式调用IP，它的调用策略是: 高
-质量代理IP会一直被调用直至该代理IP不能用或者被封，而低应速度IP会轮询调用。这也可能导致高质量IP的空缺。
-
-由此可见IP校验和调用策略还有很大的优化空间。希望能有志同道合的朋友加入进来一起优化。
+![](./static/zhihu.png)
 
 测试代码见[examples/zhihu](examples/zhihu/zhihu_spider.py)
+
+# 项目监控(可选)
+项目监控主要通过[sentry](https://sentry.io/welcome/)和[prometheus](https://prometheus.io/),通过在关键地方
+进行业务埋点对项目各个维度进行监测，以提高项目的鲁棒性
+
+项目使用[Sentry](https://sentry.io/welcome/)作`Bug Trace`工具，通过Sentry可以很容易跟踪项目健康情况
+![](./static/bug_trace.jpg)
+
+使用[Prometheus](https://prometheus.io/)+[Grafana](https://grafana.com/)做业务监控，了解项目当前状态
+![](./static/monitor.png)
 
 # 捐赠作者
 开源不易，如果本项目对您有用，不妨进行小额捐赠，以支持项目的持续维护
