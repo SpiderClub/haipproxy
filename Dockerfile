@@ -13,7 +13,6 @@ RUN apk upgrade --no-cache \
   libxslt \
   libffi-dev \
   python3-dev \
-  libffi-dev \
   libssl-dev \
   libjpeg8-dev \
   zlib1g-dev \
