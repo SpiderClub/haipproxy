@@ -64,3 +64,4 @@ vine==1.1.4
 w3lib==1.19.0
 websocket-client==0.47.0
 zope.interface==4.4.3
+Flask==1.0.2
