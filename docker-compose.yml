@@ -1,7 +1,7 @@
 version: "2.0"
 services:
   redis:
-    image: redis
+    image: redis:alpine
     ports:
       - "6379:6379"
     command: >
@@ -11,7 +11,7 @@ services:
     ports:
       - "8050:8050"
   haipproxy:
-    image: registry.cn-hangzhou.aliyuncs.com/weakiwi/haipproxy-alpine-image:stable
+    build: .
     command: sh run.sh
     volumes:
       - .:/haipproxy
