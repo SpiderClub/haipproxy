@@ -3,6 +3,7 @@ LABEL mantainer="ResolveWang <resolvewang@foxmail.com>"
 
 ENV LC_ALL C.UTF-8
 ENV LANG C.UTF-8
+ENV ISDOCKER 1
 RUN echo -e "https://mirrors.tuna.tsinghua.edu.cn/alpine/v3.7/main/\nhttps://mirrors.tuna.tsinghua.edu.cn/alpine/v3.7/community/" > /etc/apk/repositories
 RUN apk upgrade --no-cache \
   && apk add --no-cache \
