@@ -23,20 +23,6 @@ __all__ = ['CRAWLER_TASKS', 'VALIDATOR_TASKS', 'CRAWLER_TASK_MAPS',
 
 CRAWLER_TASKS = [
     {
-        'name': 'mogumiao.com',
-        'resource': ['http://www.mogumiao.com/proxy/free/listFreeIp',
-                     'http://www.mogumiao.com/proxy/api/freeIp?count=15'],
-        'task_queue': SPIDER_COMMON_TASK,
-        'parse_type': 'json',
-        'parse_rule': {
-            'detail_rule': ['msg'],
-            'ip_key': 'ip',
-            'port_key': 'port',
-        },
-        'interval': 5,
-        'enable': 1,
-    },
-    {
         # now we can't get proxies from it,but it required by ip181
         'name': 'xdaili.cn',
         'resource': ['http://www.xdaili.cn:80/ipagent/freeip/getFreeIps?page=1&rows=10'],
