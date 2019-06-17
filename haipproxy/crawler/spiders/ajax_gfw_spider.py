@@ -27,7 +27,9 @@ class AjaxGFWSpider(BaseSpider, RedisAjaxSpider):
             port = proxy_detail[1][1:].strip()
             cur_protocols = self.procotol_extractor(info_str)
             for protocol in cur_protocols:
-                items.append(ProxyUrlItem(url=self.construct_proxy_url(protocol, ip, port)))
+                items.append(
+                    ProxyUrlItem(
+                        url=self.construct_proxy_url(protocol, ip, port)))
 
         return items
 
@@ -43,8 +45,8 @@ class AjaxGFWSpider(BaseSpider, RedisAjaxSpider):
 
             cur_protocols = self.procotol_extractor(info_str)
             for protocol in cur_protocols:
-                items.append(ProxyUrlItem(url=self.construct_proxy_url(protocol, ip, port)))
+                items.append(
+                    ProxyUrlItem(
+                        url=self.construct_proxy_url(protocol, ip, port)))
 
         return items
-
-

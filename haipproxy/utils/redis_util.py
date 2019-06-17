@@ -3,9 +3,8 @@ import time
 
 import redis
 
-from haipproxy.config.settings import (
-    REDIS_HOST, REDIS_PORT, REDIS_DB,
-    REDIS_PASSWORD, LOCKER_PREFIX)
+from haipproxy.config.settings import (REDIS_HOST, REDIS_PORT, REDIS_DB,
+                                       REDIS_PASSWORD, LOCKER_PREFIX)
 
 
 def get_redis_conn(**kwargs):

@@ -15,24 +15,19 @@ from ..client import SquidClient
 # from logger import (
 #     crawler_logger, scheduler_logger,
 #     client_logger)
-from ..config.rules import (
-    CRAWLER_TASKS, VALIDATOR_TASKS,
-    CRAWLER_TASK_MAPS, TEMP_TASK_MAPS)
+from ..config.rules import (CRAWLER_TASKS, VALIDATOR_TASKS, CRAWLER_TASK_MAPS,
+                            TEMP_TASK_MAPS)
 from ..crawler.spiders import all_spiders
 from ..crawler.validators import all_validators
-from ..config.settings import (
-    SPIDER_COMMON_TASK, SPIDER_AJAX_TASK,
-    SPIDER_GFW_TASK, SPIDER_AJAX_GFW_TASK,
-    TEMP_HTTP_QUEUE, TEMP_HTTPS_QUEUE,
-    TIMER_RECORDER, TTL_VALIDATED_RESOURCE)
-from ..utils import (
-    get_redis_conn, acquire_lock,
-    release_lock)
-
+from ..config.settings import (SPIDER_COMMON_TASK, SPIDER_AJAX_TASK,
+                               SPIDER_GFW_TASK, SPIDER_AJAX_GFW_TASK,
+                               TEMP_HTTP_QUEUE, TEMP_HTTPS_QUEUE,
+                               TIMER_RECORDER, TTL_VALIDATED_RESOURCE)
+from ..utils import (get_redis_conn, acquire_lock, release_lock)
 
 DEFAULT_CRAWLER_TASKS = [
-    SPIDER_COMMON_TASK, SPIDER_AJAX_TASK,
-    SPIDER_GFW_TASK, SPIDER_AJAX_GFW_TASK]
+    SPIDER_COMMON_TASK, SPIDER_AJAX_TASK, SPIDER_GFW_TASK, SPIDER_AJAX_GFW_TASK
+]
 DEFAULT_VALIDATORS_TASKS = [TEMP_HTTP_QUEUE, TEMP_HTTPS_QUEUE]
 
 DEFAULT_CRAWLERS = all_spiders
@@ -63,7 +58,8 @@ class BaseScheduler:
     def schedule_with_delay(self):
         for task in self.tasks:
             interval = task.get('interval')
-            schedule.every(interval).minutes.do(self.schedule_task_with_lock, task)
+            schedule.every(interval).minutes.do(self.schedule_task_with_lock,
+                                                task)
         while True:
             schedule.run_pending()
             time.sleep(1)
@@ -162,7 +158,9 @@ class ValidatorScheduler(BaseScheduler):
 
 
 @click.command()
-@click.option('--usage', type=click.Choice(['crawler', 'validator']), default='crawler')
+@click.option('--usage',
+              type=click.Choice(['crawler', 'validator']),
+              default='crawler')
 @click.argument('task_queues', nargs=-1)
 def scheduler_start(usage, task_queues):
     """Start specified scheduler."""
@@ -189,8 +187,9 @@ def scheduler_start(usage, task_queues):
             if not allow_task_queue:
                 # scheduler_logger.warning('scheduler task {} is an invalid task, the allowed tasks are {}'.format(
                 #     task_queue, list(maps.keys())))
-                print('scheduler task {} is an invalid task, the allowed tasks are {}'.format(
-                    task_queue, list(maps.keys())))
+                print(
+                    'scheduler task {} is an invalid task, the allowed tasks are {}'
+                    .format(task_queue, list(maps.keys())))
                 continue
             scheduler.task_queues.append(allow_task_queue)
 
@@ -199,7 +198,9 @@ def scheduler_start(usage, task_queues):
 
 
 @click.command()
-@click.option('--usage', type=click.Choice(['crawler', 'validator']), default='crawler')
+@click.option('--usage',
+              type=click.Choice(['crawler', 'validator']),
+              default='crawler')
 @click.argument('tasks', nargs=-1)
 def crawler_start(usage, tasks):
     """Start specified spiders or validators from cmd with scrapy core api.
@@ -243,7 +244,9 @@ def crawler_start(usage, tasks):
 
 @click.command()
 @click.option('--usage', default='https', help='Usage of squid')
-@click.option('--interval', default=TTL_VALIDATED_RESOURCE, help='Updating frenquency of squid conf.')
+@click.option('--interval',
+              default=TTL_VALIDATED_RESOURCE,
+              help='Updating frenquency of squid conf.')
 def squid_conf_update(usage, interval):
     """Timertask for updating proxies for squid config file"""
     # client_logger.info('the updating task is starting...')

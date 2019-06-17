@@ -5,7 +5,6 @@ import argparse
 
 from haipproxy.api import app
 
-
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--port", type=int, default=5000)

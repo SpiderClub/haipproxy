@@ -25,4 +25,3 @@ class FailLogger(object):
         else:
             spider.logger.error("Error on {0}, traceback: {1}".format(
                 response.url, failure.getTraceback()))
-

@@ -3,8 +3,7 @@ web api for haipproxy
 """
 import os
 
-from flask import (
-    Flask, jsonify as flask_jsonify)
+from flask import (Flask, jsonify as flask_jsonify)
 
 from ..client.py_cli import ProxyFetcher
 from ..config.rules import VALIDATOR_TASKS
@@ -19,7 +18,10 @@ def jsonify(*args, **kwargs):
 
 # web api uses robin strategy for proxy schedule, crawler client may implete
 # its own schedule strategy
-usage_registry = {task['name']: ProxyFetcher('task') for task in VALIDATOR_TASKS}
+usage_registry = {
+    task['name']: ProxyFetcher('task')
+    for task in VALIDATOR_TASKS
+}
 app = Flask(__name__)
 app.debug = bool(os.environ.get("DEBUG"))
 app.config["JSONIFY_PRETTYPRINT_REGULAR"] = True
@@ -27,18 +29,12 @@ app.config["JSONIFY_PRETTYPRINT_REGULAR"] = True
 
 @app.errorhandler(404)
 def not_found(e):
-    return jsonify({
-        'reason': 'resource not found',
-        'status_code': 404
-    })
+    return jsonify({'reason': 'resource not found', 'status_code': 404})
 
 
 @app.errorhandler(500)
 def not_found(e):
-    return jsonify({
-        'reason': 'internal server error',
-        'status_code': 500
-    })
+    return jsonify({'reason': 'internal server error', 'status_code': 500})
 
 
 @app.route("/proxy/get/<usage>")
@@ -48,11 +44,7 @@ def get_proxy(usage):
         usage = 'https'
     proxy_fetcher = usage_registry.get(usage)
     ip = proxy_fetcher.get_proxy()
-    return jsonify({
-        'proxy': ip,
-        'resource': usage,
-        'status_code': 200
-    })
+    return jsonify({'proxy': ip, 'resource': usage, 'status_code': 200})
 
 
 @app.route("/proxy/delete/<usage>/<proxy>")
@@ -61,10 +53,7 @@ def delete_proxy(usage, proxy):
         usage = 'https'
     proxy_fetcher = usage_registry.get(usage)
     proxy_fetcher.delete_proxy(proxy)
-    return jsonify({
-        'result': 'ok',
-        'status_code': 200
-    })
+    return jsonify({'result': 'ok', 'status_code': 200})
 
 
 @app.route("/pool/get/<usage>")

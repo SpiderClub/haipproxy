@@ -17,6 +17,5 @@ python scheduler_booter.py --usage validator https
 
 from haipproxy.scheduler import scheduler_start
 
-
 if __name__ == '__main__':
     scheduler_start()

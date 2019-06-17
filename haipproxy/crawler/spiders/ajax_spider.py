@@ -19,15 +19,13 @@ class AjaxSpider(BaseSpider, RedisAjaxSpider):
         infos = response.xpath('//tr')[1:]
         items = list()
         for info in infos:
-            proxy_detail = info.xpath('td[1]//*[name(.)!="p"]/text()').extract()
+            proxy_detail = info.xpath(
+                'td[1]//*[name(.)!="p"]/text()').extract()
             ip = "".join(proxy_detail[:-1])
             port = proxy_detail[-1]
             protocols = self.procotol_extractor(info.extract())
             for protocol in protocols:
-                items.append(ProxyUrlItem(url=self.construct_proxy_url(protocol, ip, port)))
+                items.append(
+                    ProxyUrlItem(
+                        url=self.construct_proxy_url(protocol, ip, port)))
         return items
-
-
-
-
-

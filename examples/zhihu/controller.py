@@ -8,10 +8,8 @@ from bs4 import BeautifulSoup as BS
 
 from haipproxy.utils import get_redis_conn
 from examples.zhihu.crawler import Crawler
-from examples.zhihu.configs import (
-    REDIS_HOST, REDIS_PORT,
-    REDIS_PASS, REDIS_DB
-)
+from examples.zhihu.configs import (REDIS_HOST, REDIS_PORT, REDIS_PASS,
+                                    REDIS_DB)
 
 per_page = 20
 info_max_process_num = 50
@@ -20,7 +18,6 @@ host = 'https://www.zhihu.com'
 waiting_set = 'zhihu:seeds:to_crawl'
 seeds_all = 'zhihu:seeds:all'
 info_set = 'zhihu:info:user'
-
 
 # Not considering concurrent security
 common_crawler = Crawler()
@@ -94,7 +91,8 @@ def get_followers(url_token, follower_count):
 
     results = []
     for page in range(1, sum_page + 1):
-        results.append(pool.apply_async(get_per_followers, (url_token, page, sum_page)))
+        results.append(
+            pool.apply_async(get_per_followers, (url_token, page, sum_page)))
     pool.close()
     pool.join()
 

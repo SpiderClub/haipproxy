@@ -18,6 +18,5 @@ python crawler_booter.py --usage validator init https
 """
 from haipproxy.scheduler import crawler_start
 
-
 if __name__ == '__main__':
     crawler_start()

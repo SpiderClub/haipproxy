@@ -3,7 +3,6 @@ from setuptools import setup
 
 import haipproxy
 
-
 this_directory = os_path.abspath(os_path.dirname(__file__))
 
 
@@ -14,8 +13,10 @@ def read_file(filename):
 
 
 def read_requirements(filename):
-    return [line.strip() for line in read_file(filename).splitlines()
-            if not line.startswith('#')]
+    return [
+        line.strip() for line in read_file(filename).splitlines()
+        if not line.startswith('#')
+    ]
 
 
 setup(
@@ -29,10 +30,7 @@ setup(
     author_email='resolvewang@foxmail.com',
     url='https://github.com/SpiderClub/haipproxy',
     packages=[
-        'haipproxy',
-        'haipproxy.client',
-        'haipproxy.config',
-        'haipproxy.utils'
+        'haipproxy', 'haipproxy.client', 'haipproxy.config', 'haipproxy.utils'
     ],
     install_requires=read_requirements('requirements-cli.txt'),
     include_package_data=True,

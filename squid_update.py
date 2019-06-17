@@ -14,6 +14,5 @@ sudo python squid_update.py
 
 from haipproxy.scheduler import squid_conf_update
 
-
 if __name__ == '__main__':
     squid_conf_update()

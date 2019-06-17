@@ -5,13 +5,9 @@ import time
 import threading
 
 from ..utils import get_redis_conn
-from ..config.rules import (
-    SCORE_MAPS, TTL_MAPS,
-    SPEED_MAPS)
-from ..config.settings import (
-    TTL_VALIDATED_RESOURCE, LONGEST_RESPONSE_TIME,
-    LOWEST_SCORE, LOWEST_TOTAL_PROXIES,
-    DATA_ALL)
+from ..config.rules import (SCORE_MAPS, TTL_MAPS, SPEED_MAPS)
+from ..config.settings import (TTL_VALIDATED_RESOURCE, LONGEST_RESPONSE_TIME,
+                               LOWEST_SCORE, LOWEST_TOTAL_PROXIES, DATA_ALL)
 from .core import IPFetcherMixin
 
 __all__ = ['ProxyFetcher']
@@ -89,11 +85,19 @@ class GreedyStrategy(Strategy):
 
 
 class ProxyFetcher(IPFetcherMixin):
-    def __init__(self, usage, strategy='robin', fast_response=5,
-                 score_map=SCORE_MAPS, ttl_map=TTL_MAPS, speed_map=SPEED_MAPS,
-                 longest_response_time=LONGEST_RESPONSE_TIME, lowest_score=LOWEST_SCORE,
-                 ttl_validated_resource=TTL_VALIDATED_RESOURCE, min_pool_size=LOWEST_TOTAL_PROXIES,
-                 all_data=DATA_ALL, redis_args=None):
+    def __init__(self,
+                 usage,
+                 strategy='robin',
+                 fast_response=5,
+                 score_map=SCORE_MAPS,
+                 ttl_map=TTL_MAPS,
+                 speed_map=SPEED_MAPS,
+                 longest_response_time=LONGEST_RESPONSE_TIME,
+                 lowest_score=LOWEST_SCORE,
+                 ttl_validated_resource=TTL_VALIDATED_RESOURCE,
+                 min_pool_size=LOWEST_TOTAL_PROXIES,
+                 all_data=DATA_ALL,
+                 redis_args=None):
         """
         :param usage: one of SCORE_MAPS's keys, such as https
         :param strategy: the load balance of proxy ip, the value is
@@ -115,8 +119,9 @@ class ProxyFetcher(IPFetcherMixin):
         score_queue = score_map.get(usage)
         ttl_queue = ttl_map.get(usage)
         speed_queue = speed_map.get(usage)
-        super().__init__(score_queue, ttl_queue, speed_queue, longest_response_time,
-                         lowest_score, ttl_validated_resource, min_pool_size)
+        super().__init__(score_queue, ttl_queue, speed_queue,
+                         longest_response_time, lowest_score,
+                         ttl_validated_resource, min_pool_size)
         self.strategy = strategy
         # pool is a FIFO queue
         self.pool = list()
@@ -161,8 +166,10 @@ class ProxyFetcher(IPFetcherMixin):
         """
         for handler in self.handlers:
             if handler.strategy == self.strategy:
-                handler.process_feedback(self.pool, res,
-                                         proxy, real=response_time,
+                handler.process_feedback(self.pool,
+                                         res,
+                                         proxy,
+                                         real=response_time,
                                          expected=self.fast_response)
 
     def refresh(self):

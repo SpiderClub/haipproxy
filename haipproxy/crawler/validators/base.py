@@ -3,13 +3,10 @@ Useful base class for all the validators.
 """
 import time
 
-from twisted.internet.error import (
-    TimeoutError, TCPTimedOutError)
+from twisted.internet.error import (TimeoutError, TCPTimedOutError)
 
 # from logger import crawler_logger
-from ..items import (
-    ProxyScoreItem, ProxyVerifiedTimeItem,
-    ProxySpeedItem)
+from ..items import (ProxyScoreItem, ProxyVerifiedTimeItem, ProxySpeedItem)
 
 
 class BaseValidator:
@@ -28,7 +25,6 @@ class BaseValidator:
         'ITEM_PIPELINES': {
             'haipproxy.crawler.pipelines.ProxyCommonPipeline': 200,
         }
-
     }
     use_set = True
     success_key = ''
@@ -74,7 +70,9 @@ class BaseValidator:
 
     def set_item_queue(self, url, proxy, score, incr, speed=0):
         score_item = ProxyScoreItem(url=proxy, score=score, incr=incr)
-        ttl_item = ProxyVerifiedTimeItem(url=proxy, verified_time=int(time.time()), incr=incr)
+        ttl_item = ProxyVerifiedTimeItem(url=proxy,
+                                         verified_time=int(time.time()),
+                                         incr=incr)
         speed_item = ProxySpeedItem(url=proxy, response_time=speed, incr=incr)
         score_item['queue'] = self.score_queue
         ttl_item['queue'] = self.ttl_queue

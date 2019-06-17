@@ -8,20 +8,15 @@ from json.decoder import JSONDecodeError
 
 import requests
 
-from haipproxy.config.rules import (
-    SPEED_MAPS, TTL_MAPS,
-    SCORE_MAPS, HTTP_TASKS,
-    HTTPS_TASKS)
-from haipproxy.config.settings import (
-    INIT_HTTP_QUEUE, TEMP_HTTP_QUEUE,
-    TEMP_HTTPS_QUEUE, VALIDATED_HTTP_QUEUE,
-    VALIDATED_HTTPS_QUEUE, TTL_HTTP_QUEUE,
-    TTL_HTTPS_QUEUE, SPEED_HTTP_QUEUE,
-    SPEED_HTTPS_QUEUE, ORIGIN_IP)
+from haipproxy.config.rules import (SPEED_MAPS, TTL_MAPS, SCORE_MAPS,
+                                    HTTP_TASKS, HTTPS_TASKS)
+from haipproxy.config.settings import (INIT_HTTP_QUEUE, TEMP_HTTP_QUEUE,
+                                       TEMP_HTTPS_QUEUE, VALIDATED_HTTP_QUEUE,
+                                       VALIDATED_HTTPS_QUEUE, TTL_HTTP_QUEUE,
+                                       TTL_HTTPS_QUEUE, SPEED_HTTP_QUEUE,
+                                       SPEED_HTTPS_QUEUE, ORIGIN_IP)
 from ..redis_spiders import ValidatorRedisSpider
-from ..items import (
-    ProxyScoreItem, ProxyVerifiedTimeItem,
-    ProxySpeedItem)
+from ..items import (ProxyScoreItem, ProxyVerifiedTimeItem, ProxySpeedItem)
 from .base import BaseValidator
 
 
@@ -69,8 +64,12 @@ class HttpBinInitValidator(BaseValidator, ValidatorRedisSpider):
         # todo set proxy to tmp_queue
         for task in tasks:
             score_item = ProxyScoreItem(url=proxy, score=score, incr=incr)
-            ttl_item = ProxyVerifiedTimeItem(url=proxy, verified_time=int(time.time()), incr=incr)
-            speed_item = ProxySpeedItem(url=proxy, response_time=speed, incr=incr)
+            ttl_item = ProxyVerifiedTimeItem(url=proxy,
+                                             verified_time=int(time.time()),
+                                             incr=incr)
+            speed_item = ProxySpeedItem(url=proxy,
+                                        response_time=speed,
+                                        incr=incr)
             score_item['queue'] = SCORE_MAPS.get(task)
             ttl_item['queue'] = TTL_MAPS.get(task)
             speed_item['queue'] = SPEED_MAPS.get(task)

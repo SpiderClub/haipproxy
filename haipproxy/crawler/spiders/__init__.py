@@ -49,14 +49,14 @@ from .gfw_spider import GFWSpider
 from .ajax_gfw_spider import AjaxGFWSpider
 from .base import BaseSpider
 
-
-__all__ = ['CommonSpider', 'AjaxSpider',
-           'GFWSpider', 'AjaxGFWSpider',
-           'BaseSpider', 'all_spiders']
-
-
-all_spiders = [
-    CommonSpider, AjaxSpider,
-    GFWSpider, AjaxGFWSpider,
+__all__ = [
+    'CommonSpider', 'AjaxSpider', 'GFWSpider', 'AjaxGFWSpider', 'BaseSpider',
+    'all_spiders'
 ]
 
+all_spiders = [
+    CommonSpider,
+    AjaxSpider,
+    GFWSpider,
+    AjaxGFWSpider,
+]

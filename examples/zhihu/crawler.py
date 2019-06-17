@@ -4,14 +4,10 @@ import requests
 from haipproxy.client import ProxyFetcher
 from haipproxy.utils import get_redis_conn
 
-from .configs import (
-    SCORE_MAPS, TTL_MAPS,
-    SPEED_MAPS, LONGEST_RESPONSE_TIME,
-    LOWEST_SCORE, TTL_VALIDATED_RESOURCE,
-    LOWEST_TOTAL_PROXIES, DATA_ALL,
-    TOTAL_SUCCESS_REQUESTS, REDIS_HOST,
-    REDIS_PORT, REDIS_PASS,
-    REDIS_DB)
+from .configs import (SCORE_MAPS, TTL_MAPS, SPEED_MAPS, LONGEST_RESPONSE_TIME,
+                      LOWEST_SCORE, TTL_VALIDATED_RESOURCE,
+                      LOWEST_TOTAL_PROXIES, DATA_ALL, TOTAL_SUCCESS_REQUESTS,
+                      REDIS_HOST, REDIS_PORT, REDIS_PASS, REDIS_DB)
 
 
 class Crawler:
@@ -19,7 +15,7 @@ class Crawler:
     success_req = TOTAL_SUCCESS_REQUESTS
     headers = {
         'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 '
-                      '(KHTML, like Gecko) Chrome/57.0.2987.133 Safari/537.36',
+        '(KHTML, like Gecko) Chrome/57.0.2987.133 Safari/537.36',
         'Host': 'www.zhihu.com'
     }
 
@@ -42,7 +38,6 @@ class Crawler:
         'min_pool_size': LOWEST_TOTAL_PROXIES,
         'all_data': DATA_ALL,
         'redis_args': redis_args
-
     }
 
     def __init__(self, retries=5):
@@ -61,19 +56,26 @@ class Crawler:
 
             try:
                 start = time.time() * 1000
-                resp = requests.get(url, headers=self.headers, proxies=proxy,
-                                    timeout=self.timeout, verify=False)
+                resp = requests.get(url,
+                                    headers=self.headers,
+                                    proxies=proxy,
+                                    timeout=self.timeout,
+                                    verify=False)
                 end = time.time() * 1000
                 if '安全验证' in resp.text:
                     if proxy:
-                        self.fetcher.proxy_feedback('failure', proxy.get(self.scheme))
-                    print('Current ip is blocked! The proxy is {}'.format(proxy))
+                        self.fetcher.proxy_feedback('failure',
+                                                    proxy.get(self.scheme))
+                    print(
+                        'Current ip is blocked! The proxy is {}'.format(proxy))
                     tries += 1
                     continue
                 else:
                     print('Request succeeded! The proxy is {}'.format(proxy))
                     # if you use greedy strategy, you must feedback
-                    self.fetcher.proxy_feedback('success', proxy.get(self.scheme), int(end - start))
+                    self.fetcher.proxy_feedback('success',
+                                                proxy.get(self.scheme),
+                                                int(end - start))
                     # not considering transaction
                     self.conn.incr(self.success_req, 1)
                     return resp.text

@@ -6,11 +6,8 @@ import time
 from scrapy.downloadermiddlewares.retry import RetryMiddleware
 from scrapy.utils.response import response_status_message
 
-from ..exceptions import (
-    HttpError, DownloadException
-)
-from ..config.settings import (
-    GFW_PROXY, USE_SENTRY)
+from ..exceptions import (HttpError, DownloadException)
+from ..config.settings import (GFW_PROXY, USE_SENTRY)
 from ..utils.err_trace import client
 from .user_agents import FakeChromeUA
 
@@ -60,7 +57,8 @@ class RequestEndProfileMiddleware(object):
 class ErrorTraceMiddleware(object):
     def process_response(self, request, response, spider):
         if response.status >= 400:
-            reason = 'error http code {} for {}'.format(response.status, request.url)
+            reason = 'error http code {} for {}'.format(
+                response.status, request.url)
             self._faillog(request, HttpError, reason, spider)
         return response
 
@@ -73,7 +71,8 @@ class ErrorTraceMiddleware(object):
             try:
                 raise exc
             except Exception:
-                message = 'error occurs when downloading {}'.format(request.url)
+                message = 'error occurs when downloading {}'.format(
+                    request.url)
                 client.captureException(message=message)
         else:
             print(reason)

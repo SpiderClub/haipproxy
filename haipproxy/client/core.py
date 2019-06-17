@@ -25,9 +25,11 @@ class IPFetcherMixin:
         pipe = conn.pipeline(False)
         pipe.zrevrangebyscore(self.score_queue, '+inf', self.lowest_score)
         pipe.zrevrangebyscore(self.ttl_queue, '+inf', start_time)
-        pipe.zrangebyscore(self.speed_queue, 0, 1000 * self.longest_response_time)
+        pipe.zrangebyscore(self.speed_queue, 0,
+                           1000 * self.longest_response_time)
         scored_proxies, ttl_proxies, speed_proxies = pipe.execute()
-        scored_proxies, ttl_proxies, speed_proxies = set(scored_proxies), set(ttl_proxies), set(speed_proxies)
+        scored_proxies, ttl_proxies, speed_proxies = set(scored_proxies), set(
+            ttl_proxies), set(speed_proxies)
 
         proxies = scored_proxies & ttl_proxies & speed_proxies
         if not proxies or len(proxies) < self.min_pool_size * 2:

@@ -6,6 +6,5 @@ in haipproxy.monitor.exporter
 """
 from haipproxy.monitor import exporter_start
 
-
 if __name__ == '__main__':
     exporter_start()

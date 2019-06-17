@@ -3,32 +3,31 @@ Spider rules.Scheduler will provide crawling tasks according to the rules and
 spiders will parse response content according to the rules.
 """
 from ..config.settings import (
-    SPIDER_COMMON_TASK, SPIDER_AJAX_TASK,
-    SPIDER_GFW_TASK, SPIDER_AJAX_GFW_TASK,
-    INIT_HTTP_QUEUE, VALIDATED_HTTP_QUEUE,
-    VALIDATED_HTTPS_QUEUE, TEMP_HTTP_QUEUE,
-    TEMP_HTTPS_QUEUE, TTL_HTTP_QUEUE,
-    TTL_HTTPS_QUEUE, SPEED_HTTPS_QUEUE,
-    SPEED_HTTP_QUEUE, TEMP_WEIBO_QUEUE,
-    VALIDATED_WEIBO_QUEUE, TTL_WEIBO_QUEUE,
-    SPEED_WEIBO_QUEUE, TEMP_ZHIHU_QUEUE,
-    VALIDATED_ZHIHU_QUEUE, TTL_ZHIHU_QUEUE,
+    SPIDER_COMMON_TASK, SPIDER_AJAX_TASK, SPIDER_GFW_TASK,
+    SPIDER_AJAX_GFW_TASK, INIT_HTTP_QUEUE, VALIDATED_HTTP_QUEUE,
+    VALIDATED_HTTPS_QUEUE, TEMP_HTTP_QUEUE, TEMP_HTTPS_QUEUE, TTL_HTTP_QUEUE,
+    TTL_HTTPS_QUEUE, SPEED_HTTPS_QUEUE, SPEED_HTTP_QUEUE, TEMP_WEIBO_QUEUE,
+    VALIDATED_WEIBO_QUEUE, TTL_WEIBO_QUEUE, SPEED_WEIBO_QUEUE,
+    TEMP_ZHIHU_QUEUE, VALIDATED_ZHIHU_QUEUE, TTL_ZHIHU_QUEUE,
     SPEED_ZHIHU_QUEUE)
 
-
-__all__ = ['CRAWLER_TASKS', 'VALIDATOR_TASKS', 'CRAWLER_TASK_MAPS',
-           'TEMP_TASK_MAPS', 'SCORE_MAPS', 'TTL_MAPS',
-           'SPEED_MAPS']
-
+__all__ = [
+    'CRAWLER_TASKS', 'VALIDATOR_TASKS', 'CRAWLER_TASK_MAPS', 'TEMP_TASK_MAPS',
+    'SCORE_MAPS', 'TTL_MAPS', 'SPEED_MAPS'
+]
 
 CRAWLER_TASKS = [
     {
-        'name': 'xicidaili.com',
-        'resource': ['http://www.xicidaili.com/nn/%s' % i for i in range(1, 6)] +
-                    ['http://www.xicidaili.com/wn/%s' % i for i in range(1, 6)] +
-                    ['http://www.xicidaili.com/wt/%s' % i for i in range(1, 6)],
-        'task_queue': SPIDER_COMMON_TASK,
-        'parse_type': 'common',
+        'name':
+        'xicidaili.com',
+        'resource':
+        ['http://www.xicidaili.com/nn/%s' % i for i in range(1, 6)] +
+        ['http://www.xicidaili.com/wn/%s' % i for i in range(1, 6)] +
+        ['http://www.xicidaili.com/wt/%s' % i for i in range(1, 6)],
+        'task_queue':
+        SPIDER_COMMON_TASK,
+        'parse_type':
+        'common',
         'parse_rule': {
             'pre_extract_method': 'xpath',
             'pre_extract': '//tr',
@@ -41,15 +40,21 @@ CRAWLER_TASKS = [
             'split_detail': False,
             'protocols': None
         },
-        'interval': 60,
-        'enable': 1
+        'interval':
+        60,
+        'enable':
+        1
     },
     {
-        'name': 'kuaidaili.com',
-        'resource': ['https://www.kuaidaili.com/free/inha/%s' % i for i in range(1, 6)] +
-                    ['https://www.kuaidaili.com/proxylist/%s' % i for i in range(1, 11)],
-        'task_queue': SPIDER_COMMON_TASK,
-        'parse_type': 'common',
+        'name':
+        'kuaidaili.com',
+        'resource':
+        ['https://www.kuaidaili.com/free/inha/%s' % i for i in range(1, 6)] +
+        ['https://www.kuaidaili.com/proxylist/%s' % i for i in range(1, 11)],
+        'task_queue':
+        SPIDER_COMMON_TASK,
+        'parse_type':
+        'common',
         'parse_rule': {
             'pre_extract_method': 'xpath',
             'pre_extract': '//tr',
@@ -62,16 +67,22 @@ CRAWLER_TASKS = [
             'split_detail': False,
             'protocols': None
         },
-        'interval': 60,
-        'enable': 1
+        'interval':
+        60,
+        'enable':
+        1
     },
     {
-        'name': 'kxdaili.com',
+        'name':
+        'kxdaili.com',
         'resource': [
-            'http://www.kxdaili.com/dailiip/%s/%s.html#ip' % (i, j) for i in range(1, 3) for j in range(1, 11)
+            'http://www.kxdaili.com/dailiip/%s/%s.html#ip' % (i, j)
+            for i in range(1, 3) for j in range(1, 11)
         ],
-        'task_queue': SPIDER_COMMON_TASK,
-        'parse_type': 'common',
+        'task_queue':
+        SPIDER_COMMON_TASK,
+        'parse_type':
+        'common',
         'parse_rule': {
             'pre_extract_method': 'xpath',
             'pre_extract': '//tr',
@@ -84,8 +95,10 @@ CRAWLER_TASKS = [
             'split_detail': False,
             'protocols': None
         },
-        'interval': 60,
-        'enable': 1
+        'interval':
+        60,
+        'enable':
+        1
     },
     {
         'name': 'mrhinkydink.com',
@@ -108,12 +121,16 @@ CRAWLER_TASKS = [
         'enable': 1,
     },
     {
-        'name': 'nianshao.me',
-        'resource': ['http://www.nianshao.me/?stype=1&page=%s' % i for i in range(1, 11)] +
-                    ['http://www.nianshao.me/?stype=2&page=%s' % i for i in range(1, 11)] +
-                    ['http://www.nianshao.me/?stype=5&page=%s' % i for i in range(1, 11)],
-        'task_queue': SPIDER_COMMON_TASK,
-        'parse_type': 'common',
+        'name':
+        'nianshao.me',
+        'resource':
+        ['http://www.nianshao.me/?stype=1&page=%s' % i for i in range(1, 11)] +
+        ['http://www.nianshao.me/?stype=2&page=%s' % i for i in range(1, 11)] +
+        ['http://www.nianshao.me/?stype=5&page=%s' % i for i in range(1, 11)],
+        'task_queue':
+        SPIDER_COMMON_TASK,
+        'parse_type':
+        'common',
         'parse_rule': {
             'pre_extract_method': 'xpath',
             'pre_extract': '//tr',
@@ -126,16 +143,22 @@ CRAWLER_TASKS = [
             'split_detail': False,
             'protocols': None
         },
-        'interval': 60,
-        'enable': 1  # it seems the website is down
+        'interval':
+        60,
+        'enable':
+        1  # it seems the website is down
     },
     {
-        'name': '66ip.cn',
-        'resource': ['http://www.66ip.cn/%s.html' % i for i in range(1, 3)] +
-                    ['http://www.66ip.cn/areaindex_%s/%s.html' % (i, j)
-                     for i in range(1, 35) for j in range(1, 3)],
-        'task_queue': SPIDER_COMMON_TASK,
-        'parse_type': 'common',
+        'name':
+        '66ip.cn',
+        'resource': ['http://www.66ip.cn/%s.html' % i for i in range(1, 3)] + [
+            'http://www.66ip.cn/areaindex_%s/%s.html' % (i, j)
+            for i in range(1, 35) for j in range(1, 3)
+        ],
+        'task_queue':
+        SPIDER_COMMON_TASK,
+        'parse_type':
+        'common',
         'parse_rule': {
             'pre_extract_method': 'xpath',
             'pre_extract': '//tr',
@@ -148,8 +171,10 @@ CRAWLER_TASKS = [
             'split_detail': False,
             'protocols': None
         },
-        'interval': 2 * 60,
-        'enable': 1
+        'interval':
+        2 * 60,
+        'enable':
+        1
     },
     {
         'name': 'baizhongsou.com',
@@ -172,14 +197,17 @@ CRAWLER_TASKS = [
         'enable': 1
     },
     {
-        'name': 'data5u.com',
+        'name':
+        'data5u.com',
         'resource': [
             'http://www.data5u.com/free/index.shtml',
             'http://www.data5u.com/free/gngn/index.shtml',
             'http://www.data5u.com/free/gwgn/index.shtml'
         ],
-        'task_queue': SPIDER_COMMON_TASK,
-        'parse_type': 'common',
+        'task_queue':
+        SPIDER_COMMON_TASK,
+        'parse_type':
+        'common',
         'parse_rule': {
             'pre_extract_method': 'xpath',
             'pre_extract': '//ul[contains(@class, "l2")]',
@@ -192,15 +220,20 @@ CRAWLER_TASKS = [
             'split_detail': False,
             'protocols': None
         },
-        'interval': 10,
-        'enable': 1,
+        'interval':
+        10,
+        'enable':
+        1,
     },
     {
-        'name': 'ip181.com',
+        'name':
+        'ip181.com',
         'resource': ['http://www.ip181.com/'] +
-                    ['http://www.ip181.com/daili/%s.html' % i for i in range(1, 20)],
-        'task_queue': SPIDER_COMMON_TASK,
-        'parse_type': 'common',
+        ['http://www.ip181.com/daili/%s.html' % i for i in range(1, 20)],
+        'task_queue':
+        SPIDER_COMMON_TASK,
+        'parse_type':
+        'common',
         'parse_rule': {
             'pre_extract_method': 'xpath',
             'pre_extract': '//tr',
@@ -213,41 +246,54 @@ CRAWLER_TASKS = [
             'split_detail': False,
             'protocols': None
         },
-        'interval': 10,
-        'enable': 1,
+        'interval':
+        10,
+        'enable':
+        1,
     },
     {
-        'name': 'ip3366.net',
-        'resource': ['http://www.ip3366.net/free/?stype=1&page=%s' % i for i in range(1, 3)] +
-                    ['http://www.ip3366.net/free/?stype=3&page=%s' % i for i in range(1, 3)],
-        'task_queue': SPIDER_COMMON_TASK,
-        'parse_type': 'common',
-        'parse_rule': {
-            'pre_extract_method': 'xpath',
-            'pre_extract': '//tr',
-            'infos_pos': 1,
-            'infos_end': None,
-            'detail_rule': 'td::text',
-            'ip_pos': 0,
-            'port_pos': 1,
-            'extract_protocol': True,
-            'split_detail': False,
-            'protocols': None
-        },
-        'interval': 30,
-        'enable': 1
-    },
-    {
-        'name': 'iphai.com',
+        'name':
+        'ip3366.net',
         'resource': [
-            'http://www.iphai.com/free/ng',
-            'http://www.iphai.com/free/wg',
-            'http://www.iphai.com/free/np',
-            'http://www.iphai.com/free/wp',
+            'http://www.ip3366.net/free/?stype=1&page=%s' % i
+            for i in range(1, 3)
+        ] + [
+            'http://www.ip3366.net/free/?stype=3&page=%s' % i
+            for i in range(1, 3)
+        ],
+        'task_queue':
+        SPIDER_COMMON_TASK,
+        'parse_type':
+        'common',
+        'parse_rule': {
+            'pre_extract_method': 'xpath',
+            'pre_extract': '//tr',
+            'infos_pos': 1,
+            'infos_end': None,
+            'detail_rule': 'td::text',
+            'ip_pos': 0,
+            'port_pos': 1,
+            'extract_protocol': True,
+            'split_detail': False,
+            'protocols': None
+        },
+        'interval':
+        30,
+        'enable':
+        1
+    },
+    {
+        'name':
+        'iphai.com',
+        'resource': [
+            'http://www.iphai.com/free/ng', 'http://www.iphai.com/free/wg',
+            'http://www.iphai.com/free/np', 'http://www.iphai.com/free/wp',
             'http://www.iphai.com/'
         ],
-        'task_queue': SPIDER_COMMON_TASK,
-        'parse_type': 'common',
+        'task_queue':
+        SPIDER_COMMON_TASK,
+        'parse_type':
+        'common',
         'parse_rule': {
             'pre_extract_method': 'xpath',
             'pre_extract': '//tr',
@@ -260,15 +306,23 @@ CRAWLER_TASKS = [
             'split_detail': False,
             'protocols': None
         },
-        'interval': 60,
-        'enable': 1,
+        'interval':
+        60,
+        'enable':
+        1,
     },
     {
-        'name': 'swei360.com',
-        'resource': ['http://www.swei360.com/free/?page=%s' % i for i in range(1, 4)] +
-                    ['http://www.swei360.com/free/?stype=3&page=%s' % i for i in range(1, 4)],
-        'task_queue': SPIDER_COMMON_TASK,
-        'parse_type': 'common',
+        'name':
+        'swei360.com',
+        'resource':
+        ['http://www.swei360.com/free/?page=%s' % i for i in range(1, 4)] + [
+            'http://www.swei360.com/free/?stype=3&page=%s' % i
+            for i in range(1, 4)
+        ],
+        'task_queue':
+        SPIDER_COMMON_TASK,
+        'parse_type':
+        'common',
         'parse_rule': {
             'pre_extract_method': 'xpath',
             'pre_extract': '//tr',
@@ -281,19 +335,24 @@ CRAWLER_TASKS = [
             'split_detail': False,
             'protocols': None
         },
-        'interval': 30,
-        'enable': 1,
+        'interval':
+        30,
+        'enable':
+        1,
     },
     {
-        'name': 'yundaili.com',
+        'name':
+        'yundaili.com',
         'resource': [
             'http://www.yun-daili.com/free.asp?stype=1',
             'http://www.yun-daili.com/free.asp?stype=2',
             'http://www.yun-daili.com/free.asp?stype=3',
             'http://www.yun-daili.com/free.asp?stype=4',
         ],
-        'task_queue': SPIDER_COMMON_TASK,
-        'parse_type': 'common',
+        'task_queue':
+        SPIDER_COMMON_TASK,
+        'parse_type':
+        'common',
         'parse_rule': {
             'pre_extract_method': 'xpath',
             'pre_extract': '//tr[contains(@class, "odd")]',
@@ -306,8 +365,10 @@ CRAWLER_TASKS = [
             'split_detail': False,
             'protocols': None
         },
-        'interval': 6 * 60,
-        'enable': 1,
+        'interval':
+        6 * 60,
+        'enable':
+        1,
     },
     {
         'name': 'ab57.ru',
@@ -338,20 +399,24 @@ CRAWLER_TASKS = [
         'enable': 1,
     },
     {
-        'name': 'my-proxy.com',
+        'name':
+        'my-proxy.com',
         'resource': [
             'https://www.my-proxy.com/free-elite-proxy.html',
             'https://www.my-proxy.com/free-anonymous-proxy.html',
             'https://www.my-proxy.com/free-socks-4-proxy.html',
             'https://www.my-proxy.com/free-socks-5-proxy.html'
         ],
-        'task_queue': SPIDER_COMMON_TASK,
+        'task_queue':
+        SPIDER_COMMON_TASK,
         # if the parse method is specified, set it in the Spider's parser_maps
-        'parse_type': 'myproxy',
-        'interval': 60,
-        'enable': 1,
+        'parse_type':
+        'myproxy',
+        'interval':
+        60,
+        'enable':
+        1,
     },
-
     {
         'name': 'us-proxy.org',
         'resource': ['https://www.us-proxy.org/'],
@@ -415,13 +480,16 @@ CRAWLER_TASKS = [
         'enable': 1,
     },
     {
-        'name': 'atomintersoft.com',
+        'name':
+        'atomintersoft.com',
         'resource': [
             'http://www.atomintersoft.com/high_anonymity_elite_proxy_list',
             'http://www.atomintersoft.com/anonymous_proxy_list',
         ],
-        'task_queue': SPIDER_COMMON_TASK,
-        'parse_type': 'common',
+        'task_queue':
+        SPIDER_COMMON_TASK,
+        'parse_type':
+        'common',
         'parse_rule': {
             'pre_extract_method': 'xpath',
             'pre_extract': '//tr',
@@ -434,14 +502,14 @@ CRAWLER_TASKS = [
             'split_detail': True,
             'protocols': None
         },
-        'interval': 60,
-        'enable': 1,
+        'interval':
+        60,
+        'enable':
+        1,
     },
     {
         'name': 'rmccurdy.com',
-        'resource': [
-            'https://www.rmccurdy.com/scripts/proxy/good.txt'
-        ],
+        'resource': ['https://www.rmccurdy.com/scripts/proxy/good.txt'],
         'task_queue': SPIDER_COMMON_TASK,
         'parse_type': 'text',
         'parse_rule': {
@@ -455,20 +523,37 @@ CRAWLER_TASKS = [
     },
     {
         # there are some problems using crawlspider, so we use basic spider
-        'name': 'coderbusy.com',
-        'resource': ['https://proxy.coderbusy.com/'] +
-                    ['https://proxy.coderbusy.com/classical/https-ready.aspx?page=%s' % i for i in range(1, 21)] +
-                    ['https://proxy.coderbusy.com/classical/post-ready.aspx?page=%s' % i for i in range(1, 21)] +
-                    ['https://proxy.coderbusy.com/classical/anonymous-type/anonymous.aspx?page=%s'
-                     % i for i in range(1, 6)] +
-                    ['https://proxy.coderbusy.com/classical/anonymous-type/highanonymous.aspx?page=%s'
-                     % i for i in range(1, 6)] +
-                    ['https://proxy.coderbusy.com/classical/country/cn.aspx?page=%s' % i for i in range(1, 21)] +
-                    ['https://proxy.coderbusy.com/classical/country/us.aspx?page=%s' % i for i in range(1, 11)] +
-                    ['https://proxy.coderbusy.com/classical/country/id.aspx?page=%s' % i for i in range(1, 6)] +
-                    ['https://proxy.coderbusy.com/classical/country/ru.aspx?page=%s' % i for i in range(1, 6)],
-        'task_queue': SPIDER_AJAX_TASK,
-        'parse_type': 'common',
+        'name':
+        'coderbusy.com',
+        'resource': ['https://proxy.coderbusy.com/'] + [
+            'https://proxy.coderbusy.com/classical/https-ready.aspx?page=%s' %
+            i for i in range(1, 21)
+        ] + [
+            'https://proxy.coderbusy.com/classical/post-ready.aspx?page=%s' % i
+            for i in range(1, 21)
+        ] + [
+            'https://proxy.coderbusy.com/classical/anonymous-type/anonymous.aspx?page=%s'
+            % i for i in range(1, 6)
+        ] + [
+            'https://proxy.coderbusy.com/classical/anonymous-type/highanonymous.aspx?page=%s'
+            % i for i in range(1, 6)
+        ] + [
+            'https://proxy.coderbusy.com/classical/country/cn.aspx?page=%s' % i
+            for i in range(1, 21)
+        ] + [
+            'https://proxy.coderbusy.com/classical/country/us.aspx?page=%s' % i
+            for i in range(1, 11)
+        ] + [
+            'https://proxy.coderbusy.com/classical/country/id.aspx?page=%s' % i
+            for i in range(1, 6)
+        ] + [
+            'https://proxy.coderbusy.com/classical/country/ru.aspx?page=%s' % i
+            for i in range(1, 6)
+        ],
+        'task_queue':
+        SPIDER_AJAX_TASK,
+        'parse_type':
+        'common',
         'parse_rule': {
             'pre_extract_method': 'xpath',
             'pre_extract': '//tr',
@@ -481,12 +566,15 @@ CRAWLER_TASKS = [
             'split_detail': False,
             'protocols': None
         },
-        'interval': 2 * 60,
-        'enable': 1,
+        'interval':
+        2 * 60,
+        'enable':
+        1,
     },
     {
         'name': 'proxydb.net',
-        'resource': ['http://proxydb.net/?offset=%s' % (15 * i) for i in range(20)],
+        'resource':
+        ['http://proxydb.net/?offset=%s' % (15 * i) for i in range(20)],
         'task_queue': SPIDER_AJAX_TASK,
         'parse_type': 'common',
         'parse_rule': {
@@ -497,11 +585,16 @@ CRAWLER_TASKS = [
         'enable': 1,
     },
     {
-        'name': 'cool-proxy.net',
-        'resource': ['https://www.cool-proxy.net/proxies/http_proxy_list/country_code:/port:/anonymous:1/page:%s'
-                     % i for i in range(1, 11)],
-        'task_queue': SPIDER_AJAX_TASK,
-        'parse_type': 'common',
+        'name':
+        'cool-proxy.net',
+        'resource': [
+            'https://www.cool-proxy.net/proxies/http_proxy_list/country_code:/port:/anonymous:1/page:%s'
+            % i for i in range(1, 11)
+        ],
+        'task_queue':
+        SPIDER_AJAX_TASK,
+        'parse_type':
+        'common',
         'parse_rule': {
             'pre_extract_method': 'xpath',
             'pre_extract': '//tr',
@@ -514,8 +607,10 @@ CRAWLER_TASKS = [
             'split_detail': False,
             'protocols': None
         },
-        'interval': 30,
-        'enable': 1,
+        'interval':
+        30,
+        'enable':
+        1,
     },
     {
         'name': 'goubanjia.com',
@@ -527,10 +622,8 @@ CRAWLER_TASKS = [
     },
     {
         'name': 'cn-proxy.com',
-        'resource': [
-            'http://cn-proxy.com/',
-            'http://cn-proxy.com/archives/218'
-        ],
+        'resource':
+        ['http://cn-proxy.com/', 'http://cn-proxy.com/archives/218'],
         'task_queue': SPIDER_GFW_TASK,
         'parse_type': 'common',
         'parse_rule': {
@@ -549,14 +642,17 @@ CRAWLER_TASKS = [
         'enable': 1,
     },
     {
-        'name': 'free-proxy-list.net',
+        'name':
+        'free-proxy-list.net',
         'resource': [
             'https://free-proxy-list.net/',
             'https://free-proxy-list.net/uk-proxy.html',
             'https://free-proxy-list.net/anonymous-proxy.html',
         ],
-        'task_queue': SPIDER_GFW_TASK,
-        'parse_type': 'common',
+        'task_queue':
+        SPIDER_GFW_TASK,
+        'parse_type':
+        'common',
         'parse_rule': {
             'pre_extract_method': 'xpath',
             'pre_extract': '//tbody//tr',
@@ -569,26 +665,38 @@ CRAWLER_TASKS = [
             'split_detail': False,
             'protocols': None
         },
-        'interval': 60,
-        'enable': 1,
+        'interval':
+        60,
+        'enable':
+        1,
     },
     {
-        'name': 'xroxy',
-        'resource': ['http://www.xroxy.com/proxylist.php?port=&type=&ssl=&country=&latency=&reliability=&'
-                     'sort=reliability&desc=true&pnum=%s#table' % i for i in range(20)],
-        'task_queue': SPIDER_GFW_TASK,
-        'parse_type': 'xroxy',
-        'interval': 60,
-        'enable': 1,
+        'name':
+        'xroxy',
+        'resource': [
+            'http://www.xroxy.com/proxylist.php?port=&type=&ssl=&country=&latency=&reliability=&'
+            'sort=reliability&desc=true&pnum=%s#table' % i for i in range(20)
+        ],
+        'task_queue':
+        SPIDER_GFW_TASK,
+        'parse_type':
+        'xroxy',
+        'interval':
+        60,
+        'enable':
+        1,
     },
     {
-        'name': 'proxylistplus',
+        'name':
+        'proxylistplus',
         'resource': [
             'http://list.proxylistplus.com/Fresh-HTTP-Proxy-List-1',
             'http://list.proxylistplus.com/SSL-List-1'
         ],
-        'task_queue': SPIDER_GFW_TASK,
-        'parse_type': 'common',
+        'task_queue':
+        SPIDER_GFW_TASK,
+        'parse_type':
+        'common',
         'parse_rule': {
             'pre_extract_method': 'xpath',
             'pre_extract': '//tr[contains(@class, "cells")]',
@@ -601,31 +709,53 @@ CRAWLER_TASKS = [
             'split_detail': False,
             'protocols': None
         },
-        'interval': 3 * 60,
-        'enable': 1,
+        'interval':
+        3 * 60,
+        'enable':
+        1,
     },
     {
-        'name': 'cnproxy.com',
-        'resource': ['http://www.cnproxy.com/proxy%s.html' % i for i in range(1, 11)] +
-                    ['http://www.cnproxy.com/proxyedu%s.html' % i for i in range(1, 3)],
-        'task_queue': SPIDER_AJAX_GFW_TASK,
-        'parse_type': 'cnproxy',
-        'interval': 60,
-        'enable': 1,
+        'name':
+        'cnproxy.com',
+        'resource':
+        ['http://www.cnproxy.com/proxy%s.html' % i for i in range(1, 11)] +
+        ['http://www.cnproxy.com/proxyedu%s.html' % i for i in range(1, 3)],
+        'task_queue':
+        SPIDER_AJAX_GFW_TASK,
+        'parse_type':
+        'cnproxy',
+        'interval':
+        60,
+        'enable':
+        1,
     },
     {
-        'name': 'free-proxy.cz',
-        'resource': ['http://free-proxy.cz/en/proxylist/main/%s' % i for i in range(1, 30)],
-        'task_queue': SPIDER_AJAX_GFW_TASK,
-        'parse_type': 'free-proxy',
-        'interval': 3 * 60,
-        'enable': 1,
+        'name':
+        'free-proxy.cz',
+        'resource': [
+            'http://free-proxy.cz/en/proxylist/main/%s' % i
+            for i in range(1, 30)
+        ],
+        'task_queue':
+        SPIDER_AJAX_GFW_TASK,
+        'parse_type':
+        'free-proxy',
+        'interval':
+        3 * 60,
+        'enable':
+        1,
     },
     {
-        'name': 'proxy-list.org',
-        'resource': ['https://proxy-list.org/english/index.php?p=%s' % i for i in range(1, 11)],
-        'task_queue': SPIDER_AJAX_GFW_TASK,
-        'parse_type': 'common',
+        'name':
+        'proxy-list.org',
+        'resource': [
+            'https://proxy-list.org/english/index.php?p=%s' % i
+            for i in range(1, 11)
+        ],
+        'task_queue':
+        SPIDER_AJAX_GFW_TASK,
+        'parse_type':
+        'common',
         'parse_rule': {
             'pre_extract_method': 'css',
             'pre_extract': '.table ul',
@@ -638,11 +768,14 @@ CRAWLER_TASKS = [
             'split_detail': True,
             'protocols': None
         },
-        'interval': 60,
-        'enable': 1,
+        'interval':
+        60,
+        'enable':
+        1,
     },
     {
-        'name': 'gatherproxy',
+        'name':
+        'gatherproxy',
         'resource': [
             'http://www.gatherproxy.com/',
             'http://www.gatherproxy.com/proxylist/anonymity/?t=Elite',
@@ -658,8 +791,10 @@ CRAWLER_TASKS = [
             'http://www.gatherproxy.com/proxylist/port/80',
             'http://www.gatherproxy.com/proxylist/port/8118'
         ],
-        'task_queue': SPIDER_AJAX_GFW_TASK,
-        'parse_type': 'common',
+        'task_queue':
+        SPIDER_AJAX_GFW_TASK,
+        'parse_type':
+        'common',
         'parse_rule': {
             'pre_extract_method': 'xpath',
             'pre_extract': '//tr',
@@ -672,8 +807,10 @@ CRAWLER_TASKS = [
             'split_detail': False,
             'protocols': None
         },
-        'interval': 60,
-        'enable': 1,
+        'interval':
+        60,
+        'enable':
+        1,
     },
 ]
 
@@ -755,4 +892,3 @@ SPEED_MAPS = {
     'weibo': SPEED_WEIBO_QUEUE,
     'zhihu': SPEED_ZHIHU_QUEUE
 }
-

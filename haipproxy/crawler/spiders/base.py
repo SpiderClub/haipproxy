@@ -16,7 +16,7 @@ class BaseSpider:
         'DOWNLOAD_DELAY': 3,
         'EXTENSIONS': {
             'haipproxy.crawler.extensions.FailLogger': 500,
-         },
+        },
         'DOWNLOADER_MIDDLEWARES': {
             'haipproxy.crawler.middlewares.ErrorTraceMiddleware': 200,
         },
@@ -48,10 +48,17 @@ class BaseSpider:
         for item in items:
             yield item
 
-    def parse_common(self, response, pre_extract_method='xpath',
-                     pre_extract='//tr', infos_pos=1, infos_end=None,
-                     detail_rule='td::text', ip_pos=0, port_pos=1,
-                     extract_protocol=True, split_detail=False,
+    def parse_common(self,
+                     response,
+                     pre_extract_method='xpath',
+                     pre_extract='//tr',
+                     infos_pos=1,
+                     infos_end=None,
+                     detail_rule='td::text',
+                     ip_pos=0,
+                     port_pos=1,
+                     extract_protocol=True,
+                     split_detail=False,
                      protocols=None):
         """
         Common response parser
@@ -97,7 +104,9 @@ class BaseSpider:
                 cur_protocols = self.default_protocols
 
             for protocol in cur_protocols:
-                items.append(ProxyUrlItem(url=self.construct_proxy_url(protocol, ip, port)))
+                items.append(
+                    ProxyUrlItem(
+                        url=self.construct_proxy_url(protocol, ip, port)))
 
         return items
 
@@ -123,11 +132,18 @@ class BaseSpider:
 
             protocols = self.procotol_extractor(str(info))
             for protocol in protocols:
-                items.append(ProxyUrlItem(url=self.construct_proxy_url(protocol, ip, port)))
+                items.append(
+                    ProxyUrlItem(
+                        url=self.construct_proxy_url(protocol, ip, port)))
 
         return items
 
-    def parse_raw_text(self, response, pre_extract=None, delimiter='\r\n', redundancy=None, protocols=None):
+    def parse_raw_text(self,
+                       response,
+                       pre_extract=None,
+                       delimiter='\r\n',
+                       redundancy=None,
+                       protocols=None):
         """
         Raw response parser
         :param response: scrapy response
@@ -158,7 +174,9 @@ class BaseSpider:
             protocols = self.default_protocols if not protocols else protocols
 
             for protocol in protocols:
-                items.append(ProxyUrlItem(url=self.construct_proxy_url(protocol, ip, port)))
+                items.append(
+                    ProxyUrlItem(
+                        url=self.construct_proxy_url(protocol, ip, port)))
         return items
 
     def procotol_extractor(self, detail):

@@ -34,5 +34,7 @@ class CommonSpider(BaseSpider, RedisSpider):
             ip, port = info.split(':')
             protocols = self.default_protocols if not protocols else protocols
             for protocol in protocols:
-                items.append(ProxyUrlItem(url=self.construct_proxy_url(protocol, ip, port)))
+                items.append(
+                    ProxyUrlItem(
+                        url=self.construct_proxy_url(protocol, ip, port)))
         return items

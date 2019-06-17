@@ -4,20 +4,19 @@ This module provides basic distributed spider, inspired by scrapy-redis
 from scrapy import signals
 from scrapy.http import Request
 from scrapy.exceptions import DontCloseSpider
-from scrapy.spiders import (
-    Spider, CrawlSpider)
+from scrapy.spiders import (Spider, CrawlSpider)
 from scrapy_splash.request import SplashRequest
 # from scrapy.utils.log import configure_logging
 
 # from logger import crawler_logger
 from ..utils import get_redis_conn
-from ..config.settings import (
-    VALIDATOR_FEED_SIZE, SPIDER_FEED_SIZE)
-
+from ..config.settings import (VALIDATOR_FEED_SIZE, SPIDER_FEED_SIZE)
 
 # configure_logging(install_root_handler=True)
-__all__ = ['RedisSpider', 'RedisAjaxSpider',
-           'RedisCrawlSpider', 'ValidatorRedisSpider']
+__all__ = [
+    'RedisSpider', 'RedisAjaxSpider', 'RedisCrawlSpider',
+    'ValidatorRedisSpider'
+]
 
 
 class RedisMixin(object):
@@ -122,8 +121,10 @@ class ValidatorRedisSpider(RedisSpider):
                 break
             proxy_url = data.decode()
             for url in self.urls:
-                req = Request(url, meta={'proxy': proxy_url},
-                              callback=self.parse, errback=self.parse_error)
+                req = Request(url,
+                              meta={'proxy': proxy_url},
+                              callback=self.parse,
+                              errback=self.parse_error)
                 yield req
                 found += 1
         # crawler_logger.info('Read {} ip proxies from {}'.format(found, task_queue))

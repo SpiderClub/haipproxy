@@ -30,7 +30,6 @@ SPLASH_URL = 'http://127.0.0.1:8050'
 RETRY_ENABLED = False
 TELNETCONSOLE_ENABLED = False
 
-
 UserAgentMiddleware = 'haipproxy.crawler.middlewares.UserAgentMiddleware'
 ProxyMiddleware = 'haipproxy.crawler.middlewares.ProxyMiddleware'
 DOWNLOADER_MIDDLEWARES = {
@@ -39,7 +38,8 @@ DOWNLOADER_MIDDLEWARES = {
     'scrapy_splash.SplashCookiesMiddleware': 723,
     # it should be prior to HttpProxyMiddleware
     'scrapy_splash.SplashMiddleware': 725,
-    'scrapy.downloadermiddlewares.httpcompression.HttpCompressionMiddleware': 810,
+    'scrapy.downloadermiddlewares.httpcompression.HttpCompressionMiddleware':
+    810,
 }
 
 SPIDER_MIDDLEWARES = {
@@ -49,7 +49,6 @@ SPIDER_MIDDLEWARES = {
 # scrapy log settings
 LOG_LEVEL = 'DEBUG'
 # LOG_FILE = 'logs/haipproxy.log'
-
 
 #####################################################################
 # Custom settings of this project
