@@ -23,20 +23,6 @@ __all__ = ['CRAWLER_TASKS', 'VALIDATOR_TASKS', 'CRAWLER_TASK_MAPS',
 
 CRAWLER_TASKS = [
     {
-        # now we can't get proxies from it,but it required by ip181
-        'name': 'xdaili.cn',
-        'resource': ['http://www.xdaili.cn:80/ipagent/freeip/getFreeIps?page=1&rows=10'],
-        'task_queue': SPIDER_COMMON_TASK,
-        'parse_type': 'json',
-        'parse_rule': {
-            'detail_rule': ['RESULT'],
-            'ip_key': 'ip',
-            'port_key': 'port',
-        },
-        'interval': 10,
-        'enable': 0,
-    },
-    {
         'name': 'xicidaili.com',
         'resource': ['http://www.xicidaili.com/nn/%s' % i for i in range(1, 6)] +
                     ['http://www.xicidaili.com/wn/%s' % i for i in range(1, 6)] +
@@ -208,27 +194,6 @@ CRAWLER_TASKS = [
         },
         'interval': 10,
         'enable': 1,
-    },
-    {
-        # can not access
-        'name': 'httpsdaili.com',
-        'resource': ['http://www.httpsdaili.com/?stype=1&page=%s' % i for i in range(1, 8)],
-        'task_queue': SPIDER_COMMON_TASK,
-        'parse_type': 'common',
-        'parse_rule': {
-            'pre_extract_method': 'xpath',
-            'pre_extract': '//tr[contains(@class, "odd")]',
-            'infos_pos': 0,
-            'infos_end': None,
-            'detail_rule': 'td::text',
-            'ip_pos': 0,
-            'port_pos': 1,
-            'extract_protocol': True,
-            'split_detail': False,
-            'protocols': None
-        },
-        'interval': 3 * 60,
-        'enable': 0,
     },
     {
         'name': 'ip181.com',
