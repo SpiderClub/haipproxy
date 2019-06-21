@@ -285,36 +285,6 @@ CRAWLER_TASKS = [
         1,
     },
     {
-        'name':
-        'yundaili.com',
-        'resource': [
-            'http://www.yun-daili.com/free.asp?stype=1',
-            'http://www.yun-daili.com/free.asp?stype=2',
-            'http://www.yun-daili.com/free.asp?stype=3',
-            'http://www.yun-daili.com/free.asp?stype=4',
-        ],
-        'task_queue':
-        SPIDER_COMMON_TASK,
-        'parse_type':
-        'common',
-        'parse_rule': {
-            'pre_extract_method': 'xpath',
-            'pre_extract': '//tr[contains(@class, "odd")]',
-            'infos_pos': 0,
-            'infos_end': None,
-            'detail_rule': 'td::text',
-            'ip_pos': 0,
-            'port_pos': 1,
-            'extract_protocol': True,
-            'split_detail': False,
-            'protocols': None
-        },
-        'interval':
-        6 * 60,
-        'enable':
-        1,
-    },
-    {
         'name': 'ab57.ru',
         'resource': ['http://ab57.ru/downloads/proxyold.txt'],
         'task_queue': SPIDER_COMMON_TASK,

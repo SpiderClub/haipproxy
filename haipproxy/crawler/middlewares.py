@@ -1,6 +1,7 @@
 """
 scrapy middlerwares for both downloader and spider
 """
+import logging
 import time
 
 from scrapy.downloadermiddlewares.retry import RetryMiddleware
@@ -10,6 +11,8 @@ from ..exceptions import (HttpError, DownloadException)
 from ..config.settings import (GFW_PROXY, USE_SENTRY)
 from ..utils.err_trace import client
 from .user_agents import FakeChromeUA
+
+logger = logging.getLogger(__name__)
 
 
 class UserAgentMiddleware(object):
@@ -75,7 +78,7 @@ class ErrorTraceMiddleware(object):
                     request.url)
                 client.captureException(message=message)
         else:
-            print(reason)
+            logger.error(reason)
 
 
 class ProxyRetryMiddleware(RetryMiddleware):
@@ -86,8 +89,11 @@ class ProxyRetryMiddleware(RetryMiddleware):
         if response.status in self.retry_http_codes:
             reason = response_status_message(response.status)
             # 删除该代理
-            self.delete_proxy(request.meta.get('proxy', False))
-            print('返回值异常, 进行重试...')
+            proxy = request.meta.get('proxy', False)
+            self.delete_proxy(proxy)
+            logger.error(
+                f'response.status:{response.status}\twith proxy:{proxy}')
+            logger.error(reason)
             return self._retry(request, reason, spider) or response
         return response
 
@@ -95,7 +101,7 @@ class ProxyRetryMiddleware(RetryMiddleware):
         if isinstance(exception, self.EXCEPTIONS_TO_RETRY) \
                 and not request.meta.get('dont_retry', False):
             # 删除该代理
-            self.delete_proxy(request.meta.get('proxy', False))
-            print('连接异常, 进行重试...')
-
+            proxy = request.meta.get('proxy', False)
+            self.delete_proxy(proxy)
+            logger.error(f'exception:{exception}\twith proxy:{proxy}')
             return self._retry(request, exception, spider)

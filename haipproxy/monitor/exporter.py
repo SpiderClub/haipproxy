@@ -1,3 +1,4 @@
+import logging
 import time
 
 from prometheus_client import start_http_server
@@ -23,6 +24,7 @@ from haipproxy.config.settings import (
 )
 from haipproxy.utils import get_redis_conn
 
+logger = logging.getLogger(__name__)
 
 class CustomCollector:
     def __init__(self):
@@ -65,7 +67,7 @@ class CustomCollector:
 
 
 def exporter_start():
-    print('starting server http://{}:{}/metrics'.format(
+    logger.info('starting server http://{}:{}/metrics'.format(
         EXPORTER_LISTEN_HOST, EXPORTER_LISTEN_PORT))
     REGISTRY.register(CustomCollector())
     start_http_server(EXPORTER_LISTEN_PORT, addr=EXPORTER_LISTEN_HOST)

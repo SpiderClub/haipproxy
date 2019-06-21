@@ -1,20 +1,18 @@
 """
 This module schedules all the tasks according to config.rules.
 """
-import time
-from multiprocessing import Pool
-
 import click
+import logging
+import multiprocessing
 import schedule
-from twisted.internet import reactor
+import time
+
 from scrapy.crawler import CrawlerRunner
 from scrapy.utils.log import configure_logging
 from scrapy.utils.project import get_project_settings
+from twisted.internet import reactor
 
 from ..client import SquidClient
-# from logger import (
-#     crawler_logger, scheduler_logger,
-#     client_logger)
 from ..config.rules import (CRAWLER_TASKS, VALIDATOR_TASKS, CRAWLER_TASK_MAPS,
                             TEMP_TASK_MAPS)
 from ..crawler.spiders import all_spiders
@@ -32,6 +30,8 @@ DEFAULT_VALIDATORS_TASKS = [TEMP_HTTP_QUEUE, TEMP_HTTPS_QUEUE]
 
 DEFAULT_CRAWLERS = all_spiders
 DEFAULT_VALIDATORS = all_validators
+
+logger = logging.getLogger(__name__)
 
 
 class BaseCase:
@@ -65,7 +65,7 @@ class BaseScheduler:
             time.sleep(1)
 
     def schedule_all_right_now(self):
-        with Pool() as pool:
+        with multiprocessing.Pool() as pool:
             pool.map(self.schedule_task_with_lock, self.tasks)
 
     def get_lock(self, conn, task):
@@ -109,7 +109,9 @@ class CrawlerScheduler(BaseScheduler):
                 pipe.lpush(task_queue, *urls)
                 pipe.hset(TIMER_RECORDER, task_name, now)
                 pipe.execute()
-                # scheduler_logger.info('crawler task {} has been stored into redis successfully'.format(task_name))
+                logger.info(
+                    'crawler task {} has been stored into redis successfully'.
+                    format(task_name))
                 return True
             else:
                 return None
@@ -142,14 +144,16 @@ class ValidatorScheduler(BaseScheduler):
             r, proxies = pipe.execute()
             if not r or (now - int(r.decode('utf-8'))) >= interval * 60:
                 if not proxies:
-                    # scheduler_logger.warning('fetched no proxies from task {}'.format(task_name))
-                    print('fetched no proxies from task {}'.format(task_name))
+                    logger.warning(
+                        'fetched no proxies from task {}'.format(task_name))
                     return None
 
                 pipe.sadd(task_queue, *proxies)
                 pipe.hset(TIMER_RECORDER, task_name, now)
                 pipe.execute()
-                # scheduler_logger.info('validator task {} has been stored into redis successfully'.format(task_name))
+                logger.info(
+                    'validator task {} has been stored into redis successfully'
+                    .format(task_name))
                 return True
             else:
                 return None
@@ -164,8 +168,7 @@ class ValidatorScheduler(BaseScheduler):
 @click.argument('task_queues', nargs=-1)
 def scheduler_start(usage, task_queues):
     """Start specified scheduler."""
-    # scheduler_logger.info('{} scheduler is starting...'.format(usage))
-    print('{} scheduler is starting...'.format(usage))
+    logger.info('{} scheduler is starting...'.format(usage))
     if usage == 'crawler':
         default_tasks = CRAWLER_TASKS
         default_allow_tasks = DEFAULT_CRAWLER_TASKS
@@ -185,9 +188,7 @@ def scheduler_start(usage, task_queues):
         for task_queue in task_queues:
             allow_task_queue = maps.get(task_queue)
             if not allow_task_queue:
-                # scheduler_logger.warning('scheduler task {} is an invalid task, the allowed tasks are {}'.format(
-                #     task_queue, list(maps.keys())))
-                print(
+                logger.warning(
                     'scheduler task {} is an invalid task, the allowed tasks are {}'
                     .format(task_queue, list(maps.keys())))
                 continue
@@ -225,11 +226,12 @@ def crawler_start(usage, tasks):
                     spiders.append(case.spider)
                     break
             else:
-                # crawler_logger.warning('spider task {} is an invalid task, the allowed tasks are {}'.format(
-                #     task, list(maps.keys())))
+                crawler_logger.warning(
+                    'spider task {} is an invalid task, the allowed tasks are {}'
+                    .format(task, list(maps.keys())))
                 pass
     if not spiders:
-        #crawler_logger.warning('no spider starts up, please check your task input')
+        logger.warning('no spider starts up, please check your task input')
         return
 
     settings = get_project_settings()
@@ -249,7 +251,7 @@ def crawler_start(usage, tasks):
               help='Updating frenquency of squid conf.')
 def squid_conf_update(usage, interval):
     """Timertask for updating proxies for squid config file"""
-    # client_logger.info('the updating task is starting...')
+    logger.info('the updating task is starting...')
     client = SquidClient(usage)
     client.update_conf()
     schedule.every(interval).minutes.do(client.update_conf)

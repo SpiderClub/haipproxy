@@ -1,8 +1,9 @@
 """
 python client for haipproxy
 """
-import time
+import logging
 import threading
+import time
 
 from ..utils import get_redis_conn
 from ..config.rules import (SCORE_MAPS, TTL_MAPS, SPEED_MAPS)
@@ -13,6 +14,8 @@ from .core import IPFetcherMixin
 __all__ = ['ProxyFetcher']
 
 lock = threading.RLock()
+
+logger = logging.getLogger(__name__)
 
 
 class Strategy:
@@ -152,8 +155,7 @@ class ProxyFetcher(IPFetcherMixin):
     def get_proxies(self):
         # the older proxies will not be dropped
         proxies = self.get_available_proxies(self.conn)
-        # client_logger.info('{} proxies have been fetched'.format(len(proxies)))
-        print('{} proxies have been fetched'.format(len(proxies)))
+        logger.info('{} proxies have been fetched'.format(len(proxies)))
         self.pool.extend(proxies)
         return self.pool
 

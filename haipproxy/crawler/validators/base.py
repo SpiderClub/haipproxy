@@ -1,12 +1,15 @@
 """
 Useful base class for all the validators.
 """
+import logging
 import time
 
 from twisted.internet.error import (TimeoutError, TCPTimedOutError)
 
 # from logger import crawler_logger
 from ..items import (ProxyScoreItem, ProxyVerifiedTimeItem, ProxySpeedItem)
+
+logger = logging.getLogger(__name__)
 
 
 class BaseValidator:
@@ -54,8 +57,7 @@ class BaseValidator:
     def parse_error(self, failure):
         request = failure.request
         proxy = request.meta.get('proxy')
-        # crawler_logger.error('proxy {} has failed, {} is raised'.format(proxy, failure))
-        print('proxy {} has been failed,{} is raised'.format(proxy, failure))
+        logger.error('proxy {} has failed, {} is raised'.format(proxy, failure))
         if failure.check(TimeoutError, TCPTimedOutError):
             decr = -1
         else:

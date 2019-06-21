@@ -1,6 +1,8 @@
 """
 This module provides basic distributed spider, inspired by scrapy-redis
 """
+import logging
+
 from scrapy import signals
 from scrapy.http import Request
 from scrapy.exceptions import DontCloseSpider
@@ -8,7 +10,6 @@ from scrapy.spiders import (Spider, CrawlSpider)
 from scrapy_splash.request import SplashRequest
 # from scrapy.utils.log import configure_logging
 
-# from logger import crawler_logger
 from ..utils import get_redis_conn
 from ..config.settings import (VALIDATOR_FEED_SIZE, SPIDER_FEED_SIZE)
 
@@ -18,6 +19,7 @@ __all__ = [
     'ValidatorRedisSpider'
 ]
 
+logger = logging.getLogger(__name__)
 
 class RedisMixin(object):
     keyword_encoding = 'utf-8'
@@ -50,8 +52,7 @@ class RedisMixin(object):
                 yield req
                 found += 1
 
-        # crawler_logger.info('Read {} requests from {}'.format(found, self.task_queue))
-        print('Read {} requests from {}'.format(found, self.task_queue))
+        logger.info('Read {} requests from {}'.format(found, self.task_queue))
 
     def schedule_next_requests(self):
         for req in self.next_requests():
@@ -98,8 +99,7 @@ class RedisAjaxSpider(RedisSpider):
                 yield req
                 found += 1
 
-        # crawler_logger.info('Read {} requests from {}'.format(found, self.task_queue))
-        print('Read {} requests from {}'.format(found, self.task_queue))
+        logger.info('Read {} requests from {}'.format(found, self.task_queue))
 
 
 class ValidatorRedisSpider(RedisSpider):
@@ -127,8 +127,7 @@ class ValidatorRedisSpider(RedisSpider):
                               errback=self.parse_error)
                 yield req
                 found += 1
-        # crawler_logger.info('Read {} ip proxies from {}'.format(found, task_queue))
-        print('Read {} ip proxies from {}'.format(found, task_queue))
+        logger.info('Read {} ip proxies from {}'.format(found, task_queue))
 
     def parse_error(self, failure):
         raise NotImplementedError
