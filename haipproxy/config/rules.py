@@ -149,34 +149,6 @@ CRAWLER_TASKS = [
         1  # it seems the website is down
     },
     {
-        'name':
-        '66ip.cn',
-        'resource': ['http://www.66ip.cn/%s.html' % i for i in range(1, 3)] + [
-            'http://www.66ip.cn/areaindex_%s/%s.html' % (i, j)
-            for i in range(1, 35) for j in range(1, 3)
-        ],
-        'task_queue':
-        SPIDER_COMMON_TASK,
-        'parse_type':
-        'common',
-        'parse_rule': {
-            'pre_extract_method': 'xpath',
-            'pre_extract': '//tr',
-            'infos_pos': 4,
-            'infos_end': None,
-            'detail_rule': 'td::text',
-            'ip_pos': 0,
-            'port_pos': 1,
-            'extract_protocol': True,
-            'split_detail': False,
-            'protocols': None
-        },
-        'interval':
-        2 * 60,
-        'enable':
-        1
-    },
-    {
         'name': 'baizhongsou.com',
         'resource': ['http://ip.baizhongsou.com/'],
         'task_queue': SPIDER_COMMON_TASK,
@@ -195,35 +167,6 @@ CRAWLER_TASKS = [
         },
         'interval': 30,
         'enable': 1
-    },
-    {
-        'name':
-        'data5u.com',
-        'resource': [
-            'http://www.data5u.com/free/index.shtml',
-            'http://www.data5u.com/free/gngn/index.shtml',
-            'http://www.data5u.com/free/gwgn/index.shtml'
-        ],
-        'task_queue':
-        SPIDER_COMMON_TASK,
-        'parse_type':
-        'common',
-        'parse_rule': {
-            'pre_extract_method': 'xpath',
-            'pre_extract': '//ul[contains(@class, "l2")]',
-            'infos_pos': 0,
-            'infos_end': None,
-            'detail_rule': 'span li::text',
-            'ip_pos': 0,
-            'port_pos': 1,
-            'extract_protocol': True,
-            'split_detail': False,
-            'protocols': None
-        },
-        'interval':
-        10,
-        'enable':
-        1,
     },
     {
         'name':
@@ -312,6 +255,7 @@ CRAWLER_TASKS = [
         1,
     },
     {
+        # no page
         'name':
         'swei360.com',
         'resource':
