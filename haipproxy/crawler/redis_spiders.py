@@ -35,12 +35,12 @@ class RedisMixin(object):
     def setup_redis(self, crawler):
         """send signals when the spider is free"""
         self.redis_batch_size = SPIDER_FEED_SIZE
-        self.redis_con = get_redis_conn()
+        self.redis_conn = get_redis_conn()
 
         crawler.signals.connect(self.spider_idle, signal=signals.spider_idle)
 
     def next_requests(self):
-        fetch_one = self.redis_con.spop if self.use_set else self.redis_con.lpop
+        fetch_one = self.redis_conn.spop if self.use_set else self.redis_conn.lpop
         found = 0
         while found < self.redis_batch_size:
             data = fetch_one(self.task_queue)
@@ -81,7 +81,7 @@ class RedisCrawlSpider(RedisMixin, CrawlSpider):
 
 class RedisAjaxSpider(RedisSpider):
     def next_requests(self):
-        fetch_one = self.redis_con.spop if self.use_set else self.redis_con.lpop
+        fetch_one = self.redis_conn.spop if self.use_set else self.redis_conn.lpop
         found = 0
         while found < self.redis_batch_size:
             data = fetch_one(self.task_queue)
@@ -113,7 +113,7 @@ class ValidatorRedisSpider(RedisSpider):
         yield from self.next_requests_process(self.task_queue)
 
     def next_requests_process(self, task_queue):
-        fetch_one = self.redis_con.spop if self.use_set else self.redis_con.lpop
+        fetch_one = self.redis_conn.spop if self.use_set else self.redis_conn.lpop
         found = 0
         while found < self.redis_batch_size:
             data = fetch_one(task_queue)

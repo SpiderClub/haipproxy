@@ -17,12 +17,12 @@ redis_args = {
 
 class CustomCollector:
     def __init__(self):
-        self.redis_con = get_redis_conn(**redis_args)
+        self.redis_conn = get_redis_conn(**redis_args)
 
     def collect(self):
         try:
             redis_count = int(
-                self.redis_con.get(TOTAL_SUCCESS_REQUESTS).decode())
+                self.redis_conn.get(TOTAL_SUCCESS_REQUESTS).decode())
         except AttributeError:
             redis_count = 0
         yield CounterMetricFamily('total_success_requests',

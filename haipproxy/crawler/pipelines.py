@@ -12,7 +12,7 @@ from .items import (ProxyScoreItem, ProxyVerifiedTimeItem, ProxySpeedItem)
 
 class BasePipeline:
     def open_spider(self, spider):
-        self.redis_con = get_redis_conn(db=REDIS_DB)
+        self.redis_conn = get_redis_conn(db=REDIS_DB)
 
     def process_item(self, item, spider):
         return deferToThread(self._process_item, item, spider)
@@ -27,7 +27,7 @@ class ProxyIPPipeline(BasePipeline):
         if not url:
             return item
 
-        pipeline = self.redis_con.pipeline()
+        pipeline = self.redis_conn.pipeline()
         not_exists = pipeline.sadd(DATA_ALL, url)
         if not_exists:
             if 'socks4' in url:
@@ -52,32 +52,32 @@ class ProxyCommonPipeline(BasePipeline):
         return item
 
     def _process_score_item(self, item, spider):
-        score = self.redis_con.zscore(item['queue'], item['url'])
+        score = self.redis_conn.zscore(item['queue'], item['url'])
         if score is None:
-            self.redis_con.zadd(item['queue'],{item['url']: item['score']})
+            self.redis_conn.zadd(item['queue'],{item['url']: item['score']})
         else:
             # delete ip resource when score < 1 or error happens
             if item['incr'] == '-inf' or (item['incr'] < 0 and score <= 1):
-                pipe = self.redis_con.pipeline(True)
+                pipe = self.redis_conn.pipeline(True)
                 pipe.srem(DATA_ALL, item['url'])
                 pipe.zrem(item['queue'], item['url'])
                 pipe.execute()
             elif item['incr'] < 0 and 1 < score:
-                self.redis_con.zincrby(item['queue'], item['url'], -1)
+                self.redis_conn.zincrby(item['queue'], -1, item['url'])
             elif item['incr'] > 0 and score < 10:
-                self.redis_con.zincrby(item['queue'], item['url'], 1)
+                self.redis_conn.zincrby(item['queue'], 1, item['url'])
             elif item['incr'] > 0 and score >= 10:
                 incr = round(10 / score, 2)
-                self.redis_con.zincrby(item['queue'], item['url'], incr)
+                self.redis_conn.zincrby(item['queue'], incr, item['url'])
 
     def _process_verified_item(self, item, spider):
         if item['incr'] == '-inf' or item['incr'] < 0:
             raise DropItem('item verification has failed')
 
-        self.redis_con.zadd(item['queue'],{item['url']: item['verified_time']})
+        self.redis_conn.zadd(item['queue'],{item['url']: item['verified_time']})
 
     def _process_speed_item(self, item, spider):
         if item['incr'] == '-inf' or item['incr'] < 0:
             raise DropItem('item verification has failed')
 
-        self.redis_con.zadd(item['queue'],{item['url']: item['response_time']})
+        self.redis_conn.zadd(item['queue'],{item['url']: item['response_time']})
