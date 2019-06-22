@@ -54,7 +54,7 @@ class ProxyCommonPipeline(BasePipeline):
     def _process_score_item(self, item, spider):
         score = self.redis_con.zscore(item['queue'], item['url'])
         if score is None:
-            self.redis_con.zadd(item['queue'], item['score'], item['url'])
+            self.redis_con.zadd(item['queue'],{item['url']: item['score']})
         else:
             # delete ip resource when score < 1 or error happens
             if item['incr'] == '-inf' or (item['incr'] < 0 and score <= 1):
@@ -74,10 +74,10 @@ class ProxyCommonPipeline(BasePipeline):
         if item['incr'] == '-inf' or item['incr'] < 0:
             raise DropItem('item verification has failed')
 
-        self.redis_con.zadd(item['queue'], item['verified_time'], item['url'])
+        self.redis_con.zadd(item['queue'],{item['url']: item['verified_time']})
 
     def _process_speed_item(self, item, spider):
         if item['incr'] == '-inf' or item['incr'] < 0:
             raise DropItem('item verification has failed')
 
-        self.redis_con.zadd(item['queue'], item['response_time'], item['url'])
+        self.redis_con.zadd(item['queue'],{item['url']: item['response_time']})

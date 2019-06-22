@@ -121,34 +121,6 @@ CRAWLER_TASKS = [
         'enable': 1,
     },
     {
-        'name':
-        'nianshao.me',
-        'resource':
-        ['http://www.nianshao.me/?stype=1&page=%s' % i for i in range(1, 11)] +
-        ['http://www.nianshao.me/?stype=2&page=%s' % i for i in range(1, 11)] +
-        ['http://www.nianshao.me/?stype=5&page=%s' % i for i in range(1, 11)],
-        'task_queue':
-        SPIDER_COMMON_TASK,
-        'parse_type':
-        'common',
-        'parse_rule': {
-            'pre_extract_method': 'xpath',
-            'pre_extract': '//tr',
-            'infos_pos': 1,
-            'infos_end': None,
-            'detail_rule': 'td::text',
-            'ip_pos': 0,
-            'port_pos': 1,
-            'extract_protocol': True,
-            'split_detail': False,
-            'protocols': None
-        },
-        'interval':
-        60,
-        'enable':
-        1  # it seems the website is down
-    },
-    {
         'name': 'baizhongsou.com',
         'resource': ['http://ip.baizhongsou.com/'],
         'task_queue': SPIDER_COMMON_TASK,
