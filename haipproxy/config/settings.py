@@ -128,15 +128,17 @@ LOWEST_TOTAL_PROXIES = 5
 # if no origin ip is given, request will be sent to https://httpbin.org/ip
 ORIGIN_IP = ''
 
-#####################################################################
-# monitor and bug trace
-#####################################################################
+#### monitor and bug trace
 
 # sentry for error tracking, for more information see
 # https://github.com/getsentry/sentry
-# disable it by setting USE_SENTRY = False
-USE_SENTRY = False
-SENTRY_DSN = 'http://82c130028fa942f29add1e0aa0ff9cbd:cffa174304d248b9aa2bdb385d3b01b8@127.0.0.1:9000/6'
+import sentry_sdk
+sentry_sdk.init(
+    # replace with your own path here.
+    # use empty path to disable it
+    'https://e5278b49bb5c426ab66bda0d2b59f2ae@sentry.io/1488193',
+    debug=True,
+)
 
 # prometheus for monitoring, for more information see
 # https://github.com/prometheus/prometheus

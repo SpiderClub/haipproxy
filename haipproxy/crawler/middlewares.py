@@ -6,10 +6,9 @@ import time
 
 from scrapy.downloadermiddlewares.retry import RetryMiddleware
 from scrapy.utils.response import response_status_message
+from sentry_sdk import capture_message
 
 from ..exceptions import (HttpError, DownloadException)
-from ..config.settings import (GFW_PROXY, USE_SENTRY)
-from ..utils.err_trace import client
 from .user_agents import FakeChromeUA
 
 logger = logging.getLogger(__name__)
@@ -70,13 +69,11 @@ class ErrorTraceMiddleware(object):
         return
 
     def _faillog(self, request, exc, reason, spider):
-        if USE_SENTRY:
-            try:
-                raise exc
-            except Exception:
-                message = 'error occurs when downloading {}'.format(
-                    request.url)
-                client.captureException(message=message)
+        try:
+            raise exc
+        except Exception:
+            message = 'error occurs when downloading {}'.format(request.url)
+            capture_message(message)
         else:
             logger.error(reason)
 
