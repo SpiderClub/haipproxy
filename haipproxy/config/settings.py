@@ -137,7 +137,7 @@ sentry_sdk.init(
     # replace with your own path here.
     # use empty path to disable it
     'https://e5278b49bb5c426ab66bda0d2b59f2ae@sentry.io/1488193',
-    debug=True,
+    debug=False,
 )
 
 # prometheus for monitoring, for more information see

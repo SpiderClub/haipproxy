@@ -18,6 +18,7 @@ __all__ = [
 
 CRAWLER_TASKS = [
     {
+        # > 3000 pages
         'name':
         'xicidaili.com',
         'resource':
@@ -49,7 +50,7 @@ CRAWLER_TASKS = [
         'name':
         'kuaidaili.com',
         'resource':
-        ['https://www.kuaidaili.com/free/inha/%s' % i for i in range(1, 6)] +
+        ['https://www.kuaidaili.com/free/inha/%s' % i for i in range(1, 6)] + \
         ['https://www.kuaidaili.com/proxylist/%s' % i for i in range(1, 11)],
         'task_queue':
         SPIDER_COMMON_TASK,
@@ -75,10 +76,9 @@ CRAWLER_TASKS = [
     {
         'name':
         'kxdaili.com',
-        'resource': [
-            'http://www.kxdaili.com/dailiip/%s/%s.html#ip' % (i, j)
-            for i in range(1, 3) for j in range(1, 11)
-        ],
+        'resource':
+        [f'http://ip.kxdaili.com/dailiip/1/{i}.html#ip' for i in range(1, 7)] + \
+        [f'http://ip.kxdaili.com/dailiip/2/{i}.html#ip' for i in range(1, 5)],
         'task_queue':
         SPIDER_COMMON_TASK,
         'parse_type':
@@ -223,36 +223,6 @@ CRAWLER_TASKS = [
         },
         'interval':
         60,
-        'enable':
-        1,
-    },
-    {
-        # no page
-        'name':
-        'swei360.com',
-        'resource':
-        ['http://www.swei360.com/free/?page=%s' % i for i in range(1, 4)] + [
-            'http://www.swei360.com/free/?stype=3&page=%s' % i
-            for i in range(1, 4)
-        ],
-        'task_queue':
-        SPIDER_COMMON_TASK,
-        'parse_type':
-        'common',
-        'parse_rule': {
-            'pre_extract_method': 'xpath',
-            'pre_extract': '//tr',
-            'infos_pos': 1,
-            'infos_end': None,
-            'detail_rule': 'td::text',
-            'ip_pos': 0,
-            'port_pos': 1,
-            'extract_protocol': True,
-            'split_detail': False,
-            'protocols': None
-        },
-        'interval':
-        30,
         'enable':
         1,
     },
