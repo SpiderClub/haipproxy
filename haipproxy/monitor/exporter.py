@@ -28,12 +28,12 @@ logger = logging.getLogger(__name__)
 
 class CustomCollector:
     def __init__(self):
-        self.conn = get_redis_conn()
+        self.redis_conn = get_redis_conn()
 
     def collect(self):
         start_time = int(time.time()) - TTL_VALIDATED_RESOURCE * 60
 
-        pipe = self.conn.pipeline(False)
+        pipe = self.redis_conn.pipeline(False)
         pipe.scard(DATA_ALL)
         pipe.llen(INIT_HTTP_QUEUE)
         pipe.scard(TEMP_ZHIHU_QUEUE)

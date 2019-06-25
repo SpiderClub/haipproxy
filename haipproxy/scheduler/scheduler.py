@@ -68,7 +68,7 @@ class BaseScheduler:
         with multiprocessing.Pool() as pool:
             pool.map(self.schedule_task_with_lock, self.tasks)
 
-    def get_lock(self, conn, task):
+    def get_lock(self, redis_conn, task):
         if not task.get('enable'):
             return None
         task_queue = task.get('task_queue')
@@ -76,7 +76,7 @@ class BaseScheduler:
             return None
 
         task_name = task.get('name')
-        lock_indentifier = acquire_lock(conn, task_name)
+        lock_indentifier = acquire_lock(redis_conn, task_name)
         return lock_indentifier
 
     def schedule_task_with_lock(self, task):
@@ -92,15 +92,15 @@ class CrawlerScheduler(BaseScheduler):
         if task_queue not in self.task_queues:
             return None
 
-        conn = get_redis_conn()
+        redis_conn = get_redis_conn()
         task_name = task.get('name')
         interval = task.get('interval')
         urls = task.get('resource')
-        lock_indentifier = acquire_lock(conn, task_name)
+        lock_indentifier = acquire_lock(redis_conn, task_name)
         if not lock_indentifier:
             return False
 
-        pipe = conn.pipeline(True)
+        pipe = redis_conn.pipeline(True)
         try:
             now = int(time.time())
             pipe.hget(TIMER_RECORDER, task_name)
@@ -116,7 +116,7 @@ class CrawlerScheduler(BaseScheduler):
             else:
                 return None
         finally:
-            release_lock(conn, task_name, lock_indentifier)
+            release_lock(redis_conn, task_name, lock_indentifier)
 
 
 class ValidatorScheduler(BaseScheduler):
@@ -129,14 +129,14 @@ class ValidatorScheduler(BaseScheduler):
         if task_queue not in self.task_queues:
             return None
 
-        conn = get_redis_conn()
+        redis_conn = get_redis_conn()
         interval = task.get('interval')
         task_name = task.get('name')
         resource_queue = task.get('resource')
-        lock_indentifier = acquire_lock(conn, task_name)
+        lock_indentifier = acquire_lock(redis_conn, task_name)
         if not lock_indentifier:
             return False
-        pipe = conn.pipeline(True)
+        pipe = redis_conn.pipeline(True)
         try:
             now = int(time.time())
             pipe.hget(TIMER_RECORDER, task_name)
@@ -158,7 +158,7 @@ class ValidatorScheduler(BaseScheduler):
             else:
                 return None
         finally:
-            release_lock(conn, task_name, lock_indentifier)
+            release_lock(redis_conn, task_name, lock_indentifier)
 
 
 @click.command()

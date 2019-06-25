@@ -56,8 +56,8 @@ class SquidClient(IPFetcherMixin):
             self.squid_path = SQUID_BIN_PATH
 
     def update_conf(self):
-        conn = get_redis_conn()
-        proxies = self.get_available_proxies(conn)
+        redis_conn = get_redis_conn()
+        proxies = self.get_available_proxies(redis_conn)
         conts = list()
         with open(self.template_path, 'r') as fr, open(self.conf_path,
                                                        'w') as fw:

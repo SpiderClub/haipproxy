@@ -4,20 +4,12 @@ from prometheus_client import start_http_server
 from prometheus_client.core import (CounterMetricFamily, REGISTRY)
 from haipproxy.utils import get_redis_conn
 
-from examples.zhihu.configs import (REDIS_HOST, REDIS_PORT, REDIS_PASS,
-                                    REDIS_DB, TOTAL_SUCCESS_REQUESTS)
-
-redis_args = {
-    'host': REDIS_HOST,
-    'port': REDIS_PORT,
-    'password': REDIS_PASS,
-    'db': REDIS_DB
-}
+from examples.zhihu.configs import TOTAL_SUCCESS_REQUESTS
 
 
 class CustomCollector:
     def __init__(self):
-        self.redis_conn = get_redis_conn(**redis_args)
+        self.redis_conn = get_redis_conn()
 
     def collect(self):
         try:

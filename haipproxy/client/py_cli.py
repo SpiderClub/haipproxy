@@ -99,8 +99,7 @@ class ProxyFetcher(IPFetcherMixin):
                  lowest_score=LOWEST_SCORE,
                  ttl_validated_resource=TTL_VALIDATED_RESOURCE,
                  min_pool_size=LOWEST_TOTAL_PROXIES,
-                 all_data=DATA_ALL,
-                 redis_args=None):
+                 all_data=DATA_ALL):
         """
         :param usage: one of SCORE_MAPS's keys, such as https
         :param strategy: the load balance of proxy ip, the value is
@@ -132,10 +131,7 @@ class ProxyFetcher(IPFetcherMixin):
         self.fast_response = fast_response
         self.all_data = all_data
         self.handlers = [RobinStrategy(), GreedyStrategy()]
-        if isinstance(redis_args, dict):
-            self.conn = get_redis_conn(**redis_args)
-        else:
-            self.conn = get_redis_conn()
+        self.redis_conn = get_redis_conn()
         t = threading.Thread(target=self._refresh_periodically)
         t.setDaemon(True)
         t.start()
@@ -154,7 +150,7 @@ class ProxyFetcher(IPFetcherMixin):
 
     def get_proxies(self):
         # the older proxies will not be dropped
-        proxies = self.get_available_proxies(self.conn)
+        proxies = self.get_available_proxies(self.redis_conn)
         logger.info('{} proxies have been fetched'.format(len(proxies)))
         self.pool.extend(proxies)
         return self.pool
@@ -179,7 +175,7 @@ class ProxyFetcher(IPFetcherMixin):
             self.get_proxies()
 
     def delete_proxy(self, proxy):
-        pipe = self.conn.pipeline()
+        pipe = self.redis_conn.pipeline()
         pipe.srem(self.all_data, proxy)
         pipe.zrem(self.score_queue, proxy)
         pipe.zrem(self.speed_queue, proxy)

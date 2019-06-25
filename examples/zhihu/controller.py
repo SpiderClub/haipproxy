@@ -8,8 +8,6 @@ from bs4 import BeautifulSoup as BS
 
 from haipproxy.utils import get_redis_conn
 from examples.zhihu.crawler import Crawler
-from examples.zhihu.configs import (REDIS_HOST, REDIS_PORT, REDIS_PASS,
-                                    REDIS_DB)
 
 per_page = 20
 info_max_process_num = 50
@@ -21,17 +19,6 @@ info_set = 'zhihu:info:user'
 
 # Not considering concurrent security
 common_crawler = Crawler()
-redis_args = {
-    'host': REDIS_HOST,
-    'port': REDIS_PORT,
-    'password': REDIS_PASS,
-    'db': REDIS_DB
-}
-
-
-def init_db():
-    redis_client = get_redis_conn(**redis_args)
-    return redis_client
 
 
 def get_info(url_token):
@@ -103,18 +90,18 @@ def get_followers(url_token, follower_count):
 
 
 def start():
-    redis_client = init_db()
-    while not redis_client.scard(waiting_set):
+    redis_conn = get_redis_conn()
+    while not redis_conn.scard(waiting_set):
         # block if there is no seed in waiting_set
         print('no seeds in waiting set {}'.format(waiting_set))
         time.sleep(0.1)
 
     # fetch seeds from waiting_set
-    url_token = redis_client.spop(waiting_set).decode()
+    url_token = redis_conn.spop(waiting_set).decode()
 
     print("crawling %s's user info……" % url_token)
     user = get_info(url_token)
-    redis_client.sadd(info_set, user)
+    redis_conn.sadd(info_set, user)
     print("crawling  %s's followers list……" % url_token)
     try:
         follower_list = get_followers(url_token, user['followerCount'])
@@ -122,8 +109,8 @@ def start():
         return
 
     for follower in follower_list:
-        if not redis_client.sismember(seeds_all, follower):
-            pipe = redis_client.pipeline(False)
+        if not redis_conn.sismember(seeds_all, follower):
+            pipe = redis_conn.pipeline(False)
             pipe.sadd(waiting_set, follower)
             pipe.sadd(seeds_all, follower)
             pipe.execute()

@@ -45,7 +45,3 @@ SPEED_MAPS = {
 
 # custom settings for your project
 TOTAL_SUCCESS_REQUESTS = 'zhihu:success:request'
-REDIS_HOST = '127.0.0.1'
-REDIS_PORT = 6379
-REDIS_PASS = '123456'
-REDIS_DB = 0

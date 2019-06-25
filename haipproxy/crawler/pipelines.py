@@ -12,7 +12,7 @@ from .items import (ProxyScoreItem, ProxyVerifiedTimeItem, ProxySpeedItem)
 
 class BasePipeline:
     def open_spider(self, spider):
-        self.redis_conn = get_redis_conn(db=REDIS_DB)
+        self.redis_conn = get_redis_conn()
 
     def process_item(self, item, spider):
         return deferToThread(self._process_item, item, spider)
