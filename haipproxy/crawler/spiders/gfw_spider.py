@@ -4,7 +4,7 @@ Proxy spider for the websites blocked by gfw.
 import re
 import json
 
-from haipproxy.config.settings import SPIDER_GFW_TASK
+from haipproxy.config.rules import CRAWLER_QUEUE_MAPS
 from ..items import ProxyUrlItem
 from .common_spider import CommonSpider
 
@@ -12,7 +12,7 @@ from .common_spider import CommonSpider
 class GFWSpider(CommonSpider):
     name = 'gfw'
     proxy_mode = 2
-    task_queue = SPIDER_GFW_TASK
+    task_queue = CRAWLER_QUEUE_MAPS[name]
 
     def __init__(self):
         super().__init__()

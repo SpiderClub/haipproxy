@@ -25,19 +25,19 @@ SPEED_HTTP_QUEUE = 'haipproxy:speed:http'
 SPEED_HTTPS_QUEUE = 'haipproxy:speed:https'
 SPEED_ZHIHU_QUEUE = 'haipproxy:speed:zhihu'
 
-SCORE_MAPS = {
+SCORE_QUEUE_MAPS = {
     'http': VALIDATED_HTTP_QUEUE,
     'https': VALIDATED_HTTPS_QUEUE,
     'zhihu': VALIDATED_ZHIHU_QUEUE
 }
 
-TTL_MAPS = {
+TTL_QUEUE_MAPS = {
     'http': TTL_HTTP_QUEUE,
     'https': TTL_HTTPS_QUEUE,
     'zhihu': TTL_ZHIHU_QUEUE
 }
 
-SPEED_MAPS = {
+SPEED_QUEUE_MAPS = {
     'http': SPEED_HTTP_QUEUE,
     'https': SPEED_HTTPS_QUEUE,
     'zhihu': SPEED_ZHIHU_QUEUE

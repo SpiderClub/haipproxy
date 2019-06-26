@@ -6,7 +6,7 @@ import threading
 import time
 
 from ..utils import get_redis_conn
-from ..config.rules import (SCORE_MAPS, TTL_MAPS, SPEED_MAPS)
+from ..config.rules import (SCORE_QUEUE_MAPS, TTL_QUEUE_MAPS, SPEED_QUEUE_MAPS)
 from ..config.settings import (TTL_VALIDATED_RESOURCE, LONGEST_RESPONSE_TIME,
                                LOWEST_SCORE, LOWEST_TOTAL_PROXIES, DATA_ALL)
 from .core import IPFetcherMixin
@@ -92,23 +92,23 @@ class ProxyFetcher(IPFetcherMixin):
                  usage,
                  strategy='robin',
                  fast_response=5,
-                 score_map=SCORE_MAPS,
-                 ttl_map=TTL_MAPS,
-                 speed_map=SPEED_MAPS,
+                 score_map=SCORE_QUEUE_MAPS,
+                 ttl_map=TTL_QUEUE_MAPS,
+                 speed_map=SPEED_QUEUE_MAPS,
                  longest_response_time=LONGEST_RESPONSE_TIME,
                  lowest_score=LOWEST_SCORE,
                  ttl_validated_resource=TTL_VALIDATED_RESOURCE,
                  min_pool_size=LOWEST_TOTAL_PROXIES,
                  all_data=DATA_ALL):
         """
-        :param usage: one of SCORE_MAPS's keys, such as https
+        :param usage: one of SCORE_QUEUE_MAPS's keys, such as https
         :param strategy: the load balance of proxy ip, the value is
         one of ['robin', 'greedy']
         :param fast_response: if you use greedy strategy, it will be needed to
         decide whether a proxy ip should continue to be used
-        :param score_map: score map of your project, default value is SCORE_MAPS in haipproxy.config.settings
-        :param ttl_map: ttl map of your project, default value is TTL_MAPS in haipproxy.config.settings
-        :param speed_map: speed map of your project, default value is SPEED_MAPS in haipproxy.config.settings
+        :param score_map: score map of your project, default value is SCORE_QUEUE_MAPS in haipproxy.config.settings
+        :param ttl_map: ttl map of your project, default value is TTL_QUEUE_MAPS in haipproxy.config.settings
+        :param speed_map: speed map of your project, default value is SPEED_QUEUE_MAPS in haipproxy.config.settings
         :param ttl_validated_resource: time of latest validated proxies
         :param min_pool_size: min pool size of self.pool
         :param all_data: all proxies are stored in this set

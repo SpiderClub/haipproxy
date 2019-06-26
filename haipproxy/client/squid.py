@@ -9,7 +9,7 @@ from ..config.settings import (SQUID_BIN_PATH, SQUID_CONF_PATH,
                                SQUID_TEMPLATE_PATH, TTL_VALIDATED_RESOURCE,
                                LONGEST_RESPONSE_TIME, LOWEST_SCORE,
                                LOWEST_TOTAL_PROXIES)
-from ..config.rules import (SCORE_MAPS, TTL_MAPS, SPEED_MAPS)
+from ..config.rules import (SCORE_QUEUE_MAPS, TTL_QUEUE_MAPS, SPEED_QUEUE_MAPS)
 from .core import IPFetcherMixin
 
 __all__ = ['SquidClient']
@@ -26,9 +26,9 @@ class SquidClient(IPFetcherMixin):
 
     def __init__(self,
                  task,
-                 score_map=SCORE_MAPS,
-                 ttl_map=TTL_MAPS,
-                 speed_map=SPEED_MAPS,
+                 score_map=SCORE_QUEUE_MAPS,
+                 ttl_map=TTL_QUEUE_MAPS,
+                 speed_map=SPEED_QUEUE_MAPS,
                  longest_response_time=LONGEST_RESPONSE_TIME,
                  lowest_score=LOWEST_SCORE,
                  ttl_validated_resource=TTL_VALIDATED_RESOURCE,

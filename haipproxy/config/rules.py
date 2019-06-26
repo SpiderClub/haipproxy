@@ -3,8 +3,8 @@ Spider rules.Scheduler will provide crawling tasks according to the rules and
 spiders will parse response content according to the rules.
 """
 from ..config.settings import (
-    SPIDER_COMMON_TASK, SPIDER_AJAX_TASK, SPIDER_GFW_TASK,
-    SPIDER_AJAX_GFW_TASK, INIT_HTTP_QUEUE, VALIDATED_HTTP_QUEUE,
+    SPIDER_COMMON_Q, SPIDER_AJAX_Q, SPIDER_GFW_Q,
+    SPIDER_AJAX_GFW_Q, INIT_HTTP_QUEUE, VALIDATED_HTTP_QUEUE,
     VALIDATED_HTTPS_QUEUE, TEMP_HTTP_QUEUE, TEMP_HTTPS_QUEUE, TTL_HTTP_QUEUE,
     TTL_HTTPS_QUEUE, SPEED_HTTPS_QUEUE, SPEED_HTTP_QUEUE, TEMP_WEIBO_QUEUE,
     VALIDATED_WEIBO_QUEUE, TTL_WEIBO_QUEUE, SPEED_WEIBO_QUEUE,
@@ -12,8 +12,8 @@ from ..config.settings import (
     SPEED_ZHIHU_QUEUE)
 
 __all__ = [
-    'CRAWLER_TASKS', 'VALIDATOR_TASKS', 'CRAWLER_TASK_MAPS', 'TEMP_TASK_MAPS',
-    'SCORE_MAPS', 'TTL_MAPS', 'SPEED_MAPS'
+    'CRAWLER_TASKS', 'VALIDATOR_TASKS', 'CRAWLER_QUEUE_MAPS', 'TEMP_QUEUE_MAPS',
+    'SCORE_QUEUE_MAPS', 'TTL_QUEUE_MAPS', 'SPEED_QUEUE_MAPS'
 ]
 
 CRAWLER_TASKS = [
@@ -26,7 +26,7 @@ CRAWLER_TASKS = [
         ['http://www.xicidaili.com/wn/%s' % i for i in range(1, 6)] +
         ['http://www.xicidaili.com/wt/%s' % i for i in range(1, 6)],
         'task_queue':
-        SPIDER_COMMON_TASK,
+        SPIDER_COMMON_Q,
         'parse_type':
         'common',
         'parse_rule': {
@@ -53,7 +53,7 @@ CRAWLER_TASKS = [
         ['https://www.kuaidaili.com/free/inha/%s' % i for i in range(1, 6)] + \
         ['https://www.kuaidaili.com/proxylist/%s' % i for i in range(1, 11)],
         'task_queue':
-        SPIDER_COMMON_TASK,
+        SPIDER_COMMON_Q,
         'parse_type':
         'common',
         'parse_rule': {
@@ -80,7 +80,7 @@ CRAWLER_TASKS = [
         [f'http://ip.kxdaili.com/dailiip/1/{i}.html#ip' for i in range(1, 7)] + \
         [f'http://ip.kxdaili.com/dailiip/2/{i}.html#ip' for i in range(1, 5)],
         'task_queue':
-        SPIDER_COMMON_TASK,
+        SPIDER_COMMON_Q,
         'parse_type':
         'common',
         'parse_rule': {
@@ -103,7 +103,7 @@ CRAWLER_TASKS = [
     {
         'name': 'mrhinkydink.com',
         'resource': ['http://www.mrhinkydink.com/proxies.htm'],
-        'task_queue': SPIDER_COMMON_TASK,
+        'task_queue': SPIDER_COMMON_Q,
         'parse_type': 'common',
         'parse_rule': {
             'pre_extract_method': 'css',
@@ -123,7 +123,7 @@ CRAWLER_TASKS = [
     {
         'name': 'baizhongsou.com',
         'resource': ['http://ip.baizhongsou.com/'],
-        'task_queue': SPIDER_COMMON_TASK,
+        'task_queue': SPIDER_COMMON_Q,
         'parse_type': 'common',
         'parse_rule': {
             'pre_extract_method': 'xpath',
@@ -146,7 +146,7 @@ CRAWLER_TASKS = [
         'resource': ['http://www.ip181.com/'] +
         ['http://www.ip181.com/daili/%s.html' % i for i in range(1, 20)],
         'task_queue':
-        SPIDER_COMMON_TASK,
+        SPIDER_COMMON_Q,
         'parse_type':
         'common',
         'parse_rule': {
@@ -177,7 +177,7 @@ CRAWLER_TASKS = [
             for i in range(1, 3)
         ],
         'task_queue':
-        SPIDER_COMMON_TASK,
+        SPIDER_COMMON_Q,
         'parse_type':
         'common',
         'parse_rule': {
@@ -206,7 +206,7 @@ CRAWLER_TASKS = [
             'http://www.iphai.com/'
         ],
         'task_queue':
-        SPIDER_COMMON_TASK,
+        SPIDER_COMMON_Q,
         'parse_type':
         'common',
         'parse_rule': {
@@ -229,7 +229,7 @@ CRAWLER_TASKS = [
     {
         'name': 'ab57.ru',
         'resource': ['http://ab57.ru/downloads/proxyold.txt'],
-        'task_queue': SPIDER_COMMON_TASK,
+        'task_queue': SPIDER_COMMON_Q,
         'parse_type': 'text',
         'parse_rule': {
             'pre_extract': None,
@@ -244,7 +244,7 @@ CRAWLER_TASKS = [
         'name': 'proxylists.net',
         'resource': ['http://www.proxylists.net/http_highanon.txt'],
         'parse_type': 'text',
-        'task_queue': SPIDER_COMMON_TASK,
+        'task_queue': SPIDER_COMMON_Q,
         'parse_rule': {
             'pre_extract': None,
             'delimiter': '\r\n',
@@ -264,7 +264,7 @@ CRAWLER_TASKS = [
             'https://www.my-proxy.com/free-socks-5-proxy.html'
         ],
         'task_queue':
-        SPIDER_COMMON_TASK,
+        SPIDER_COMMON_Q,
         # if the parse method is specified, set it in the Spider's parser_maps
         'parse_type':
         'myproxy',
@@ -276,7 +276,7 @@ CRAWLER_TASKS = [
     {
         'name': 'us-proxy.org',
         'resource': ['https://www.us-proxy.org/'],
-        'task_queue': SPIDER_COMMON_TASK,
+        'task_queue': SPIDER_COMMON_Q,
         'parse_type': 'common',
         'parse_rule': {
             'pre_extract_method': 'xpath',
@@ -298,7 +298,7 @@ CRAWLER_TASKS = [
         'resource': [
             'https://www.socks-proxy.net/',
         ],
-        'task_queue': SPIDER_COMMON_TASK,
+        'task_queue': SPIDER_COMMON_Q,
         'parse_type': 'common',
         'parse_rule': {
             'pre_extract_method': 'xpath',
@@ -318,7 +318,7 @@ CRAWLER_TASKS = [
     {
         'name': 'sslproxies.org/',
         'resource': ['https://www.sslproxies.org/'],
-        'task_queue': SPIDER_COMMON_TASK,
+        'task_queue': SPIDER_COMMON_Q,
         'parse_type': 'common',
         'parse_rule': {
             'pre_extract_method': 'xpath',
@@ -343,7 +343,7 @@ CRAWLER_TASKS = [
             'http://www.atomintersoft.com/anonymous_proxy_list',
         ],
         'task_queue':
-        SPIDER_COMMON_TASK,
+        SPIDER_COMMON_Q,
         'parse_type':
         'common',
         'parse_rule': {
@@ -366,7 +366,7 @@ CRAWLER_TASKS = [
     {
         'name': 'rmccurdy.com',
         'resource': ['https://www.rmccurdy.com/scripts/proxy/good.txt'],
-        'task_queue': SPIDER_COMMON_TASK,
+        'task_queue': SPIDER_COMMON_Q,
         'parse_type': 'text',
         'parse_rule': {
             'pre_extract': None,
@@ -407,7 +407,7 @@ CRAWLER_TASKS = [
             for i in range(1, 6)
         ],
         'task_queue':
-        SPIDER_AJAX_TASK,
+        SPIDER_AJAX_Q,
         'parse_type':
         'common',
         'parse_rule': {
@@ -431,7 +431,7 @@ CRAWLER_TASKS = [
         'name': 'proxydb.net',
         'resource':
         ['http://proxydb.net/?offset=%s' % (15 * i) for i in range(20)],
-        'task_queue': SPIDER_AJAX_TASK,
+        'task_queue': SPIDER_AJAX_Q,
         'parse_type': 'common',
         'parse_rule': {
             'detail_rule': 'a::text',
@@ -448,7 +448,7 @@ CRAWLER_TASKS = [
             % i for i in range(1, 11)
         ],
         'task_queue':
-        SPIDER_AJAX_TASK,
+        SPIDER_AJAX_Q,
         'parse_type':
         'common',
         'parse_rule': {
@@ -471,7 +471,7 @@ CRAWLER_TASKS = [
     {
         'name': 'goubanjia.com',
         'resource': ['http://www.goubanjia.com/'],
-        'task_queue': SPIDER_AJAX_TASK,
+        'task_queue': SPIDER_AJAX_Q,
         'parse_type': 'goubanjia',
         'interval': 10,
         'enable': 1,
@@ -480,7 +480,7 @@ CRAWLER_TASKS = [
         'name': 'cn-proxy.com',
         'resource':
         ['http://cn-proxy.com/', 'http://cn-proxy.com/archives/218'],
-        'task_queue': SPIDER_GFW_TASK,
+        'task_queue': SPIDER_GFW_Q,
         'parse_type': 'common',
         'parse_rule': {
             'pre_extract_method': 'xpath',
@@ -506,7 +506,7 @@ CRAWLER_TASKS = [
             'https://free-proxy-list.net/anonymous-proxy.html',
         ],
         'task_queue':
-        SPIDER_GFW_TASK,
+        SPIDER_GFW_Q,
         'parse_type':
         'common',
         'parse_rule': {
@@ -534,7 +534,7 @@ CRAWLER_TASKS = [
             'sort=reliability&desc=true&pnum=%s#table' % i for i in range(20)
         ],
         'task_queue':
-        SPIDER_GFW_TASK,
+        SPIDER_GFW_Q,
         'parse_type':
         'xroxy',
         'interval':
@@ -550,7 +550,7 @@ CRAWLER_TASKS = [
             'http://list.proxylistplus.com/SSL-List-1'
         ],
         'task_queue':
-        SPIDER_GFW_TASK,
+        SPIDER_GFW_Q,
         'parse_type':
         'common',
         'parse_rule': {
@@ -577,7 +577,7 @@ CRAWLER_TASKS = [
         ['http://www.cnproxy.com/proxy%s.html' % i for i in range(1, 11)] +
         ['http://www.cnproxy.com/proxyedu%s.html' % i for i in range(1, 3)],
         'task_queue':
-        SPIDER_AJAX_GFW_TASK,
+        SPIDER_AJAX_GFW_Q,
         'parse_type':
         'cnproxy',
         'interval':
@@ -593,7 +593,7 @@ CRAWLER_TASKS = [
             for i in range(1, 30)
         ],
         'task_queue':
-        SPIDER_AJAX_GFW_TASK,
+        SPIDER_AJAX_GFW_Q,
         'parse_type':
         'free-proxy',
         'interval':
@@ -609,7 +609,7 @@ CRAWLER_TASKS = [
             for i in range(1, 11)
         ],
         'task_queue':
-        SPIDER_AJAX_GFW_TASK,
+        SPIDER_AJAX_GFW_Q,
         'parse_type':
         'common',
         'parse_rule': {
@@ -648,7 +648,7 @@ CRAWLER_TASKS = [
             'http://www.gatherproxy.com/proxylist/port/8118'
         ],
         'task_queue':
-        SPIDER_AJAX_GFW_TASK,
+        SPIDER_AJAX_GFW_Q,
         'parse_type':
         'common',
         'parse_rule': {
@@ -671,11 +671,11 @@ CRAWLER_TASKS = [
 ]
 
 # crawler will fetch tasks from the following queues
-CRAWLER_TASK_MAPS = {
-    'common': SPIDER_COMMON_TASK,
-    'ajax': SPIDER_AJAX_TASK,
-    'gfw': SPIDER_GFW_TASK,
-    'ajax_gfw': SPIDER_AJAX_GFW_TASK
+CRAWLER_QUEUE_MAPS = {
+    'common': SPIDER_COMMON_Q,
+    'ajax': SPIDER_AJAX_Q,
+    'gfw': SPIDER_GFW_Q,
+    'ajax_gfw': SPIDER_AJAX_GFW_Q
 }
 
 # validator scheduler will fetch tasks from resource queue and store into task queue
@@ -711,7 +711,7 @@ VALIDATOR_TASKS = [
 ]
 
 # validators will fetch proxies from the following queues
-TEMP_TASK_MAPS = {
+TEMP_QUEUE_MAPS = {
     'init': INIT_HTTP_QUEUE,
     'http': TEMP_HTTP_QUEUE,
     'https': TEMP_HTTPS_QUEUE,
@@ -727,7 +727,7 @@ HTTPS_TASKS = ['https', 'zhihu', 'weibo']
 
 # todo the three maps may be combined in one map
 # validator scheduler and clients will fetch proxies from the following queues
-SCORE_MAPS = {
+SCORE_QUEUE_MAPS = {
     'http': VALIDATED_HTTP_QUEUE,
     'https': VALIDATED_HTTPS_QUEUE,
     'weibo': VALIDATED_WEIBO_QUEUE,
@@ -735,14 +735,14 @@ SCORE_MAPS = {
 }
 
 # validator scheduler and clients will fetch proxies from the following queues which are verified recently
-TTL_MAPS = {
+TTL_QUEUE_MAPS = {
     'http': TTL_HTTP_QUEUE,
     'https': TTL_HTTPS_QUEUE,
     'weibo': TTL_WEIBO_QUEUE,
     'zhihu': TTL_ZHIHU_QUEUE
 }
 
-SPEED_MAPS = {
+SPEED_QUEUE_MAPS = {
     'http': SPEED_HTTP_QUEUE,
     'https': SPEED_HTTPS_QUEUE,
     'weibo': SPEED_WEIBO_QUEUE,

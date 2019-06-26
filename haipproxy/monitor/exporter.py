@@ -8,10 +8,10 @@ from prometheus_client.core import (CounterMetricFamily, GaugeMetricFamily,
 from haipproxy.config.settings import (
     DATA_ALL,
     INIT_HTTP_QUEUE,
-    SPIDER_COMMON_TASK,
-    SPIDER_AJAX_TASK,
-    SPIDER_GFW_TASK,
-    SPIDER_AJAX_GFW_TASK,
+    SPIDER_COMMON_Q,
+    SPIDER_AJAX_Q,
+    SPIDER_GFW_Q,
+    SPIDER_AJAX_GFW_Q,
     TEMP_ZHIHU_QUEUE,
     VALIDATED_ZHIHU_QUEUE,
     TTL_ZHIHU_QUEUE,
@@ -40,10 +40,10 @@ class CustomCollector:
         pipe.zrevrangebyscore(VALIDATED_ZHIHU_QUEUE, '+inf', LOWEST_SCORE)
         pipe.zrevrangebyscore(TTL_ZHIHU_QUEUE, '+inf', start_time)
         pipe.zrangebyscore(SPEED_ZHIHU_QUEUE, 0, 1000 * LONGEST_RESPONSE_TIME)
-        pipe.llen(SPIDER_COMMON_TASK)
-        pipe.llen(SPIDER_AJAX_TASK)
-        pipe.llen(SPIDER_GFW_TASK)
-        pipe.llen(SPIDER_AJAX_GFW_TASK)
+        pipe.llen(SPIDER_COMMON_Q)
+        pipe.llen(SPIDER_AJAX_Q)
+        pipe.llen(SPIDER_GFW_Q)
+        pipe.llen(SPIDER_AJAX_GFW_Q)
         r = pipe.execute()
         available_proxies = len(set(r[3]) & set(r[4]) & set(r[5]))
 

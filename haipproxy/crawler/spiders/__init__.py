@@ -46,15 +46,16 @@ https://proxy-list.org/english/index.php
 from .ajax_gfw_spider import AjaxGFWSpider
 from .ajax_spider import AjaxSpider
 from .base import BaseSpider
-from .common_spider import CommonSpider
+from .common_spider import CommonSpider, ProxySpider
 from .gfw_spider import GFWSpider
 
 __all__ = [
-    'CommonSpider', 'AjaxSpider', 'GFWSpider', 'AjaxGFWSpider', 'BaseSpider',
+    'ProxySpider', 'CommonSpider', 'AjaxSpider', 'GFWSpider', 'AjaxGFWSpider', 'BaseSpider',
     'all_spiders'
 ]
 
 all_spiders = [
+    ProxySpider,
     CommonSpider,
     AjaxSpider,
     GFWSpider,

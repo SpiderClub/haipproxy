@@ -1,7 +1,7 @@
 """
 Ajax gfw proxy ip crawler with scrapy-splash
 """
-from haipproxy.config.settings import SPIDER_AJAX_GFW_TASK
+from haipproxy.config.rules import CRAWLER_QUEUE_MAPS
 from ..redis_spiders import RedisAjaxSpider
 from ..items import ProxyUrlItem
 from .base import BaseSpider
@@ -10,7 +10,7 @@ from .base import BaseSpider
 class AjaxGFWSpider(BaseSpider, RedisAjaxSpider):
     name = 'ajax_gfw'
     proxy_mode = 2
-    task_queue = SPIDER_AJAX_GFW_TASK
+    task_queue = CRAWLER_QUEUE_MAPS[name]
 
     def __init__(self):
         super().__init__()

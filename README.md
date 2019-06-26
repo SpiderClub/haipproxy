@@ -91,7 +91,7 @@ print(fetcher.get_proxies()) # or print(fetcher.pool)
 - 本项目高度依赖Redis，除了消息通信和数据存储之外，IP校验和任务定时工具也使用了Redis中的多种数据结构。
 如果需要替换Redis，请自行度量
 - 由于*GFW*的原因，某些网站需要通过科学上网才能进行访问和采集，如果用户无法访问墙外的网站，请将[rules.py](config/rules.py)
-`task_queue`为` SPIDER_GFW_TASK`和`SPIDER_AJAX_GFW_TASK`的任务`enable`属性设置为0或者启动爬虫的时候指定爬虫类型为`common`和
+`task_queue`为` SPIDER_GFW_Q`和`SPIDER_AJAX_GFW_Q`的任务`enable`属性设置为0或者启动爬虫的时候指定爬虫类型为`common`和
 `ajax`
   > python crawler_booter.py --usage crawler common ajax
 - 相同代理IP，对于不同网站的代理效果可能大不相同。如果通用代理无法满足您的需求，您可以[为特定网站编写代理IP校验器](https://github.com/SpiderClub/haipproxy/blob/master/docs/%E9%92%88%E5%AF%B9%E7%89%B9%E5%AE%9A%E7%AB%99%E7%82%B9%E6%B7%BB%E5%8A%A0%E6%A0%A1%E9%AA%8C%E5%99%A8.md)

@@ -3,15 +3,14 @@ Basic proxy ip crawler.
 """
 import scrapy
 
-from haipproxy.config.settings import SPIDER_COMMON_TASK
+from haipproxy.config.rules import CRAWLER_QUEUE_MAPS
 from ..redis_spiders import RedisSpider
 from ..items import ProxyUrlItem
 from .base import BaseSpider
 
 
-class CommonSpider(scrapy.Spider):
-    name = 'common'
-    task_queue = SPIDER_COMMON_TASK
+class ProxySpider(scrapy.Spider):
+    name = 'proxy'
     custom_settings = {
         'ITEM_PIPELINES': {
             'haipproxy.crawler.pipelines.ProxyIPPipeline': 200,
@@ -37,9 +36,9 @@ class CommonSpider(scrapy.Spider):
 
 
 # notice multi inheritance order in python
-class RedisCommonSpider(BaseSpider, RedisSpider):
-    name = 'rediscommon'
-    task_queue = SPIDER_COMMON_TASK
+class CommonSpider(BaseSpider, RedisSpider):
+    name = 'common'
+    task_queue = CRAWLER_QUEUE_MAPS[name]
 
     def __init__(self):
         super().__init__()

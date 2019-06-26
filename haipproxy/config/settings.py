@@ -61,10 +61,10 @@ LOCKER_PREFIX = 'haipproxy:lock:'
 
 # proxies crawler's settings
 SPIDER_FEED_SIZE = 10
-SPIDER_COMMON_TASK = 'haipproxy:spider:common'
-SPIDER_AJAX_TASK = 'haipproxy:spider:ajax'
-SPIDER_GFW_TASK = 'haipproxy:spider:gfw'
-SPIDER_AJAX_GFW_TASK = 'haipproxy:spider:ajax_gfw'
+SPIDER_COMMON_Q = 'haipproxy:spider:common'
+SPIDER_AJAX_Q = 'haipproxy:spider:ajax'
+SPIDER_GFW_Q = 'haipproxy:spider:gfw'
+SPIDER_AJAX_GFW_Q = 'haipproxy:spider:ajax_gfw'
 
 # data_all is a set , it's a dupefilter
 DATA_ALL = 'haipproxy:all'

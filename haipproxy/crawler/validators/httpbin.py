@@ -8,7 +8,7 @@ from json.decoder import JSONDecodeError
 
 import requests
 
-from haipproxy.config.rules import (SPEED_MAPS, TTL_MAPS, SCORE_MAPS,
+from haipproxy.config.rules import (SPEED_QUEUE_MAPS, TTL_QUEUE_MAPS, SCORE_QUEUE_MAPS,
                                     HTTP_TASKS, HTTPS_TASKS)
 from haipproxy.config.settings import (INIT_HTTP_QUEUE, TEMP_HTTP_QUEUE,
                                        TEMP_HTTPS_QUEUE, VALIDATED_HTTP_QUEUE,
@@ -70,9 +70,9 @@ class HttpBinInitValidator(BaseValidator, ValidatorRedisSpider):
             speed_item = ProxySpeedItem(url=proxy,
                                         response_time=speed,
                                         incr=incr)
-            score_item['queue'] = SCORE_MAPS.get(task)
-            ttl_item['queue'] = TTL_MAPS.get(task)
-            speed_item['queue'] = SPEED_MAPS.get(task)
+            score_item['queue'] = SCORE_QUEUE_MAPS.get(task)
+            ttl_item['queue'] = TTL_QUEUE_MAPS.get(task)
+            speed_item['queue'] = SPEED_QUEUE_MAPS.get(task)
             items.append(score_item)
             items.append(ttl_item)
             items.append(speed_item)

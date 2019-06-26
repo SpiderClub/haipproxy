@@ -13,32 +13,23 @@ from scrapy.utils.project import get_project_settings
 from twisted.internet import reactor
 
 from ..client import SquidClient
-from ..config.rules import (CRAWLER_TASKS, VALIDATOR_TASKS, CRAWLER_TASK_MAPS,
-                            TEMP_TASK_MAPS)
+from ..config.rules import (CRAWLER_TASKS, VALIDATOR_TASKS, CRAWLER_QUEUE_MAPS,
+                            TEMP_QUEUE_MAPS)
 from ..crawler.spiders import all_spiders
 from ..crawler.validators import all_validators
-from ..config.settings import (SPIDER_COMMON_TASK, SPIDER_AJAX_TASK,
-                               SPIDER_GFW_TASK, SPIDER_AJAX_GFW_TASK,
+from ..config.settings import (SPIDER_COMMON_Q, SPIDER_AJAX_Q,
+                               SPIDER_GFW_Q, SPIDER_AJAX_GFW_Q,
                                TEMP_HTTP_QUEUE, TEMP_HTTPS_QUEUE,
                                TIMER_RECORDER, TTL_VALIDATED_RESOURCE)
 from ..utils import (get_redis_conn, acquire_lock, release_lock)
 
 DEFAULT_CRAWLER_TASKS = [
-    SPIDER_COMMON_TASK, SPIDER_AJAX_TASK, SPIDER_GFW_TASK, SPIDER_AJAX_GFW_TASK
+    SPIDER_COMMON_Q, SPIDER_AJAX_Q, SPIDER_GFW_Q, SPIDER_AJAX_GFW_Q
 ]
 DEFAULT_VALIDATORS_TASKS = [TEMP_HTTP_QUEUE, TEMP_HTTPS_QUEUE]
 
 
 logger = logging.getLogger(__name__)
-
-
-class BaseCase:
-    def __init__(self, spider):
-        self.spider = spider
-
-    def check(self, task, maps):
-        task_queue = maps.get(task)
-        return self.spider.task_queue == task_queue
 
 
 class BaseScheduler:
@@ -170,12 +161,12 @@ def scheduler_start(usage, task_queues):
     if usage == 'crawler':
         default_tasks = CRAWLER_TASKS
         default_allow_tasks = DEFAULT_CRAWLER_TASKS
-        maps = CRAWLER_TASK_MAPS
+        maps = CRAWLER_QUEUE_MAPS
         SchedulerCls = CrawlerScheduler
     else:
         default_tasks = VALIDATOR_TASKS
         default_allow_tasks = DEFAULT_VALIDATORS_TASKS
-        maps = TEMP_TASK_MAPS
+        maps = TEMP_QUEUE_MAPS
         SchedulerCls = ValidatorScheduler
 
     scheduler = SchedulerCls(usage, default_tasks)
@@ -206,32 +197,19 @@ def crawler_start(usage, tasks):
     There are four kinds of spiders: common, ajax, gfw, ajax_gfw. If you don't
     assign any tasks, all these spiders will run.
     """
-    if usage == 'crawler':
-        maps = CRAWLER_TASK_MAPS
-        origin_spiders = all_spiders
-    else:
-        maps = TEMP_TASK_MAPS
-        origin_spiders = all_validators
-
+    origin_spiders = all_spiders if usage == 'crawler' else all_validators
     if not tasks:
         spiders = origin_spiders
     else:
         spiders = list()
-        cases = list(map(BaseCase, origin_spiders))
         for task in tasks:
-            for case in cases:
-                if case.check(task, maps):
-                    spiders.append(case.spider)
+            for spider in origin_spiders:
+                if spider.name == task:
+                    spiders.append(spider)
                     break
-            else:
-                crawler_logger.warning(
-                    'spider task {} is an invalid task, the allowed tasks are {}'
-                    .format(task, list(maps.keys())))
-                pass
+    logger.info(f'{len(spiders)} spiders will starts up')
     if not spiders:
-        logger.warning('no spider starts up, please check your task input')
         return
-
     settings = get_project_settings()
     configure_logging(settings)
     runner = CrawlerRunner(settings)
