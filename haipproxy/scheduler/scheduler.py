@@ -28,8 +28,6 @@ DEFAULT_CRAWLER_TASKS = [
 ]
 DEFAULT_VALIDATORS_TASKS = [TEMP_HTTP_QUEUE, TEMP_HTTPS_QUEUE]
 
-DEFAULT_CRAWLERS = all_spiders
-DEFAULT_VALIDATORS = all_validators
 
 logger = logging.getLogger(__name__)
 
@@ -210,10 +208,10 @@ def crawler_start(usage, tasks):
     """
     if usage == 'crawler':
         maps = CRAWLER_TASK_MAPS
-        origin_spiders = DEFAULT_CRAWLERS
+        origin_spiders = all_spiders
     else:
         maps = TEMP_TASK_MAPS
-        origin_spiders = DEFAULT_VALIDATORS
+        origin_spiders = all_validators
 
     if not tasks:
         spiders = origin_spiders

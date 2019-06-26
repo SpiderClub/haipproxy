@@ -1,15 +1,44 @@
 """
 Basic proxy ip crawler.
 """
+import scrapy
+
 from haipproxy.config.settings import SPIDER_COMMON_TASK
 from ..redis_spiders import RedisSpider
 from ..items import ProxyUrlItem
 from .base import BaseSpider
 
 
-# notice multi inheritance order in python
-class CommonSpider(BaseSpider, RedisSpider):
+class CommonSpider(scrapy.Spider):
     name = 'common'
+    task_queue = SPIDER_COMMON_TASK
+    custom_settings = {
+        'ITEM_PIPELINES': {
+            'haipproxy.crawler.pipelines.ProxyIPPipeline': 200,
+        },
+        'USER_AGENT': 'Mozilla/6.0',
+    }
+
+    def start_requests(self):
+        urls = [
+            'https://www.xicidaili.com/nn/1',
+        ]
+        for url in urls:
+            yield scrapy.Request(url=url, callback=self.parse)
+
+    def parse(self, response):
+        rows = response.xpath('//table/tr[@class]')
+        for row in rows:
+            cols = row.xpath('td/text()').getall()
+            ip = cols[0]
+            port = cols[1]
+            protocol = cols[5]
+            yield ProxyUrlItem(url=f'{protocol}://{ip}:{port}')
+
+
+# notice multi inheritance order in python
+class RedisCommonSpider(BaseSpider, RedisSpider):
+    name = 'rediscommon'
     task_queue = SPIDER_COMMON_TASK
 
     def __init__(self):
