@@ -54,6 +54,7 @@ LOG_LEVEL = 'INFO'
 REDIS_HOST = '127.0.0.1'
 REDIS_PORT = 6379
 REDIS_DB = 0
+REDIS_PIPE_BATCH_SIZE = 500
 
 # scheduler settings
 TIMER_RECORDER = 'haipproxy:scheduler:task'

@@ -1,47 +1,54 @@
 """
 scrapy pipelines for storing proxy ip infos.
 """
-from twisted.internet.threads import deferToThread
+import logging
+
 from scrapy.exceptions import DropItem
 
 from ..utils import get_redis_conn
 from ..config.settings import (REDIS_DB, DATA_ALL, INIT_HTTP_Q, INIT_SOCKS4_Q,
-                               INIT_SOCKS5_Q)
+                               INIT_SOCKS5_Q, REDIS_PIPE_BATCH_SIZE)
 from .items import (ProxyScoreItem, ProxyVerifiedTimeItem, ProxySpeedItem)
+
+logger = logging.getLogger(__name__)
 
 
 class BasePipeline:
     def open_spider(self, spider):
         self.redis_conn = get_redis_conn()
+        self.pipe = self.redis_conn.pipeline()
+        self.pipe_size = 0
 
-    def process_item(self, item, spider):
-        return deferToThread(self._process_item, item, spider)
-
-    def _process_item(self, item, spider):
-        raise NotImplementedError
+    def close_spider(self, spider):
+        self.pipe.execute()
+        logger.info(f'{self.pipe_size} redis commands executed')
 
 
 class ProxyIPPipeline(BasePipeline):
-    def _process_item(self, item, spider):
+    def process_item(self, item, spider):
         url = item.get('url', None)
         if not url:
             return item
 
-        pipeline = self.redis_conn.pipeline()
-        not_exists = pipeline.sadd(DATA_ALL, url)
+        not_exists = self.pipe.sadd(DATA_ALL, url)
+        self.pipe_size += 1
         if not_exists:
             if 'socks4' in url:
-                pipeline.rpush(INIT_SOCKS4_Q, url)
+                self.pipe.rpush(INIT_SOCKS4_Q, url)
             elif 'socks5' in url:
-                pipeline.rpush(INIT_SOCKS5_Q, url)
+                self.pipe.rpush(INIT_SOCKS5_Q, url)
             else:
-                pipeline.rpush(INIT_HTTP_Q, url)
-        pipeline.execute()
+                self.pipe.rpush(INIT_HTTP_Q, url)
+            self.pipe_size += 1
+        if self.pipe_size >= REDIS_PIPE_BATCH_SIZE:
+            self.pipe.execute()
+            logger.info(f'{self.pipe_size} redis commands executed')
+            self.pipe_size = 0
         return item
 
 
 class ProxyCommonPipeline(BasePipeline):
-    def _process_item(self, item, spider):
+    def process_item(self, item, spider):
         if isinstance(item, ProxyScoreItem):
             self._process_score_item(item, spider)
         if isinstance(item, ProxyVerifiedTimeItem):
@@ -58,10 +65,9 @@ class ProxyCommonPipeline(BasePipeline):
         else:
             # delete ip resource when score < 1 or error happens
             if item['incr'] == '-inf' or (item['incr'] < 0 and score <= 1):
-                pipe = self.redis_conn.pipeline(True)
-                pipe.srem(DATA_ALL, item['url'])
-                pipe.zrem(item['queue'], item['url'])
-                pipe.execute()
+                self.pipe.srem(DATA_ALL, item['url'])
+                self.pipe.zrem(item['queue'], item['url'])
+                self.pipe.execute()
             elif item['incr'] < 0 and 1 < score:
                 self.redis_conn.zincrby(item['queue'], -1, item['url'])
             elif item['incr'] > 0 and score < 10:
