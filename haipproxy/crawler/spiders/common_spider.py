@@ -1,6 +1,8 @@
 """
 Basic proxy ip crawler.
 """
+from urllib.parse import urlparse
+
 import scrapy
 
 from haipproxy.config.rules import CRAWLER_QUEUE_MAPS
@@ -21,11 +23,22 @@ class ProxySpider(scrapy.Spider):
     def start_requests(self):
         urls = [
             'https://www.xicidaili.com/nn/1',
+            'https://www.kuaidaili.com/free/inha/1/',
         ]
         for url in urls:
             yield scrapy.Request(url=url, callback=self.parse)
 
     def parse(self, response):
+        site = urlparse(response.url).hostname.split('.')[1]
+        cur_parse = getattr(self, f'parse_{site}')
+        debug = False
+        if debug:
+            from scrapy.shell import inspect_response
+            inspect_response(response, self)
+        for item in cur_parse(response):
+            yield item
+
+    def parse_xicidaili(self, response):
         rows = response.xpath('//table/tr[@class]')
         for row in rows:
             cols = row.xpath('td/text()').getall()
@@ -34,6 +47,14 @@ class ProxySpider(scrapy.Spider):
             protocol = cols[5]
             yield ProxyUrlItem(url=f'{protocol}://{ip}:{port}')
 
+    def parse_kuaidaili(self, response):
+        rows = response.xpath('//table/tbody/tr')
+        for row in rows:
+            cols = row.xpath('td/text()').getall()
+            ip = cols[0]
+            port = cols[1]
+            protocol = cols[3]
+            yield ProxyUrlItem(url=f'{protocol}://{ip}:{port}')
 
 # notice multi inheritance order in python
 class CommonSpider(BaseSpider, RedisSpider):
