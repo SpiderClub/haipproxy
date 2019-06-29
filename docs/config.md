@@ -55,11 +55,6 @@ SPIDER_MIDDLEWARES = {
     'scrapy_splash.SplashDeduplicateArgsMiddleware': 100,
 }
 
-# scrapy日志设置，目前仍然没找到一个比较好的方法
-LOG_LEVEL = 'DEBUG'
-LOG_FILE = 'logs/haipproxy.log'
-
-
 #####################################################################
 # HAipproxy的默认设置
 #####################################################################

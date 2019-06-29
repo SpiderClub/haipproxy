@@ -11,8 +11,6 @@ from ..config.settings import (TTL_VALIDATED_RESOURCE, LONGEST_RESPONSE_TIME,
                                LOWEST_SCORE, LOWEST_TOTAL_PROXIES, DATA_ALL)
 from .core import IPFetcherMixin
 
-__all__ = ['ProxyFetcher']
-
 lock = threading.RLock()
 
 logger = logging.getLogger(__name__)

@@ -3,8 +3,6 @@ This module provides fake ua for all spiders.
 """
 import random
 
-__all__ = ['FakeChromeUA']
-
 FIRST_NUM = random.randint(55, 62)
 THIRD_NUM = random.randint(0, 3200)
 FOURTH_NUM = random.randint(0, 140)

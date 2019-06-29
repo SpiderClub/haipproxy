@@ -49,11 +49,6 @@ from .base import BaseSpider
 from .common_spider import CommonSpider, ProxySpider
 from .gfw_spider import GFWSpider
 
-__all__ = [
-    'ProxySpider', 'CommonSpider', 'AjaxSpider', 'GFWSpider', 'AjaxGFWSpider', 'BaseSpider',
-    'all_spiders'
-]
-
 all_spiders = [
     ProxySpider,
     CommonSpider,

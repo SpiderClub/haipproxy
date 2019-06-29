@@ -8,7 +8,6 @@ import schedule
 import time
 
 from scrapy.crawler import CrawlerRunner
-from scrapy.utils.log import configure_logging
 from scrapy.utils.project import get_project_settings
 from twisted.internet import reactor
 
@@ -211,7 +210,6 @@ def crawler_start(usage, tasks):
     if not spiders:
         return
     settings = get_project_settings()
-    configure_logging(settings)
     runner = CrawlerRunner(settings)
     for spider in spiders:
         runner.crawl(spider)
