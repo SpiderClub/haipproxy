@@ -3,10 +3,10 @@
 ---
 1.在[settings.py](https://github.com/SpiderClub/haipproxy/blob/master/config/settings.py)中添加`zhihu`校验器对应的`temp queue`、`validated queue`、`ttl queue`及`speed queue`。`temp queue`的作用是作为临时队列存储下一次定时校验的任务，`validated queue`是已经校验过的任务，记录了对应代理IP的打分(成功率)，`ttl queue`是对应代理IP最近一次的校验时间，`speed queue`记录的是对应代理IP最近一次校验的响应速度，后面三个队列都会作为客户端获取代理IP需要考虑的因素。这里我将四者分别设置为
 ```python3
-TEMP_ZHIHU_QUEUE = 'haipproxy:zhihu:temp'
-VALIDATED_ZHIHU_QUEUE = 'haipproxy:validated:zhihu'
-TTL_ZHIHU_QUEUE = 'haipproxy:ttl:zhihu'
-SPEED_ZHIHU_QUEUE = 'haipproxy:speed:zhihu'
+TEMP_ZHIHU_Q = 'haipproxy:zhihu:temp'
+VALIDATED_ZHIHU_Q = 'haipproxy:validated:zhihu'
+TTL_ZHIHU_Q = 'haipproxy:ttl:zhihu'
+SPEED_ZHIHU_Q = 'haipproxy:speed:zhihu'
 ```
 
 2.将上一步的`queue`配置到[rules.py](https://github.com/SpiderClub/haipproxy/blob/master/config/rules.py)中对应的maps中
@@ -14,33 +14,33 @@ SPEED_ZHIHU_QUEUE = 'haipproxy:speed:zhihu'
 VALIDATOR_TASKS = [
     {
         'name': 'zhihu',
-        'task_queue': TEMP_ZHIHU_QUEUE,
-        'resource': VALIDATED_ZHIHU_QUEUE,
+        'task_queue': TEMP_ZHIHU_Q,
+        'resource': VALIDATED_ZHIHU_Q,
         'interval': 20,
         'enable': 1,
     },
 ]
 TEMP_QUEUE_MAPS = {
     # temp task maps 中init queue必须存在
-    'init': INIT_HTTP_QUEUE,
-    'zhihu': TEMP_ZHIHU_QUEUE
+    'init': INIT_HTTP_Q,
+    'zhihu': TEMP_ZHIHU_Q
 }
 SCORE_QUEUE_MAPS = {
-    'zhihu': VALIDATED_ZHIHU_QUEUE
+    'zhihu': VALIDATED_ZHIHU_Q
 }
 TTL_QUEUE_MAPS = {
-    'zhihu': TTL_ZHIHU_QUEUE
+    'zhihu': TTL_ZHIHU_Q
 }
 SPEED_QUEUE_MAPS = {
-    'zhihu': SPEED_ZHIHU_QUEUE
+    'zhihu': SPEED_ZHIHU_Q
 }
 ```
 3.在[校验器模块](https://github.com/SpiderClub/haipproxy/blob/master/crawler/validators)添加知乎校验器爬虫，具体流程如下
 - 新建校验器爬虫文件`zhihu.py`,在其中添加校验具体逻辑
 ```
 from config.settings import (
-    TEMP_ZHIHU_QUEUE, VALIDATED_ZHIHU_QUEUE,
-    TTL_ZHIHU_QUEUE, SPEED_ZHIHU_QUEUE)
+    TEMP_ZHIHU_Q, VALIDATED_ZHIHU_Q,
+    TTL_ZHIHU_Q, SPEED_ZHIHU_Q)
 # ValidatorRedisSpider提供了分布式父类爬虫
 from ..redis_spiders import ValidatorRedisSpider
 # BaseValidator提供了基本的请求错误处理，但是业务相关逻辑错误需要自己实现
@@ -54,10 +54,10 @@ class ZhiHuValidator(BaseValidator, ValidatorRedisSpider):
         'https://www.zhihu.com/question/47464143'
     ]
     # 下面四个属性必须设置，并且与maps中的一致
-    task_queue = TEMP_ZHIHU_QUEUE
-    score_queue = VALIDATED_ZHIHU_QUEUE
-    ttl_queue = TTL_ZHIHU_QUEUE
-    speed_queue = SPEED_ZHIHU_QUEUE
+    task_queue = TEMP_ZHIHU_Q
+    score_queue = VALIDATED_ZHIHU_Q
+    ttl_queue = TTL_ZHIHU_Q
+    speed_queue = SPEED_ZHIHU_Q
     # 判断success_key是否在响应内容中，从而判断IP是否正常，默认为''，表示正常
     success_key = ''
 ```
@@ -71,7 +71,7 @@ class HttpBinInitValidator(BaseValidator, ValidatorRedisSpider):
         'https://httpbin.org/ip',
     ]
     use_set = False
-    task_queue = INIT_HTTP_QUEUE
+    task_queue = INIT_HTTP_Q
     https_tasks = ['https', 'zhihu']
     http_tasks = ['http']
 ```

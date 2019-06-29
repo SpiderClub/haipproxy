@@ -16,17 +16,15 @@ from ..config.rules import (CRAWLER_TASKS, VALIDATOR_TASKS, CRAWLER_QUEUE_MAPS,
                             TEMP_QUEUE_MAPS)
 from ..crawler.spiders import all_spiders
 from ..crawler.validators import all_validators
-from ..config.settings import (SPIDER_COMMON_Q, SPIDER_AJAX_Q,
-                               SPIDER_GFW_Q, SPIDER_AJAX_GFW_Q,
-                               TEMP_HTTP_QUEUE, TEMP_HTTPS_QUEUE,
+from ..config.settings import (SPIDER_COMMON_Q, SPIDER_AJAX_Q, SPIDER_GFW_Q,
+                               SPIDER_AJAX_GFW_Q, TEMP_HTTP_Q, TEMP_HTTPS_Q,
                                TIMER_RECORDER, TTL_VALIDATED_RESOURCE)
 from ..utils import (get_redis_conn, acquire_lock, release_lock)
 
-DEFAULT_CRAWLER_TASKS = [
+DEFAULT_CRAWLER_QS = [
     SPIDER_COMMON_Q, SPIDER_AJAX_Q, SPIDER_GFW_Q, SPIDER_AJAX_GFW_Q
 ]
-DEFAULT_VALIDATORS_TASKS = [TEMP_HTTP_QUEUE, TEMP_HTTPS_QUEUE]
-
+DEFAULT_VALIDATORS_QS = [TEMP_HTTP_Q, TEMP_HTTPS_Q]
 
 logger = logging.getLogger(__name__)
 
@@ -159,19 +157,19 @@ def scheduler_start(usage, task_queues):
     logger.info('{} scheduler is starting...'.format(usage))
     if usage == 'crawler':
         default_tasks = CRAWLER_TASKS
-        default_allow_tasks = DEFAULT_CRAWLER_TASKS
+        default_allow_qs = DEFAULT_CRAWLER_QS
         maps = CRAWLER_QUEUE_MAPS
         SchedulerCls = CrawlerScheduler
     else:
         default_tasks = VALIDATOR_TASKS
-        default_allow_tasks = DEFAULT_VALIDATORS_TASKS
+        default_allow_qs = DEFAULT_VALIDATORS_QS
         maps = TEMP_QUEUE_MAPS
         SchedulerCls = ValidatorScheduler
 
     scheduler = SchedulerCls(usage, default_tasks)
 
     if not task_queues:
-        scheduler.task_queues = default_allow_tasks
+        scheduler.task_queues = default_allow_qs
     else:
         for task_queue in task_queues:
             allow_task_queue = maps.get(task_queue)

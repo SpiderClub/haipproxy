@@ -7,15 +7,15 @@ from prometheus_client.core import (CounterMetricFamily, GaugeMetricFamily,
 
 from haipproxy.config.settings import (
     DATA_ALL,
-    INIT_HTTP_QUEUE,
+    INIT_HTTP_Q,
     SPIDER_COMMON_Q,
     SPIDER_AJAX_Q,
     SPIDER_GFW_Q,
     SPIDER_AJAX_GFW_Q,
-    TEMP_ZHIHU_QUEUE,
-    VALIDATED_ZHIHU_QUEUE,
-    TTL_ZHIHU_QUEUE,
-    SPEED_ZHIHU_QUEUE,
+    TEMP_ZHIHU_Q,
+    VALIDATED_ZHIHU_Q,
+    TTL_ZHIHU_Q,
+    SPEED_ZHIHU_Q,
     TTL_VALIDATED_RESOURCE,
     LOWEST_SCORE,
     LONGEST_RESPONSE_TIME,
@@ -26,6 +26,7 @@ from haipproxy.utils import get_redis_conn
 
 logger = logging.getLogger(__name__)
 
+
 class CustomCollector:
     def __init__(self):
         self.redis_conn = get_redis_conn()
@@ -35,11 +36,11 @@ class CustomCollector:
 
         pipe = self.redis_conn.pipeline(False)
         pipe.scard(DATA_ALL)
-        pipe.llen(INIT_HTTP_QUEUE)
-        pipe.scard(TEMP_ZHIHU_QUEUE)
-        pipe.zrevrangebyscore(VALIDATED_ZHIHU_QUEUE, '+inf', LOWEST_SCORE)
-        pipe.zrevrangebyscore(TTL_ZHIHU_QUEUE, '+inf', start_time)
-        pipe.zrangebyscore(SPEED_ZHIHU_QUEUE, 0, 1000 * LONGEST_RESPONSE_TIME)
+        pipe.llen(INIT_HTTP_Q)
+        pipe.scard(TEMP_ZHIHU_Q)
+        pipe.zrevrangebyscore(VALIDATED_ZHIHU_Q, '+inf', LOWEST_SCORE)
+        pipe.zrevrangebyscore(TTL_ZHIHU_Q, '+inf', start_time)
+        pipe.zrangebyscore(SPEED_ZHIHU_Q, 0, 1000 * LONGEST_RESPONSE_TIME)
         pipe.llen(SPIDER_COMMON_Q)
         pipe.llen(SPIDER_AJAX_Q)
         pipe.llen(SPIDER_GFW_Q)

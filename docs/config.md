@@ -83,37 +83,37 @@ DATA_ALL = 'haipproxy:all'
 # 数据流 init queue->validated_queue->validator_queue(temp)->validated_queue(score queue)->
 # ttl_queue, speed_qeuue -> clients
 # http_queue是一个列表,用以存放刚抓取到的http/https代理
-INIT_HTTP_QUEUE = 'haipproxy:init:http'
+INIT_HTTP_Q = 'haipproxy:init:http'
 # socks4/5代理存放的列表，目前项目并未对其进行校验和使用
-INIT_SOCKS4_QUEUE = 'haipproxy:init:socks4'
-INIT_SOCKS5_QUEUE = 'haipproxy:init:socks5'
+INIT_SOCKS4_Q = 'haipproxy:init:socks4'
+INIT_SOCKS5_Q = 'haipproxy:init:socks5'
 
 # 校验器批量任务获取数据量
 VALIDATOR_FEED_SIZE = 50
 # 从init queue获取到的临时集合,目的是对透明代理做一次过滤
-TEMP_HTTP_QUEUE = 'haipproxy:http:temp'
-TEMP_HTTPS_QUEUE = 'haipproxy:https:temp'
-TEMP_WEIBO_QUEUE = 'haipproxy:weibo:temp'
-TEMP_ZHIHU_QUEUE = 'haipproxy:zhihu:temp'
+TEMP_HTTP_Q = 'haipproxy:http:temp'
+TEMP_HTTPS_Q = 'haipproxy:https:temp'
+TEMP_WEIBO_Q = 'haipproxy:weibo:temp'
+TEMP_ZHIHU_Q = 'haipproxy:zhihu:temp'
 
 # 有序集合，用以存放验证过的IP及它们的分数
-VALIDATED_HTTP_QUEUE = 'haipproxy:validated:http'
-VALIDATED_HTTPS_QUEUE = 'haipproxy:validated:https'
-VALIDATED_WEIBO_QUEUE = 'haipproxy:validated:weibo'
-VALIDATED_ZHIHU_QUEUE = 'haipproxy:validated:zhihu'
+VALIDATED_HTTP_Q = 'haipproxy:validated:http'
+VALIDATED_HTTPS_Q = 'haipproxy:validated:https'
+VALIDATED_WEIBO_Q = 'haipproxy:validated:weibo'
+VALIDATED_ZHIHU_Q = 'haipproxy:validated:zhihu'
 
 # 有序集合，用以存放验证过的IP及它们的最近验证时间
 TTL_VALIDATED_RESOURCE = 2  # minutes
-TTL_HTTP_QUEUE = 'haipproxy:ttl:http'
-TTL_HTTPS_QUEUE = 'haipproxy:ttl:https'
-TTL_WEIBO_QUEUE = 'haipproxy:ttl:weibo'
-TTL_ZHIHU_QUEUE = 'haipproxy:ttl:zhihu'
+TTL_HTTP_Q = 'haipproxy:ttl:http'
+TTL_HTTPS_Q = 'haipproxy:ttl:https'
+TTL_WEIBO_Q = 'haipproxy:ttl:weibo'
+TTL_ZHIHU_Q = 'haipproxy:ttl:zhihu'
 
 # 有序集合，用以存放验证过的IP及它们的响应速度，这里速度是最近一次响应速度，不是平均速度
-SPEED_HTTP_QUEUE = 'haipproxy:speed:http'
-SPEED_HTTPS_QUEUE = 'haipproxy:speed:https'
-SPEED_WEIBO_QUEUE = 'haipproxy:speed:weibo'
-SPEED_ZHIHU_QUEUE = 'haipproxy:speed:zhihu'
+SPEED_HTTP_Q = 'haipproxy:speed:http'
+SPEED_HTTPS_Q = 'haipproxy:speed:https'
+SPEED_WEIBO_Q = 'haipproxy:speed:weibo'
+SPEED_ZHIHU_Q = 'haipproxy:speed:zhihu'
 
 # 如果您需要使用squid作为二级代理，那么需要配置squid相关参数，以ubuntu为例
 # 首先执行 sudo chown -R $USER /etc/squid/
@@ -167,9 +167,9 @@ VALIDATOR_TASKS = [
         # 任务名，不能和其他任务同名
         'name': 'http',
         # 代理来源
-        'task_queue': TEMP_HTTP_QUEUE,
+        'task_queue': TEMP_HTTP_Q,
         # 代理存入的地方
-        'resource': VALIDATED_HTTP_QUEUE,
+        'resource': VALIDATED_HTTP_Q,
         # 定时校验间隔
         'interval': 20,
         # 是否启用
@@ -177,8 +177,8 @@ VALIDATOR_TASKS = [
     },
     {
         'name': 'zhihu',
-        'task_queue': TEMP_ZHIHU_QUEUE,
-        'resource': VALIDATED_ZHIHU_QUEUE,
+        'task_queue': TEMP_ZHIHU_Q,
+        'resource': VALIDATED_ZHIHU_Q,
         'interval': 20,
         'enable': 1,
     },
@@ -187,30 +187,30 @@ VALIDATOR_TASKS = [
 # 校验器将从下面队列中获取代理IP进行校验
 TEMP_QUEUE_MAPS = {
     # init队列必须设置
-    'init': INIT_HTTP_QUEUE,
-    'http': TEMP_HTTP_QUEUE,
-    'zhihu': TEMP_ZHIHU_QUEUE
+    'init': INIT_HTTP_Q,
+    'http': TEMP_HTTP_Q,
+    'zhihu': TEMP_ZHIHU_Q
 }
 
 # 以下三个maps的作用是存储和提供可用代理，代表三个维度
 SCORE_QUEUE_MAPS = {
-    'http': VALIDATED_HTTP_QUEUE,
-    'https': VALIDATED_HTTPS_QUEUE,
-    'weibo': VALIDATED_WEIBO_QUEUE,
-    'zhihu': VALIDATED_ZHIHU_QUEUE
+    'http': VALIDATED_HTTP_Q,
+    'https': VALIDATED_HTTPS_Q,
+    'weibo': VALIDATED_WEIBO_Q,
+    'zhihu': VALIDATED_ZHIHU_Q
 }
 
 TTL_QUEUE_MAPS = {
-    'http': TTL_HTTP_QUEUE,
-    'https': TTL_HTTPS_QUEUE,
-    'weibo': TTL_WEIBO_QUEUE,
-    'zhihu': TTL_ZHIHU_QUEUE
+    'http': TTL_HTTP_Q,
+    'https': TTL_HTTPS_Q,
+    'weibo': TTL_WEIBO_Q,
+    'zhihu': TTL_ZHIHU_Q
 }
 
 SPEED_QUEUE_MAPS = {
-    'http': SPEED_HTTP_QUEUE,
-    'https': SPEED_HTTPS_QUEUE,
-    'weibo': SPEED_WEIBO_QUEUE,
-    'zhihu': SPEED_ZHIHU_QUEUE
+    'http': SPEED_HTTP_Q,
+    'https': SPEED_HTTPS_Q,
+    'weibo': SPEED_WEIBO_Q,
+    'zhihu': SPEED_ZHIHU_Q
 }
 ```

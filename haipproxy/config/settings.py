@@ -72,39 +72,39 @@ DATA_ALL = 'haipproxy:all'
 # the data flow is init queue->validated_queue->validator_queue(temp)->validated_queue(score queue)->
 # ttl_queue, speed_qeuue -> clients
 # http_queue is a list, it's used to store initially http/https proxy resourecs
-INIT_HTTP_QUEUE = 'haipproxy:init:http'
+INIT_HTTP_Q = 'haipproxy:init:http'
 
 # socks proxy resources container
-INIT_SOCKS4_QUEUE = 'haipproxy:init:socks4'
-INIT_SOCKS5_QUEUE = 'haipproxy:init:socks5'
+INIT_SOCKS4_Q = 'haipproxy:init:socks4'
+INIT_SOCKS5_Q = 'haipproxy:init:socks5'
 
 # custom validator settings
 VALIDATOR_FEED_SIZE = 50
 
 # they are temp sets, come from init queue, in order to filter transparnt ip
-TEMP_HTTP_QUEUE = 'haipproxy:http:temp'
-TEMP_HTTPS_QUEUE = 'haipproxy:https:temp'
-TEMP_WEIBO_QUEUE = 'haipproxy:weibo:temp'
-TEMP_ZHIHU_QUEUE = 'haipproxy:zhihu:temp'
+TEMP_HTTP_Q = 'haipproxy:http:temp'
+TEMP_HTTPS_Q = 'haipproxy:https:temp'
+TEMP_WEIBO_Q = 'haipproxy:weibo:temp'
+TEMP_ZHIHU_Q = 'haipproxy:zhihu:temp'
 
 # valited queues are zsets.squid and other clients fetch ip resources from them.
-VALIDATED_HTTP_QUEUE = 'haipproxy:validated:http'
-VALIDATED_HTTPS_QUEUE = 'haipproxy:validated:https'
-VALIDATED_WEIBO_QUEUE = 'haipproxy:validated:weibo'
-VALIDATED_ZHIHU_QUEUE = 'haipproxy:validated:zhihu'
+VALIDATED_HTTP_Q = 'haipproxy:validated:http'
+VALIDATED_HTTPS_Q = 'haipproxy:validated:https'
+VALIDATED_WEIBO_Q = 'haipproxy:validated:weibo'
+VALIDATED_ZHIHU_Q = 'haipproxy:validated:zhihu'
 
 # time to live of proxy ip resources
 TTL_VALIDATED_RESOURCE = 2  # minutes
-TTL_HTTP_QUEUE = 'haipproxy:ttl:http'
-TTL_HTTPS_QUEUE = 'haipproxy:ttl:https'
-TTL_WEIBO_QUEUE = 'haipproxy:ttl:weibo'
-TTL_ZHIHU_QUEUE = 'haipproxy:ttl:zhihu'
+TTL_HTTP_Q = 'haipproxy:ttl:http'
+TTL_HTTPS_Q = 'haipproxy:ttl:https'
+TTL_WEIBO_Q = 'haipproxy:ttl:weibo'
+TTL_ZHIHU_Q = 'haipproxy:ttl:zhihu'
 
 # queue for proxy speed
-SPEED_HTTP_QUEUE = 'haipproxy:speed:http'
-SPEED_HTTPS_QUEUE = 'haipproxy:speed:https'
-SPEED_WEIBO_QUEUE = 'haipproxy:speed:weibo'
-SPEED_ZHIHU_QUEUE = 'haipproxy:speed:zhihu'
+SPEED_HTTP_Q = 'haipproxy:speed:http'
+SPEED_HTTPS_Q = 'haipproxy:speed:https'
+SPEED_WEIBO_Q = 'haipproxy:speed:weibo'
+SPEED_ZHIHU_Q = 'haipproxy:speed:zhihu'
 
 # squid settings on linux os
 # execute sudo chown -R $USER /etc/squid/ and

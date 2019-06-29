@@ -56,6 +56,7 @@ class ProxySpider(scrapy.Spider):
             protocol = cols[3]
             yield ProxyUrlItem(url=f'{protocol}://{ip}:{port}')
 
+
 # notice multi inheritance order in python
 class CommonSpider(BaseSpider, RedisSpider):
     name = 'common'

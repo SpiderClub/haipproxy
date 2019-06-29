@@ -14,6 +14,7 @@ from ..config.settings import (VALIDATOR_FEED_SIZE, SPIDER_FEED_SIZE)
 
 logger = logging.getLogger(__name__)
 
+
 class RedisMixin(object):
     keyword_encoding = 'utf-8'
     proxy_mode = 0

@@ -57,7 +57,8 @@ class BaseValidator:
     def parse_error(self, failure):
         request = failure.request
         proxy = request.meta.get('proxy')
-        logger.error('proxy {} has failed, {} is raised'.format(proxy, failure))
+        logger.error('proxy {} has failed, {} is raised'.format(
+            proxy, failure))
         if failure.check(TimeoutError, TCPTimedOutError):
             decr = -1
         else:

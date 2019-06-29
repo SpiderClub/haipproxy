@@ -4,18 +4,15 @@ spiders will parse response content according to the rules.
 """
 from ..config.settings import (
     SPIDER_COMMON_Q, SPIDER_AJAX_Q, SPIDER_GFW_Q, SPIDER_AJAX_GFW_Q,
-    INIT_HTTP_QUEUE, VALIDATED_HTTP_QUEUE, VALIDATED_HTTPS_QUEUE,
-    TEMP_HTTP_QUEUE, TEMP_HTTPS_QUEUE, TTL_HTTP_QUEUE, TTL_HTTPS_QUEUE,
-    SPEED_HTTPS_QUEUE, SPEED_HTTP_QUEUE, TEMP_WEIBO_QUEUE,
-    VALIDATED_WEIBO_QUEUE, TTL_WEIBO_QUEUE, SPEED_WEIBO_QUEUE,
-    TEMP_ZHIHU_QUEUE, VALIDATED_ZHIHU_QUEUE, TTL_ZHIHU_QUEUE,
-    SPEED_ZHIHU_QUEUE)
+    INIT_HTTP_Q, VALIDATED_HTTP_Q, VALIDATED_HTTPS_Q, TEMP_HTTP_Q,
+    TEMP_HTTPS_Q, TTL_HTTP_Q, TTL_HTTPS_Q, SPEED_HTTPS_Q, SPEED_HTTP_Q,
+    TEMP_WEIBO_Q, VALIDATED_WEIBO_Q, TTL_WEIBO_Q, SPEED_WEIBO_Q, TEMP_ZHIHU_Q,
+    VALIDATED_ZHIHU_Q, TTL_ZHIHU_Q, SPEED_ZHIHU_Q)
 
 CRAWLER_TASKS = [
     {
         # > 3000 pages
-        'name':
-        'xicidaili.com',
+        'name': 'xicidaili.com',
         'resource':
         ['http://www.xicidaili.com/nn/%s' % i for i in range(1, 6)] +
         ['http://www.xicidaili.com/wn/%s' % i for i in range(1, 6)] +
@@ -36,10 +33,8 @@ CRAWLER_TASKS = [
             'split_detail': False,
             'protocols': None
         },
-        'interval':
-        60,
-        'enable':
-        1
+        'interval': 60,
+        'enable': 1
     },
     {
         'name':
@@ -677,29 +672,29 @@ CRAWLER_QUEUE_MAPS = {
 VALIDATOR_TASKS = [
     {
         'name': 'http',
-        'task_queue': TEMP_HTTP_QUEUE,
-        'resource': VALIDATED_HTTP_QUEUE,
+        'task_queue': TEMP_HTTP_Q,
+        'resource': VALIDATED_HTTP_Q,
         'interval': 5,  # 20 minutes
         'enable': 1,
     },
     {
         'name': 'https',
-        'task_queue': TEMP_HTTPS_QUEUE,
-        'resource': VALIDATED_HTTPS_QUEUE,
+        'task_queue': TEMP_HTTPS_Q,
+        'resource': VALIDATED_HTTPS_Q,
         'interval': 5,
         'enable': 1,
     },
     {
         'name': 'weibo',
-        'task_queue': TEMP_WEIBO_QUEUE,
-        'resource': VALIDATED_WEIBO_QUEUE,
+        'task_queue': TEMP_WEIBO_Q,
+        'resource': VALIDATED_WEIBO_Q,
         'interval': 5,
         'enable': 1,
     },
     {
         'name': 'zhihu',
-        'task_queue': TEMP_ZHIHU_QUEUE,
-        'resource': VALIDATED_ZHIHU_QUEUE,
+        'task_queue': TEMP_ZHIHU_Q,
+        'resource': VALIDATED_ZHIHU_Q,
         'interval': 5,
         'enable': 1,
     },
@@ -707,11 +702,11 @@ VALIDATOR_TASKS = [
 
 # validators will fetch proxies from the following queues
 TEMP_QUEUE_MAPS = {
-    'init': INIT_HTTP_QUEUE,
-    'http': TEMP_HTTP_QUEUE,
-    'https': TEMP_HTTPS_QUEUE,
-    'weibo': TEMP_WEIBO_QUEUE,
-    'zhihu': TEMP_ZHIHU_QUEUE
+    'init': INIT_HTTP_Q,
+    'http': TEMP_HTTP_Q,
+    'https': TEMP_HTTPS_Q,
+    'weibo': TEMP_WEIBO_Q,
+    'zhihu': TEMP_ZHIHU_Q
 }
 
 # target website that use http protocol
@@ -723,23 +718,23 @@ HTTPS_TASKS = ['https', 'zhihu', 'weibo']
 # todo the three maps may be combined in one map
 # validator scheduler and clients will fetch proxies from the following queues
 SCORE_QUEUE_MAPS = {
-    'http': VALIDATED_HTTP_QUEUE,
-    'https': VALIDATED_HTTPS_QUEUE,
-    'weibo': VALIDATED_WEIBO_QUEUE,
-    'zhihu': VALIDATED_ZHIHU_QUEUE
+    'http': VALIDATED_HTTP_Q,
+    'https': VALIDATED_HTTPS_Q,
+    'weibo': VALIDATED_WEIBO_Q,
+    'zhihu': VALIDATED_ZHIHU_Q
 }
 
 # validator scheduler and clients will fetch proxies from the following queues which are verified recently
 TTL_QUEUE_MAPS = {
-    'http': TTL_HTTP_QUEUE,
-    'https': TTL_HTTPS_QUEUE,
-    'weibo': TTL_WEIBO_QUEUE,
-    'zhihu': TTL_ZHIHU_QUEUE
+    'http': TTL_HTTP_Q,
+    'https': TTL_HTTPS_Q,
+    'weibo': TTL_WEIBO_Q,
+    'zhihu': TTL_ZHIHU_Q
 }
 
 SPEED_QUEUE_MAPS = {
-    'http': SPEED_HTTP_QUEUE,
-    'https': SPEED_HTTPS_QUEUE,
-    'weibo': SPEED_WEIBO_QUEUE,
-    'zhihu': SPEED_ZHIHU_QUEUE
+    'http': SPEED_HTTP_Q,
+    'https': SPEED_HTTPS_Q,
+    'weibo': SPEED_WEIBO_Q,
+    'zhihu': SPEED_ZHIHU_Q
 }

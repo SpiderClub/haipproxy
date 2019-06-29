@@ -5,8 +5,8 @@ from twisted.internet.threads import deferToThread
 from scrapy.exceptions import DropItem
 
 from ..utils import get_redis_conn
-from ..config.settings import (REDIS_DB, DATA_ALL, INIT_HTTP_QUEUE,
-                               INIT_SOCKS4_QUEUE, INIT_SOCKS5_QUEUE)
+from ..config.settings import (REDIS_DB, DATA_ALL, INIT_HTTP_Q, INIT_SOCKS4_Q,
+                               INIT_SOCKS5_Q)
 from .items import (ProxyScoreItem, ProxyVerifiedTimeItem, ProxySpeedItem)
 
 
@@ -31,11 +31,11 @@ class ProxyIPPipeline(BasePipeline):
         not_exists = pipeline.sadd(DATA_ALL, url)
         if not_exists:
             if 'socks4' in url:
-                pipeline.rpush(INIT_SOCKS4_QUEUE, url)
+                pipeline.rpush(INIT_SOCKS4_Q, url)
             elif 'socks5' in url:
-                pipeline.rpush(INIT_SOCKS5_QUEUE, url)
+                pipeline.rpush(INIT_SOCKS5_Q, url)
             else:
-                pipeline.rpush(INIT_HTTP_QUEUE, url)
+                pipeline.rpush(INIT_HTTP_Q, url)
         pipeline.execute()
         return item
 
@@ -54,7 +54,7 @@ class ProxyCommonPipeline(BasePipeline):
     def _process_score_item(self, item, spider):
         score = self.redis_conn.zscore(item['queue'], item['url'])
         if score is None:
-            self.redis_conn.zadd(item['queue'],{item['url']: item['score']})
+            self.redis_conn.zadd(item['queue'], {item['url']: item['score']})
         else:
             # delete ip resource when score < 1 or error happens
             if item['incr'] == '-inf' or (item['incr'] < 0 and score <= 1):
@@ -74,10 +74,12 @@ class ProxyCommonPipeline(BasePipeline):
         if item['incr'] == '-inf' or item['incr'] < 0:
             raise DropItem('item verification has failed')
 
-        self.redis_conn.zadd(item['queue'],{item['url']: item['verified_time']})
+        self.redis_conn.zadd(item['queue'],
+                             {item['url']: item['verified_time']})
 
     def _process_speed_item(self, item, spider):
         if item['incr'] == '-inf' or item['incr'] < 0:
             raise DropItem('item verification has failed')
 
-        self.redis_conn.zadd(item['queue'],{item['url']: item['response_time']})
+        self.redis_conn.zadd(item['queue'],
+                             {item['url']: item['response_time']})

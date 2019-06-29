@@ -12,6 +12,7 @@ from ..config.settings import (SQUID_BIN_PATH, SQUID_CONF_PATH,
 from ..config.rules import (SCORE_QUEUE_MAPS, TTL_QUEUE_MAPS, SPEED_QUEUE_MAPS)
 from .core import IPFetcherMixin
 
+
 class SquidClient(IPFetcherMixin):
     default_conf_detail = "cache_peer {} parent {} 0 no-query weighted-round-robin weight=1 " \
                           "connect-fail-limit=2 allow-miss max-conn=5 name=proxy-{}"

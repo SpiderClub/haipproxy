@@ -8,13 +8,12 @@ from json.decoder import JSONDecodeError
 
 import requests
 
-from haipproxy.config.rules import (SPEED_QUEUE_MAPS, TTL_QUEUE_MAPS, SCORE_QUEUE_MAPS,
-                                    HTTP_TASKS, HTTPS_TASKS)
-from haipproxy.config.settings import (INIT_HTTP_QUEUE, TEMP_HTTP_QUEUE,
-                                       TEMP_HTTPS_QUEUE, VALIDATED_HTTP_QUEUE,
-                                       VALIDATED_HTTPS_QUEUE, TTL_HTTP_QUEUE,
-                                       TTL_HTTPS_QUEUE, SPEED_HTTP_QUEUE,
-                                       SPEED_HTTPS_QUEUE, ORIGIN_IP)
+from haipproxy.config.rules import (SPEED_QUEUE_MAPS, TTL_QUEUE_MAPS,
+                                    SCORE_QUEUE_MAPS, HTTP_TASKS, HTTPS_TASKS)
+from haipproxy.config.settings import (INIT_HTTP_Q, TEMP_HTTP_Q, TEMP_HTTPS_Q,
+                                       VALIDATED_HTTP_Q, VALIDATED_HTTPS_Q,
+                                       TTL_HTTP_Q, TTL_HTTPS_Q, SPEED_HTTP_Q,
+                                       SPEED_HTTPS_Q, ORIGIN_IP)
 from ..redis_spiders import ValidatorRedisSpider
 from ..items import (ProxyScoreItem, ProxyVerifiedTimeItem, ProxySpeedItem)
 from .base import BaseValidator
@@ -31,7 +30,7 @@ class HttpBinInitValidator(BaseValidator, ValidatorRedisSpider):
         'https://httpbin.org/ip',
     ]
     use_set = False
-    task_queue = INIT_HTTP_QUEUE
+    task_queue = INIT_HTTP_Q
     # https_tasks = ['https']
     # distribute proxies to each queue, according to
     # VALIDORTOR_TASKS in rules.py
@@ -85,10 +84,10 @@ class HttpValidator(BaseValidator, ValidatorRedisSpider):
     urls = [
         'http://httpbin.org/ip',
     ]
-    task_queue = TEMP_HTTP_QUEUE
-    score_queue = VALIDATED_HTTP_QUEUE
-    ttl_queue = TTL_HTTP_QUEUE
-    speed_queue = SPEED_HTTP_QUEUE
+    task_queue = TEMP_HTTP_Q
+    score_queue = VALIDATED_HTTP_Q
+    ttl_queue = TTL_HTTP_Q
+    speed_queue = SPEED_HTTP_Q
 
 
 class HttpsValidator(BaseValidator, ValidatorRedisSpider):
@@ -97,7 +96,7 @@ class HttpsValidator(BaseValidator, ValidatorRedisSpider):
     urls = [
         'https://httpbin.org/ip',
     ]
-    task_queue = TEMP_HTTPS_QUEUE
-    score_queue = VALIDATED_HTTPS_QUEUE
-    ttl_queue = TTL_HTTPS_QUEUE
-    speed_queue = SPEED_HTTPS_QUEUE
+    task_queue = TEMP_HTTPS_Q
+    score_queue = VALIDATED_HTTPS_Q
+    ttl_queue = TTL_HTTPS_Q
+    speed_queue = SPEED_HTTPS_Q
