@@ -30,7 +30,7 @@ logger = logging.getLogger(__name__)
 
 
 class BaseScheduler:
-    def __init__(self, name, tasks, task_queues=None):
+    def __init__(self, name, tasks):
         """
         init function for schedulers.
         :param name: scheduler name, generally the value is used by the scheduler
@@ -39,7 +39,6 @@ class BaseScheduler:
         """
         self.name = name
         self.tasks = tasks
-        self.task_queues = list() if not task_queues else task_queues
 
     def schedule_with_delay(self):
         for task in self.tasks:
@@ -57,9 +56,6 @@ class BaseScheduler:
     def get_lock(self, redis_conn, task):
         if not task.get('enable'):
             return None
-        task_queue = task.get('task_queue')
-        if task_queue not in self.task_queues:
-            return None
 
         task_name = task.get('name')
         lock_indentifier = acquire_lock(redis_conn, task_name)
@@ -72,14 +68,14 @@ class BaseScheduler:
 class CrawlerScheduler(BaseScheduler):
     def schedule_task_with_lock(self, task):
         """Crawler scheduler filters tasks according to task type"""
+        task_name = task.get('name')
         if not task.get('enable'):
             return None
-        task_queue = task.get('task_queue')
+        task_queue = CRAWLER_QUEUE_MAPS[task_name]
         if task_queue not in self.task_queues:
             return None
 
         redis_conn = get_redis_conn()
-        task_name = task.get('name')
         interval = task.get('interval')
         urls = task.get('resource')
         lock_indentifier = acquire_lock(redis_conn, task_name)
@@ -109,15 +105,15 @@ class ValidatorScheduler(BaseScheduler):
     def schedule_task_with_lock(self, task):
         """Validator scheduler filters tasks according to task name
         since its task name stands for task type"""
+        task_name = task.get('name')
         if not task.get('enable'):
             return None
-        task_queue = task.get('task_queue')
+        task_queue = TEMP_QUEUE_MAPS[task_name]
         if task_queue not in self.task_queues:
             return None
 
         redis_conn = get_redis_conn()
         interval = task.get('interval')
-        task_name = task.get('name')
         resource_queue = task.get('resource')
         lock_indentifier = acquire_lock(redis_conn, task_name)
         if not lock_indentifier:
