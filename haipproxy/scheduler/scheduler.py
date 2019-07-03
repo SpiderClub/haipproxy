@@ -35,7 +35,6 @@ class BaseScheduler:
         init function for schedulers.
         :param name: scheduler name, generally the value is used by the scheduler
         :param tasks: tasks in config.rules
-        :param task_queues: for crawler, the value is task_queue, while for validator, it's task name
         """
         self.name = name
         self.tasks = tasks
@@ -72,8 +71,6 @@ class CrawlerScheduler(BaseScheduler):
         if not task.get('enable'):
             return None
         task_queue = CRAWLER_QUEUE_MAPS[task_name]
-        if task_queue not in self.task_queues:
-            return None
 
         redis_conn = get_redis_conn()
         interval = task.get('interval')
@@ -109,8 +106,6 @@ class ValidatorScheduler(BaseScheduler):
         if not task.get('enable'):
             return None
         task_queue = TEMP_QUEUE_MAPS[task_name]
-        if task_queue not in self.task_queues:
-            return None
 
         redis_conn = get_redis_conn()
         interval = task.get('interval')
@@ -147,10 +142,9 @@ class ValidatorScheduler(BaseScheduler):
 @click.option('--usage',
               type=click.Choice(['crawler', 'validator']),
               default='crawler')
-@click.argument('task_queues', nargs=-1)
-def scheduler_start(usage, task_queues):
+@click.argument('tasks', nargs=-1)
+def scheduler_start(usage, tasks):
     """Start specified scheduler."""
-    logger.info('{} scheduler is starting...'.format(usage))
     if usage == 'crawler':
         default_tasks = CRAWLER_TASKS
         default_allow_qs = DEFAULT_CRAWLER_QS
@@ -163,19 +157,6 @@ def scheduler_start(usage, task_queues):
         SchedulerCls = ValidatorScheduler
 
     scheduler = SchedulerCls(usage, default_tasks)
-
-    if not task_queues:
-        scheduler.task_queues = default_allow_qs
-    else:
-        for task_queue in task_queues:
-            allow_task_queue = maps.get(task_queue)
-            if not allow_task_queue:
-                logger.warning(
-                    'scheduler task {} is an invalid task, the allowed tasks are {}'
-                    .format(task_queue, list(maps.keys())))
-                continue
-            scheduler.task_queues.append(allow_task_queue)
-
     scheduler.schedule_all_right_now()
     scheduler.schedule_with_delay()
 

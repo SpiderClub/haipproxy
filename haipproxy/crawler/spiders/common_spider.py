@@ -5,7 +5,7 @@ from urllib.parse import urlparse
 
 import scrapy
 
-from haipproxy.config.rules import CRAWLER_QUEUE_MAPS
+from haipproxy.config.rules import CRAWLER_QUEUE_MAPS, PARSE_MAP
 from ..redis_spiders import RedisSpider
 from ..items import ProxyUrlItem
 from .base import BaseSpider
@@ -30,30 +30,21 @@ class ProxySpider(scrapy.Spider):
 
     def parse(self, response):
         site = urlparse(response.url).hostname.split('.')[1]
-        cur_parse = getattr(self, f'parse_{site}')
         debug = False
         if debug:
             from scrapy.shell import inspect_response
             inspect_response(response, self)
-        for item in cur_parse(response):
-            yield item
-
-    def parse_xicidaili(self, response):
-        rows = response.xpath('//table/tr[@class]')
+        row_xpath = PARSE_MAP[site].get('row_xpath', '//table/tbody/tr')
+        col_xpath = PARSE_MAP[site].get('col_xpath', 'td')
+        ip_pos = PARSE_MAP[site].get('ip_pos', 0)
+        port_pos = PARSE_MAP[site].get('port_pos', 1)
+        protocal_pos = PARSE_MAP[site].get('protocal_pos', 2)
+        rows = response.xpath(row_xpath)
         for row in rows:
-            cols = row.xpath('td/text()').getall()
-            ip = cols[0]
-            port = cols[1]
-            protocol = cols[5]
-            yield ProxyUrlItem(url=f'{protocol}://{ip}:{port}')
-
-    def parse_kuaidaili(self, response):
-        rows = response.xpath('//table/tbody/tr')
-        for row in rows:
-            cols = row.xpath('td/text()').getall()
-            ip = cols[0]
-            port = cols[1]
-            protocol = cols[3]
+            cols = row.xpath(col_xpath)
+            ip = cols[ip_pos].xpath('text()').get()
+            port = cols[port_pos].xpath('text()').get()
+            protocol = cols[protocal_pos].xpath('text()').get()
             yield ProxyUrlItem(url=f'{protocol}://{ip}:{port}')
 
 

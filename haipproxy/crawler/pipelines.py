@@ -30,7 +30,7 @@ class ProxyIPPipeline(BasePipeline):
         if not url:
             return item
 
-        not_exists = self.pipe.sadd(DATA_ALL, url)
+        not_exists = self.pipe.hmset(url, {'score':0, 'timeused':32767, 'timestamp':0, 'used':0, 'success':0 })
         self.pipe_size += 1
         if not_exists:
             if 'socks4' in url:
@@ -65,7 +65,6 @@ class ProxyCommonPipeline(BasePipeline):
         else:
             # delete ip resource when score < 1 or error happens
             if item['incr'] == '-inf' or (item['incr'] < 0 and score <= 1):
-                self.pipe.srem(DATA_ALL, item['url'])
                 self.pipe.zrem(item['queue'], item['url'])
                 self.pipe.execute()
             elif item['incr'] < 0 and 1 < score:

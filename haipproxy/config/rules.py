@@ -637,3 +637,15 @@ SPEED_QUEUE_MAPS = {
     'weibo': SPEED_WEIBO_Q,
     'zhihu': SPEED_ZHIHU_Q
 }
+
+PARSE_MAP = {
+    'xicidaili': {
+        'row_xpath': '//table/tr[@class]',
+        'ip_pos': 1,
+        'port_pos': 2,
+        'protocal_pos': 5
+    },
+    'kuaidaili': {
+        'protocal_pos': 3
+    }
+}
