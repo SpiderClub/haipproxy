@@ -15,7 +15,7 @@ from ..config.settings import (VALIDATOR_FEED_SIZE, SPIDER_FEED_SIZE)
 logger = logging.getLogger(__name__)
 
 
-class RedisMixin(object):
+class RedisSpider(Spider):
     keyword_encoding = 'utf-8'
     proxy_mode = 0
     # if use_set=True, spider fetches data from set other than list
@@ -55,16 +55,6 @@ class RedisMixin(object):
         self.schedule_next_requests()
         raise DontCloseSpider
 
-
-class RedisSpider(RedisMixin, Spider):
-    @classmethod
-    def from_crawler(cls, crawler, *args, **kwargs):
-        obj = super().from_crawler(crawler, *args, **kwargs)
-        obj.setup_redis(crawler)
-        return obj
-
-
-class RedisCrawlSpider(RedisMixin, CrawlSpider):
     @classmethod
     def from_crawler(cls, crawler, *args, **kwargs):
         obj = super().from_crawler(crawler, *args, **kwargs)

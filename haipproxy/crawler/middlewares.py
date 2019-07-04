@@ -44,14 +44,14 @@ class RequestStartProfileMiddleware(object):
     """This middleware calculates the ip's speed"""
 
     def process_request(self, request, spider):
-        request.meta['start'] = int(time.time() * 1000)
+        request.meta['start'] = int(time.time())
 
 
 class RequestEndProfileMiddleware(object):
     """This middleware calculates the ip's speed"""
 
     def process_response(self, request, response, spider):
-        speed = int(time.time() * 1000) - request.meta['start']
+        speed = int(time.time()) - request.meta['start']
         request.meta['speed'] = speed
         return response
 

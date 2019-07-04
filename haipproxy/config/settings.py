@@ -3,7 +3,7 @@ Settings for global.
 """
 #### Scrapy settings of this project ####
 # scrapy basic info
-BOT_NAME = 'haiproxy'
+BOT_NAME = 'googlebot'
 # 注册的spider路径
 SPIDER_MODULES = ['haipproxy.crawler.spiders', 'haipproxy.crawler.validators']
 
@@ -133,11 +133,8 @@ LOWEST_SCORE = 6
 # if the total num of proxies fetched is less than LOWES_TOTAL_PROXIES, haipproxy will fetch more
 # more proxies with lower quality
 LOWEST_TOTAL_PROXIES = 5
-# if no origin ip is given, request will be sent to https://httpbin.org/ip
-ORIGIN_IP = ''
 
-#### monitor and bug trace
-
+#### monitor and bug trace ####
 # sentry for error tracking, for more information see
 # https://github.com/getsentry/sentry
 import sentry_sdk

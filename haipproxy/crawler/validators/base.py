@@ -4,7 +4,7 @@ Useful base class for all the validators.
 import logging
 import time
 
-from twisted.internet.error import (TimeoutError, TCPTimedOutError)
+from twisted.internet.error import TimeoutError, TCPTimedOutError
 
 # from logger import crawler_logger
 from ..items import (ProxyScoreItem, ProxyVerifiedTimeItem, ProxySpeedItem)

@@ -61,9 +61,9 @@ class ZhiHuValidator(BaseValidator, ValidatorRedisSpider):
     # 判断success_key是否在响应内容中，从而判断IP是否正常，默认为''，表示正常
     success_key = ''
 ```
-- 在[HttpBinInitValidator](https://github.com/SpiderClub/haipproxy/blob/master/crawler/validators/httpbin.py)的`https_tasks`中添加`zhihu`任务
+- 在[HttpbinValidator](https://github.com/SpiderClub/haipproxy/blob/master/crawler/validators/httpbin.py)的`https_tasks`中添加`zhihu`任务
 ```python3
-class HttpBinInitValidator(BaseValidator, ValidatorRedisSpider):
+class HttpbinValidator(BaseValidator, ValidatorRedisSpider):
     """This validator do initially work for ip resources"""
     name = 'init'
     urls = [
@@ -88,12 +88,12 @@ class HttpBinInitValidator(BaseValidator, ValidatorRedisSpider):
 4.将`ZhiHuValidator`加入[validators/__init__.py](https://github.com/SpiderClub/haipproxy/blob/master/crawler/validators/__init__.py)的`all_validators`列表中
    ```
 from .httpbin import (
-    HttpBinInitValidator, HttpValidator,
+    HttpbinValidator, HttpValidator,
     HttpsValidator)
 from .zhihu import ZhiHuValidator
 
 all_validators = [
-    HttpBinInitValidator, HttpValidator,
+    HttpbinValidator, HttpValidator,
     HttpsValidator, ZhiHuValidator
 ]
    ```

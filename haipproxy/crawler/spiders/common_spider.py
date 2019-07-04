@@ -44,7 +44,7 @@ class ProxySpider(scrapy.Spider):
             cols = row.xpath(col_xpath)
             ip = cols[ip_pos].xpath('text()').get()
             port = cols[port_pos].xpath('text()').get()
-            protocol = cols[protocal_pos].xpath('text()').get()
+            protocol = cols[protocal_pos].xpath('text()').get().lower()
             yield ProxyUrlItem(url=f'{protocol}://{ip}:{port}')
 
 
