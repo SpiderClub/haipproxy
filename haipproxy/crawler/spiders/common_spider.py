@@ -25,6 +25,9 @@ class ProxySpider(scrapy.Spider):
         urls = [
             'https://www.xicidaili.com/nn/1',
             'https://www.kuaidaili.com/free/inha/1/',
+            'http://ip.kxdaili.com/dailiip/1/1.html#ip',
+            'http://ip.kxdaili.com/dailiip/2/1.html#ip',
+            'https://www.xroxy.com/free-proxy-lists/?port=&type=Not_transparent&ssl=&country=&latency=&reliability=2500',
         ]
         for url in urls:
             yield scrapy.Request(url=url, callback=self.parse)
@@ -45,11 +48,23 @@ class ProxySpider(scrapy.Spider):
             cols = row.xpath(col_xpath)
             ip = cols[ip_pos].xpath('text()').get()
             port = cols[port_pos].xpath('text()').get()
-            protocol = cols[protocal_pos].xpath('text()').get().lower()
-            if self.is_valid_proxy(ip, port, protocol):
-                yield ProxyUrlItem(url=f'{protocol}://{ip}:{port}')
-            else:
-                self.logger.error(f'invalid proxy: {protocol}://{ip}:{port}')
+            for protocol in self.get_protocols(
+                    cols[protocal_pos].xpath('text()').get().lower()):
+                if self.is_valid_proxy(ip, port, protocol):
+                    yield ProxyUrlItem(url=f'{protocol}://{ip}:{port}')
+                else:
+                    self.logger.error(
+                        f'invalid proxy: {protocol}://{ip}:{port}')
+
+    def get_protocols(self, protocol):
+        if ',' in protocol:
+            return protocol.split(',')
+        elif '4/5' in protocol:
+            return ['sock4', 'sock5']
+        elif protocol in ['distorting', 'anonymous']:
+            return ['http', 'https']
+        else:
+            return [protocol]
 
     def is_valid_proxy(self, ip, port, protocol):
         try:
@@ -59,6 +74,7 @@ class ProxySpider(scrapy.Spider):
         return 0 <= int(port) and int(port) <= 65535 and protocol in [
             'http', 'https', 'sock4', 'sock5'
         ]
+
 
 class CommonSpider(BaseSpider):
     pass

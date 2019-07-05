@@ -10,73 +10,6 @@ from haipproxy.config.settings import SPIDER_AJAX_Q, SPIDER_GFW_Q, SPIDER_AJAX_G
 # gfw(需要翻墙)和ajax_gfw(需要翻墙和ajax渲染)
 CRAWLER_TASKS = [
     {
-        # > 3000 pages
-        'name': 'xicidaili.com',
-        'resource':
-        ['http://www.xicidaili.com/nn/%s' % i for i in range(1, 6)] +
-        ['http://www.xicidaili.com/wn/%s' % i for i in range(1, 6)] +
-        ['http://www.xicidaili.com/wt/%s' % i for i in range(1, 6)],
-        'parse_type': 'common',
-        'parse_rule': {
-            'pre_extract_method': 'xpath',
-            'pre_extract': '//tr',
-            'infos_pos': 1,
-            'infos_end': None,
-            'detail_rule': 'td::text',
-            'ip_pos': 0,
-            'port_pos': 1,
-            'extract_protocol': True,
-            'split_detail': False,
-            'protocols': None
-        },
-        # 定时抓取间隔，根据网站更新代理IP的时间间隔来定，单位是分钟
-        'interval': 60,
-        # 该规则是否生效
-        'enable': 1
-    },
-    {
-        'name': 'kuaidaili.com',
-        'resource':
-        ['https://www.kuaidaili.com/free/inha/%s' % i for i in range(1, 6)] +
-        ['https://www.kuaidaili.com/proxylist/%s' % i for i in range(1, 11)],
-        'parse_type': 'common',
-        'parse_rule': {
-            'pre_extract_method': 'xpath',
-            'pre_extract': '//tr',
-            'infos_pos': 4,
-            'infos_end': None,
-            'detail_rule': 'td::text',
-            'ip_pos': 0,
-            'port_pos': 1,
-            'extract_protocol': True,
-            'split_detail': False,
-            'protocols': None
-        },
-        'interval': 60,
-        'enable': 1
-    },
-    {
-        'name': 'kxdaili.com',
-        'resource':
-        [f'http://ip.kxdaili.com/dailiip/1/{i}.html#ip' for i in range(1, 7)] + \
-        [f'http://ip.kxdaili.com/dailiip/2/{i}.html#ip' for i in range(1, 5)],
-        'parse_type': 'common',
-        'parse_rule': {
-            'pre_extract_method': 'xpath',
-            'pre_extract': '//tr',
-            'infos_pos': 1,
-            'infos_end': None,
-            'detail_rule': 'td::text',
-            'ip_pos': 0,
-            'port_pos': 1,
-            'extract_protocol': True,
-            'split_detail': False,
-            'protocols': None
-        },
-        'interval': 60,
-        'enable': 1
-    },
-    {
         'name': 'mrhinkydink.com',
         'resource': ['http://www.mrhinkydink.com/proxies.htm'],
         'parse_type': 'common',
@@ -445,16 +378,6 @@ CRAWLER_TASKS = [
         'enable': 1,
     },
     {
-        'name': 'xroxy',
-        'resource': [
-            'http://www.xroxy.com/proxylist.php?port=&type=&ssl=&country=&latency=&reliability=&'
-            'sort=reliability&desc=true&pnum=%s#table' % i for i in range(20)
-        ],
-        'parse_type': 'xroxy',
-        'interval': 60,
-        'enable': 1,
-    },
-    {
         'name': 'proxylistplus',
         'resource': [
             'http://list.proxylistplus.com/Fresh-HTTP-Proxy-List-1',
@@ -568,5 +491,11 @@ PARSE_MAP = {
     },
     'kuaidaili': {
         'protocal_pos': 3
-    }
+    },
+    'kxdaili': {
+        'protocal_pos': 3
+    },
+    'xroxy': {
+        'row_xpath': '//table[@id="DataTables_Table_0"]/tbody/tr',
+    },
 }

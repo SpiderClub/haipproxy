@@ -16,7 +16,6 @@ class GFWSpider(CommonSpider):
 
     def __init__(self):
         super().__init__()
-        self.parser_maps.setdefault('xroxy', self.parse_xroxy)
         self.parser_maps.setdefault('gather_proxy', self.parse_gather_proxy)
 
     def parse_gather_proxy(self, response):
@@ -32,33 +31,4 @@ class GFWSpider(CommonSpider):
                 items.append(
                     ProxyUrlItem(
                         url=self.construct_proxy_url(protocol, ip, port)))
-        return items
-
-    def parse_xroxy(self, response):
-        items = list()
-        ip_extract_pattern = '">(.*)\\n'
-        infos = response.xpath('//tr').css('.row1') + response.xpath(
-            '//tr').css('.row0')
-        for info in infos:
-            m = re.search(ip_extract_pattern, info.css('a')[1].extract())
-            if m:
-                ip = m.group(1)
-                port = info.css('a::text')[2].extract()
-                protocol = info.css('a::text')[3].extract().lower()
-                if protocol in ['socks4', 'socks5']:
-                    items.append(
-                        ProxyUrlItem(
-                            url=self.construct_proxy_url(protocol, ip, port)))
-                elif protocol == 'transparent':
-                    continue
-                else:
-                    items.append(
-                        ProxyUrlItem(
-                            url=self.construct_proxy_url('http', ip, port)))
-                    is_ssl = info.css('a::text')[4].extract().lower() == 'true'
-                    if is_ssl:
-                        items.append(
-                            ProxyUrlItem(url=self.construct_proxy_url(
-                                'https', ip, port)))
-
         return items
