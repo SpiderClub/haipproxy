@@ -18,6 +18,6 @@ class IPFetcherMixin:
         """core algrithm to get proxies from redis"""
         start_time = int(time.time()) - 2 * 60
         pipe = conn.pipeline(False)
-        proxies = decode_all(proxies)
+        proxies = list(map(bytes.decode, proxies))
 
         return proxies

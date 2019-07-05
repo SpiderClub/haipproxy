@@ -38,6 +38,8 @@ class ProxySpider(scrapy.Spider):
         if debug:
             from scrapy.shell import inspect_response
             inspect_response(response, self)
+            from scrapy.utils.response import open_in_browser
+            open_in_browser(response)
         row_xpath = PARSE_MAP[site].get('row_xpath', '//table/tbody/tr')
         col_xpath = PARSE_MAP[site].get('col_xpath', 'td')
         ip_pos = PARSE_MAP[site].get('ip_pos', 0)
