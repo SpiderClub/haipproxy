@@ -4,7 +4,7 @@ import requests
 from haipproxy.client import ProxyFetcher
 from haipproxy.utils import get_redis_conn
 
-from .configs import (SCORE_QUEUE_MAPS, TTL_QUEUE_MAPS, SPEED_QUEUE_MAPS,
+from .configs import (SCORE_QUEUE_MAPS, TTL_QUEUE_MAPS,
                       LONGEST_RESPONSE_TIME, LOWEST_SCORE,
                       TTL_VALIDATED_RESOURCE, LOWEST_TOTAL_PROXIES, DATA_ALL,
                       TOTAL_SUCCESS_REQUESTS)
@@ -24,7 +24,6 @@ class Crawler:
         'fast_response': 5,
         'score_map': SCORE_QUEUE_MAPS,
         'ttl_map': TTL_QUEUE_MAPS,
-        'speed_map': SPEED_QUEUE_MAPS,
         'longest_response_time': LONGEST_RESPONSE_TIME,
         'lowest_score': LOWEST_SCORE,
         'ttl_validated_resource': TTL_VALIDATED_RESOURCE,

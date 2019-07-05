@@ -6,8 +6,7 @@ import threading
 import time
 
 from ..utils import get_redis_conn
-from ..config.rules import (SCORE_QUEUE_MAPS, TTL_QUEUE_MAPS, SPEED_QUEUE_MAPS)
-from ..config.settings import (TTL_VALIDATED_RESOURCE, LONGEST_RESPONSE_TIME,
+from ..config.settings import (LONGEST_RESPONSE_TIME,
                                LOWEST_SCORE, LOWEST_TOTAL_PROXIES, DATA_ALL)
 from .core import IPFetcherMixin
 
@@ -90,12 +89,8 @@ class ProxyFetcher(IPFetcherMixin):
                  usage,
                  strategy='robin',
                  fast_response=5,
-                 score_map=SCORE_QUEUE_MAPS,
-                 ttl_map=TTL_QUEUE_MAPS,
-                 speed_map=SPEED_QUEUE_MAPS,
                  longest_response_time=LONGEST_RESPONSE_TIME,
                  lowest_score=LOWEST_SCORE,
-                 ttl_validated_resource=TTL_VALIDATED_RESOURCE,
                  min_pool_size=LOWEST_TOTAL_PROXIES,
                  all_data=DATA_ALL):
         """
@@ -104,9 +99,6 @@ class ProxyFetcher(IPFetcherMixin):
         one of ['robin', 'greedy']
         :param fast_response: if you use greedy strategy, it will be needed to
         decide whether a proxy ip should continue to be used
-        :param score_map: score map of your project, default value is SCORE_QUEUE_MAPS in haipproxy.config.settings
-        :param ttl_map: ttl map of your project, default value is TTL_QUEUE_MAPS in haipproxy.config.settings
-        :param speed_map: speed map of your project, default value is SPEED_QUEUE_MAPS in haipproxy.config.settings
         :param ttl_validated_resource: time of latest validated proxies
         :param min_pool_size: min pool size of self.pool
         :param all_data: all proxies are stored in this set
@@ -116,12 +108,9 @@ class ProxyFetcher(IPFetcherMixin):
         if usage not in score_map.keys():
             # client_logger.warning('task value is invalid, https task will be used')
             usage = 'https'
-        score_queue = score_map.get(usage)
-        ttl_queue = ttl_map.get(usage)
-        speed_queue = speed_map.get(usage)
-        super().__init__(score_queue, ttl_queue, speed_queue,
+        super().__init__(
                          longest_response_time, lowest_score,
-                         ttl_validated_resource, min_pool_size)
+                         min_pool_size)
         self.strategy = strategy
         # pool is a FIFO queue
         self.pool = list()
@@ -175,9 +164,6 @@ class ProxyFetcher(IPFetcherMixin):
     def delete_proxy(self, proxy):
         pipe = self.redis_conn.pipeline()
         pipe.srem(self.all_data, proxy)
-        pipe.zrem(self.score_queue, proxy)
-        pipe.zrem(self.speed_queue, proxy)
-        pipe.zrem(self.ttl_queue, proxy)
         pipe.execute()
 
     def _refresh_periodically(self):

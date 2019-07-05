@@ -1,18 +1,14 @@
 """
 This module provides basic distributed spider, inspired by scrapy-redis
 """
-import logging
-
 from scrapy import signals
 from scrapy.http import Request
 from scrapy.exceptions import DontCloseSpider
-from scrapy.spiders import (Spider, CrawlSpider)
+from scrapy.spiders import Spider
 from scrapy_splash.request import SplashRequest
 
 from ..utils import get_redis_conn
-from ..config.settings import (VALIDATOR_FEED_SIZE, SPIDER_FEED_SIZE)
-
-logger = logging.getLogger(__name__)
+from ..config.settings import SPIDER_FEED_SIZE
 
 
 class RedisSpider(Spider):
@@ -45,7 +41,8 @@ class RedisSpider(Spider):
                 yield req
                 found += 1
 
-        logger.info('Read {} requests from {}'.format(found, self.task_queue))
+        self.logger.info('Read {} requests from {}'.format(
+            found, self.task_queue))
 
     def schedule_next_requests(self):
         for req in self.next_requests():
@@ -82,35 +79,5 @@ class RedisAjaxSpider(RedisSpider):
                 yield req
                 found += 1
 
-        logger.info('Read {} requests from {}'.format(found, self.task_queue))
-
-
-class ValidatorRedisSpider(RedisSpider):
-    """Scrapy only supports https and http proxy"""
-
-    def setup_redis(self, crawler):
-        super().setup_redis(crawler)
-        self.redis_batch_size = VALIDATOR_FEED_SIZE
-
-    def next_requests(self):
-        yield from self.next_requests_process(self.task_queue)
-
-    def next_requests_process(self, task_queue):
-        fetch_one = self.redis_conn.spop if self.use_set else self.redis_conn.lpop
-        found = 0
-        while found < self.redis_batch_size:
-            data = fetch_one(task_queue)
-            if not data:
-                break
-            proxy_url = data.decode()
-            for url in self.urls:
-                req = Request(url,
-                              meta={'proxy': proxy_url},
-                              callback=self.parse,
-                              errback=self.parse_error)
-                yield req
-                found += 1
-        logger.info('Read {} ip proxies from {}'.format(found, task_queue))
-
-    def parse_error(self, failure):
-        raise NotImplementedError
+        self.logger.info('Read {} requests from {}'.format(
+            found, self.task_queue))

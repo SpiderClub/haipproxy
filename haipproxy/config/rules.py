@@ -2,13 +2,7 @@
 Spider rules.Scheduler will provide crawling tasks according to the rules and
 spiders will parse response content according to the rules.
 """
-from ..config.settings import (
-    SPIDER_COMMON_Q, SPIDER_AJAX_Q, SPIDER_GFW_Q, SPIDER_AJAX_GFW_Q,
-    INIT_HTTP_Q, VALIDATED_HTTP_Q, VALIDATED_HTTPS_Q, TEMP_HTTP_Q,
-    TEMP_HTTPS_Q, TTL_HTTP_Q, TTL_HTTPS_Q, SPEED_HTTPS_Q, SPEED_HTTP_Q,
-    TEMP_WEIBO_Q, VALIDATED_WEIBO_Q, TTL_WEIBO_Q, SPEED_WEIBO_Q, TEMP_ZHIHU_Q,
-    VALIDATED_ZHIHU_Q, TTL_ZHIHU_Q, SPEED_ZHIHU_Q)
-
+from haipproxy.config.settings import SPIDER_AJAX_Q, SPIDER_GFW_Q, SPIDER_AJAX_GFW_Q
 # 代理抓取爬虫任务规则
 # 本项目默认只抓匿名和高匿页面
 # 爬虫任务类型，一共有四种类型，分别是:
@@ -560,82 +554,9 @@ CRAWLER_TASKS = [
 
 # crawler will fetch tasks from the following queues
 CRAWLER_QUEUE_MAPS = {
-    'common': SPIDER_COMMON_Q,
     'ajax': SPIDER_AJAX_Q,
     'gfw': SPIDER_GFW_Q,
     'ajax_gfw': SPIDER_AJAX_GFW_Q
-}
-
-# 校验器将从task_queue中获取代理IP，校验后存入resource
-VALIDATOR_TASKS = [
-    {
-        'name': 'http',
-        # 代理存入的地方
-        'resource': VALIDATED_HTTP_Q,
-        # 定时校验间隔
-        'interval': 20,  # 20 minutes
-        # 是否启用
-        'enable': 1,
-    },
-    {
-        'name': 'https',
-        'resource': VALIDATED_HTTPS_Q,
-        'interval': 5,
-        'enable': 1,
-    },
-    {
-        'name': 'weibo',
-        'resource': VALIDATED_WEIBO_Q,
-        'interval': 5,
-        'enable': 1,
-    },
-    {
-        'name': 'zhihu',
-        'resource': VALIDATED_ZHIHU_Q,
-        'interval': 5,
-        'enable': 1,
-    },
-]
-
-# validators will fetch proxies from the following queues
-TEMP_QUEUE_MAPS = {
-    # init队列必须设置
-    'init': INIT_HTTP_Q,
-    'http': TEMP_HTTP_Q,
-    'https': TEMP_HTTPS_Q,
-    'weibo': TEMP_WEIBO_Q,
-    'zhihu': TEMP_ZHIHU_Q
-}
-
-# target website that use http protocol
-HTTP_TASKS = ['http']
-
-# target website that use https protocol
-HTTPS_TASKS = ['https', 'zhihu', 'weibo']
-
-# todo the three maps may be combined in one map
-# validator scheduler and clients will fetch proxies from the following queues
-# 以下三个maps的作用是存储和提供可用代理，代表三个维度
-SCORE_QUEUE_MAPS = {
-    'http': VALIDATED_HTTP_Q,
-    'https': VALIDATED_HTTPS_Q,
-    'weibo': VALIDATED_WEIBO_Q,
-    'zhihu': VALIDATED_ZHIHU_Q
-}
-
-# validator scheduler and clients will fetch proxies from the following queues which are verified recently
-TTL_QUEUE_MAPS = {
-    'http': TTL_HTTP_Q,
-    'https': TTL_HTTPS_Q,
-    'weibo': TTL_WEIBO_Q,
-    'zhihu': TTL_ZHIHU_Q
-}
-
-SPEED_QUEUE_MAPS = {
-    'http': SPEED_HTTP_Q,
-    'https': SPEED_HTTPS_Q,
-    'weibo': SPEED_WEIBO_Q,
-    'zhihu': SPEED_ZHIHU_Q
 }
 
 PARSE_MAP = {

@@ -6,7 +6,6 @@ import os
 from flask import (Flask, jsonify as flask_jsonify)
 
 from ..client.py_cli import ProxyFetcher
-from ..config.rules import VALIDATOR_TASKS
 
 
 def jsonify(*args, **kwargs):
@@ -20,7 +19,7 @@ def jsonify(*args, **kwargs):
 # its own schedule strategy
 usage_registry = {
     task['name']: ProxyFetcher('task')
-    for task in VALIDATOR_TASKS
+    for task in []
 }
 app = Flask(__name__)
 app.debug = bool(os.environ.get("DEBUG"))

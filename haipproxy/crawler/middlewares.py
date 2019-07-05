@@ -40,22 +40,6 @@ class ProxyMiddleware(object):
                 request.meta['proxy'] = GFW_PROXY
 
 
-class RequestStartProfileMiddleware(object):
-    """This middleware calculates the ip's speed"""
-
-    def process_request(self, request, spider):
-        request.meta['start'] = int(time.time())
-
-
-class RequestEndProfileMiddleware(object):
-    """This middleware calculates the ip's speed"""
-
-    def process_response(self, request, response, spider):
-        speed = int(time.time()) - request.meta['start']
-        request.meta['speed'] = speed
-        return response
-
-
 class ErrorTraceMiddleware(object):
     def process_response(self, request, response, spider):
         if response.status >= 400:

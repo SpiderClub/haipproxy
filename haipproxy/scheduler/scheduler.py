@@ -12,31 +12,26 @@ from scrapy.utils.project import get_project_settings
 from twisted.internet import reactor
 
 from ..client import SquidClient
-from ..config.rules import (CRAWLER_TASKS, VALIDATOR_TASKS, CRAWLER_QUEUE_MAPS,
-                            TEMP_QUEUE_MAPS)
+from ..config.rules import (CRAWLER_TASKS, CRAWLER_QUEUE_MAPS)
 from ..crawler.spiders import all_spiders
-from ..crawler.validators import all_validators
-from ..config.settings import (SPIDER_COMMON_Q, SPIDER_AJAX_Q, SPIDER_GFW_Q,
-                               SPIDER_AJAX_GFW_Q, TEMP_HTTP_Q, TEMP_HTTPS_Q,
-                               TIMER_RECORDER, TTL_VALIDATED_RESOURCE)
+from ..config.settings import (SPIDER_AJAX_Q, SPIDER_GFW_Q,
+                               SPIDER_AJAX_GFW_Q, TIMER_RECORDER)
 from ..utils import (get_redis_conn, acquire_lock, release_lock)
 
 DEFAULT_CRAWLER_QS = [
-    SPIDER_COMMON_Q, SPIDER_AJAX_Q, SPIDER_GFW_Q, SPIDER_AJAX_GFW_Q
+    SPIDER_AJAX_Q, SPIDER_GFW_Q, SPIDER_AJAX_GFW_Q
 ]
-DEFAULT_VALIDATORS_QS = [TEMP_HTTP_Q, TEMP_HTTPS_Q]
 
 logger = logging.getLogger(__name__)
 
 
 class BaseScheduler:
-    def __init__(self, name, tasks):
+    def __init__(self, tasks):
         """
         init function for schedulers.
         :param name: scheduler name, generally the value is used by the scheduler
         :param tasks: tasks in config.rules
         """
-        self.name = name
         self.tasks = tasks
 
     def schedule_with_delay(self):
@@ -98,86 +93,30 @@ class CrawlerScheduler(BaseScheduler):
             release_lock(redis_conn, task_name, lock_indentifier)
 
 
-class ValidatorScheduler(BaseScheduler):
-    def schedule_task_with_lock(self, task):
-        """Validator scheduler filters tasks according to task name
-        since its task name stands for task type"""
-        task_name = task.get('name')
-        if not task.get('enable'):
-            return None
-        task_queue = TEMP_QUEUE_MAPS[task_name]
-
-        redis_conn = get_redis_conn()
-        interval = task.get('interval')
-        resource_queue = task.get('resource')
-        lock_indentifier = acquire_lock(redis_conn, task_name)
-        if not lock_indentifier:
-            return False
-        pipe = redis_conn.pipeline(True)
-        try:
-            now = int(time.time())
-            pipe.hget(TIMER_RECORDER, task_name)
-            pipe.zrevrangebyscore(resource_queue, '+inf', '-inf')
-            r, proxies = pipe.execute()
-            if not r or (now - int(r.decode('utf-8'))) >= interval * 60:
-                if not proxies:
-                    logger.warning(
-                        'fetched no proxies from task {}'.format(task_name))
-                    return None
-
-                pipe.sadd(task_queue, *proxies)
-                pipe.hset(TIMER_RECORDER, task_name, now)
-                pipe.execute()
-                logger.info(
-                    'validator task {} has been stored into redis successfully'
-                    .format(task_name))
-                return True
-            else:
-                return None
-        finally:
-            release_lock(redis_conn, task_name, lock_indentifier)
-
-
 @click.command()
-@click.option('--usage',
-              type=click.Choice(['crawler', 'validator']),
-              default='crawler')
-@click.argument('tasks', nargs=-1)
-def scheduler_start(usage, tasks):
+@click.argument('tasks', nargs=-1 )
+def scheduler_start(tasks):
     """Start specified scheduler."""
-    if usage == 'crawler':
-        default_tasks = CRAWLER_TASKS
-        default_allow_qs = DEFAULT_CRAWLER_QS
-        maps = CRAWLER_QUEUE_MAPS
-        SchedulerCls = CrawlerScheduler
-    else:
-        default_tasks = VALIDATOR_TASKS
-        default_allow_qs = DEFAULT_VALIDATORS_QS
-        maps = TEMP_QUEUE_MAPS
-        SchedulerCls = ValidatorScheduler
+    default_tasks = CRAWLER_TASKS
+    SchedulerCls = CrawlerScheduler
 
-    scheduler = SchedulerCls(usage, default_tasks)
+    scheduler = SchedulerCls(default_tasks)
     scheduler.schedule_all_right_now()
     scheduler.schedule_with_delay()
 
 
 @click.command()
-@click.option('--usage',
-              type=click.Choice(['crawler', 'validator']),
-              default='crawler')
 @click.argument('tasks', nargs=-1)
-def crawler_start(usage, tasks):
-    """Start specified spiders or validators from cmd with scrapy core api.
-    There are four kinds of spiders: common, ajax, gfw, ajax_gfw. If you don't
-    assign any tasks, all these spiders will run.
+def crawler_start(tasks):
     """
-    origin_spiders = all_spiders if usage == 'crawler' else all_validators
+    There are four kinds of spiders: common, ajax, gfw, ajax_gfw. If you don't assign any tasks, all these spiders will run.
+    """
     if not tasks:
-        spiders = origin_spiders
+        spiders = all_spiders
     else:
         spiders = list()
         for task in tasks:
-            for spider in origin_spiders:
+            for spider in all_spiders:
                 if spider.name == task:
                     spiders.append(spider)
                     break
@@ -195,9 +134,7 @@ def crawler_start(usage, tasks):
 
 @click.command()
 @click.option('--usage', default='https', help='Usage of squid')
-@click.option('--interval',
-              default=TTL_VALIDATED_RESOURCE,
-              help='Updating frenquency of squid conf.')
+@click.option('--interval', help='Updating frenquency of squid conf.')
 def squid_conf_update(usage, interval):
     """Timertask for updating proxies for squid config file"""
     logger.info('the updating task is starting...')

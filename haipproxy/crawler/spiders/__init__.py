@@ -46,13 +46,14 @@ https://proxy-list.org/english/index.php
 from .ajax_gfw_spider import AjaxGFWSpider
 from .ajax_spider import AjaxSpider
 from .base import BaseSpider
-from .common_spider import CommonSpider, ProxySpider
+from .common_spider import ProxySpider
 from .gfw_spider import GFWSpider
+from .httpbin import HttpbinValidator
 
 all_spiders = [
     ProxySpider,
-    CommonSpider,
     AjaxSpider,
     GFWSpider,
     AjaxGFWSpider,
+    HttpbinValidator
 ]

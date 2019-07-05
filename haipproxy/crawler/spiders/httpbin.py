@@ -11,15 +11,8 @@ from scrapy.spidermiddlewares.httperror import HttpError
 from twisted.internet.error import (DNSLookupError, ConnectionRefusedError,
                                     TimeoutError, TCPTimedOutError)
 
-from haipproxy.config.rules import (SPEED_QUEUE_MAPS, TTL_QUEUE_MAPS,
-                                    SCORE_QUEUE_MAPS, HTTP_TASKS, HTTPS_TASKS)
-from haipproxy.config.settings import (INIT_HTTP_Q, TEMP_HTTP_Q, TEMP_HTTPS_Q,
-                                       VALIDATED_HTTP_Q, VALIDATED_HTTPS_Q,
-                                       TTL_HTTP_Q, TTL_HTTPS_Q, SPEED_HTTP_Q,
-                                       SPEED_HTTPS_Q)
-from ..redis_spiders import RedisSpider, ValidatorRedisSpider
-from ..items import ProxyScoreItem, ProxyVerifiedTimeItem, ProxySpeedItem, ProxyStatInc
-from .base import BaseValidator
+from ..redis_spiders import RedisSpider
+from ..items import ProxyStatInc
 
 
 class HttpbinValidator(RedisSpider):
@@ -29,10 +22,6 @@ class HttpbinValidator(RedisSpider):
         'CONCURRENT_REQUESTS': 100,
         'CONCURRENT_REQUESTS_PER_DOMAIN': 100,
         'RETRY_ENABLED': False,
-        'DOWNLOADER_MIDDLEWARES': {
-            'haipproxy.crawler.middlewares.RequestStartProfileMiddleware': 500,
-            'haipproxy.crawler.middlewares.RequestEndProfileMiddleware': 500,
-        },
         'ITEM_PIPELINES': {
             'haipproxy.crawler.pipelines.ProxyStatPipeline': 200,
         }
@@ -112,27 +101,3 @@ class HttpbinValidator(RedisSpider):
             self.logger.error('transparent ip AttributeError, JSONDecodeError')
             return True
         return False
-
-
-class HttpValidator(BaseValidator, ValidatorRedisSpider):
-    """This validator checks the liveness of http proxy resources"""
-    name = 'http'
-    urls = [
-        'http://httpbin.org/ip',
-    ]
-    task_queue = TEMP_HTTP_Q
-    score_queue = VALIDATED_HTTP_Q
-    ttl_queue = TTL_HTTP_Q
-    speed_queue = SPEED_HTTP_Q
-
-
-class HttpsValidator(BaseValidator, ValidatorRedisSpider):
-    """This validator checks the liveness of https proxy resources"""
-    name = 'https'
-    urls = [
-        'https://httpbin.org/ip',
-    ]
-    task_queue = TEMP_HTTPS_Q
-    score_queue = VALIDATED_HTTPS_Q
-    ttl_queue = TTL_HTTPS_Q
-    speed_queue = SPEED_HTTPS_Q
