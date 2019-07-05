@@ -93,8 +93,6 @@ class CrawlerScheduler(BaseScheduler):
             release_lock(redis_conn, task_name, lock_indentifier)
 
 
-@click.command()
-@click.argument('tasks', nargs=-1 )
 def scheduler_start(tasks):
     """Start specified scheduler."""
     default_tasks = CRAWLER_TASKS
@@ -105,8 +103,6 @@ def scheduler_start(tasks):
     scheduler.schedule_with_delay()
 
 
-@click.command()
-@click.argument('tasks', nargs=-1)
 def crawler_start(tasks):
     """
     There are four kinds of spiders: common, ajax, gfw, ajax_gfw. If you don't assign any tasks, all these spiders will run.
