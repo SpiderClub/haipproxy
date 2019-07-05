@@ -126,7 +126,6 @@ class ProxyFetcher(IPFetcherMixin):
     def get_proxy(self):
         """
         get one available proxy from redis, if there's none, None is returned
-        :return:
         """
         proxy = None
         self.refresh()

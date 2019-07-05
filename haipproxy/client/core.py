@@ -1,9 +1,4 @@
-"""
-This module provides core code for picking up proxies
-"""
 import time
-
-from ..utils import decode_all
 
 
 class IPFetcherMixin:
