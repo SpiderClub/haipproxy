@@ -4,22 +4,22 @@ scrapy middlerwares for both downloader and spider
 import logging
 import time
 
+from fake_useragent import UserAgent
 from scrapy.downloadermiddlewares.retry import RetryMiddleware
 from scrapy.utils.response import response_status_message
 from sentry_sdk import capture_message
 
 from ..exceptions import (HttpError, DownloadException)
-from .user_agents import FakeChromeUA
 
 logger = logging.getLogger(__name__)
 
 
-class UserAgentMiddleware(object):
-    """This middleware changes user agent randomly"""
+class RandomUserAgentMiddleware(object):
+    def __init__(self):
+        self.ua = UserAgent()
 
     def process_request(self, request, spider):
-        request.headers['User-Agent'] = FakeChromeUA.get_ua()
-        request.headers['Accept-Language'] = 'zh-CN,zh;q=0.8,en;q=0.6'
+        request.headers.setdefault('User-Agent', self.ua.random)
 
 
 class ProxyMiddleware(object):

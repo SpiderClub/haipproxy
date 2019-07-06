@@ -10,6 +10,18 @@ from .base import BaseSpider
 class AjaxSpider(BaseSpider, RedisAjaxSpider):
     name = 'ajax'
     task_queue = CRAWLER_QUEUE_MAPS[name]
+    custom_settings = {
+        'DOWNLOADER_MIDDLEWARES': {
+            'haipproxy.crawler.middlewares.RandomUserAgentMiddleware': 543,
+            'haipproxy.crawler.middlewares.ProxyMiddleware': 543,
+            'scrapy_splash.SplashCookiesMiddleware': 723,
+            # it should be prior to HttpProxyMiddleware
+            'scrapy_splash.SplashMiddleware': 725,
+        },
+        'SPIDER_MIDDLEWARES': {
+            'scrapy_splash.SplashDeduplicateArgsMiddleware': 100,
+        }
+    }
 
     def __init__(self):
         super().__init__()

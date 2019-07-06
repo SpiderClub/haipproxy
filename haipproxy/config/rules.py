@@ -250,7 +250,7 @@ CRAWLER_TASKS = [
     },
     {
         # there are some problems using crawlspider, so we use basic spider
-        'name': 'coderbusy.com',
+        'name': 'coderbusy.com', # SPIDER_AJAX_TASK
         'resource': ['https://proxy.coderbusy.com/'] + [
             'https://proxy.coderbusy.com/classical/https-ready.aspx?page=%s' %
             i for i in range(1, 21)
@@ -293,7 +293,7 @@ CRAWLER_TASKS = [
         'enable': 1,
     },
     {
-        'name': 'proxydb.net',
+        'name': 'proxydb.net', # SPIDER_AJAX_TASK
         'resource':
         ['http://proxydb.net/?offset=%s' % (15 * i) for i in range(20)],
         'parse_type': 'common',
@@ -305,13 +305,12 @@ CRAWLER_TASKS = [
         'enable': 1,
     },
     {
-        'name': 'cool-proxy.net',
+        'name': 'cool-proxy.net', # SPIDER_AJAX_TASK
         'resource': [
             'https://www.cool-proxy.net/proxies/http_proxy_list/country_code:/port:/anonymous:1/page:%s'
             % i for i in range(1, 11)
         ],
-        'parse_type':
-        'common',
+        'parse_type': 'common',
         'parse_rule': {
             'pre_extract_method': 'xpath',
             'pre_extract': '//tr',
@@ -328,7 +327,7 @@ CRAWLER_TASKS = [
         'enable': 1,
     },
     {
-        'name': 'goubanjia.com',
+        'name': 'goubanjia.com', # SPIDER_AJAX_TASK
         'resource': ['http://www.goubanjia.com/'],
         'parse_type': 'goubanjia',
         'interval': 10,
@@ -400,7 +399,7 @@ CRAWLER_TASKS = [
         'enable': 1,
     },
     {
-        'name': 'cnproxy.com',
+        'name': 'cnproxy.com', # SPIDER_AJAX_GFW_TASK
         'resource':
         ['http://www.cnproxy.com/proxy%s.html' % i for i in range(1, 11)] +
         ['http://www.cnproxy.com/proxyedu%s.html' % i for i in range(1, 3)],
@@ -409,7 +408,7 @@ CRAWLER_TASKS = [
         'enable': 1,
     },
     {
-        'name': 'free-proxy.cz',
+        'name': 'free-proxy.cz', # SPIDER_AJAX_GFW_TASK
         'resource': [
             'http://free-proxy.cz/en/proxylist/main/%s' % i
             for i in range(1, 30)
@@ -419,7 +418,7 @@ CRAWLER_TASKS = [
         'enable': 1,
     },
     {
-        'name': 'proxy-list.org',
+        'name': 'proxy-list.org', # SPIDER_AJAX_GFW_TASK
         'resource': [
             'https://proxy-list.org/english/index.php?p=%s' % i
             for i in range(1, 11)
@@ -441,7 +440,7 @@ CRAWLER_TASKS = [
         'enable': 1,
     },
     {
-        'name': 'gatherproxy',
+        'name': 'gatherproxy', # SPIDER_AJAX_GFW_TASK
         'resource': [
             'http://www.gatherproxy.com/',
             'http://www.gatherproxy.com/proxylist/anonymity/?t=Elite',
@@ -497,5 +496,8 @@ PARSE_MAP = {
     },
     'xroxy': {
         'row_xpath': '//table[@id="DataTables_Table_0"]/tbody/tr',
+    },
+    'goubanjia': {
+        'row_xpath': '//table[@class="table table-hover"]/tbody/tr',
     },
 }

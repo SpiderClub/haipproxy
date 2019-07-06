@@ -29,19 +29,10 @@ SPLASH_URL = 'http://127.0.0.1:8050'
 # extension settings
 # RETRY_ENABLED = False
 # TELNETCONSOLE_ENABLED = False
-
 DOWNLOADER_MIDDLEWARES = {
-    'haipproxy.crawler.middlewares.UserAgentMiddleware': 543,
-    'haipproxy.crawler.middlewares.ProxyMiddleware': 543,
-    'scrapy_splash.SplashCookiesMiddleware': 723,
-    # it should be prior to HttpProxyMiddleware
-    'scrapy_splash.SplashMiddleware': 725,
-    'scrapy.downloadermiddlewares.httpcompression.HttpCompressionMiddleware':
-    810,
-}
-
-SPIDER_MIDDLEWARES = {
-    'scrapy_splash.SplashDeduplicateArgsMiddleware': 100,
+    'haipproxy.crawler.middlewares.ProxyMiddleware': None,
+    'scrapy.downloadermiddlewares.useragent.UserAgentMiddleware': None,
+    'haipproxy.crawler.middlewares.RandomUserAgentMiddleware': 400,
 }
 
 # scrapy log settings

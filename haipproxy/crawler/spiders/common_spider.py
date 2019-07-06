@@ -5,6 +5,7 @@ import ipaddress
 from urllib.parse import urlparse
 
 import scrapy
+from scrapy_splash.request import SplashRequest
 
 from haipproxy.config.rules import PARSE_MAP
 from ..redis_spiders import RedisSpider
@@ -18,7 +19,6 @@ class ProxySpider(scrapy.Spider):
         'ITEM_PIPELINES': {
             'haipproxy.crawler.pipelines.ProxyIPPipeline': 200,
         },
-        'USER_AGENT': 'Mozilla/6.0',
     }
 
     def start_requests(self):
@@ -29,17 +29,20 @@ class ProxySpider(scrapy.Spider):
             'http://ip.kxdaili.com/dailiip/2/1.html#ip',
             'https://www.xroxy.com/free-proxy-lists/?port=&type=Not_transparent&ssl=&country=&latency=&reliability=2500',
         ]
+        ajax_urls = []
         for url in urls:
             yield scrapy.Request(url=url, callback=self.parse)
+        for url in ajax_urls:
+            yield SplashRequest(url=url, callback=self.parse)
 
     def parse(self, response):
         site = urlparse(response.url).hostname.split('.')[1]
         debug = False
         if debug:
-            from scrapy.shell import inspect_response
-            inspect_response(response, self)
             from scrapy.utils.response import open_in_browser
             open_in_browser(response)
+            from scrapy.shell import inspect_response
+            inspect_response(response, self)
         row_xpath = PARSE_MAP[site].get('row_xpath', '//table/tbody/tr')
         col_xpath = PARSE_MAP[site].get('col_xpath', 'td')
         ip_pos = PARSE_MAP[site].get('ip_pos', 0)
