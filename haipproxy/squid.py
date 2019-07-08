@@ -4,13 +4,26 @@ Squid Client for spiders.
 import subprocess
 
 # from logger import client_logger
-from ..utils import get_redis_conn
-from ..config.settings import (SQUID_BIN_PATH, SQUID_CONF_PATH,
+from haipproxy.utils import get_redis_conn
+from haipproxy.config.settings import (SQUID_BIN_PATH, SQUID_CONF_PATH,
                                SQUID_TEMPLATE_PATH,
                                LONGEST_RESPONSE_TIME, LOWEST_SCORE,
                                LOWEST_TOTAL_PROXIES)
-from .core import IPFetcherMixin
 
+class IPFetcherMixin:
+    def __init__(self,
+                 longest_response_time, lowest_score, ttl_validated_resource,
+                 min_pool_size):
+        self.longest_response_time = longest_response_time
+        self.lowest_score = lowest_score
+        self.min_pool_size = min_pool_size
+
+    def get_available_proxies(self, conn):
+        """core algrithm to get proxies from redis"""
+        pipe = conn.pipeline(False)
+        proxies = list(map(bytes.decode, proxies))
+
+        return proxies
 
 class SquidClient(IPFetcherMixin):
     default_conf_detail = "cache_peer {} parent {} 0 no-query weighted-round-robin weight=1 " \

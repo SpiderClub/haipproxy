@@ -4,6 +4,7 @@ initial score.
 """
 import json
 import requests
+import sys
 
 from json.decoder import JSONDecodeError
 from scrapy.http import Request
@@ -57,6 +58,7 @@ class HttpbinValidator(RedisSpider):
         if self.is_transparent(response):
             success = 0
             fail = 'transparent'
+            self.logger.error(f'{proxy} is transparent')
         else:
             self.logger.info(f'good ip {proxy}')
         yield ProxyStatInc(proxy=proxy,
@@ -89,15 +91,9 @@ class HttpbinValidator(RedisSpider):
 
     def is_transparent(self, response):
         """filter transparent ip resources"""
-        if not response.body_as_unicode():
-            self.logger.error('no body')
-            return True
         try:
-            ip = json.loads(response.body_as_unicode()).get('origin')
-            if self.origin_ip in ip:
-                self.logger.error('is transparent ip')
-                return True
-        except (AttributeError, JSONDecodeError):
-            self.logger.error('transparent ip AttributeError, JSONDecodeError')
+            ip = json.loads(response.text).get('origin')
+        except:
+            self.logger.error("Unexpected error:", sys.exc_info()[0])
             return True
-        return False
+        return self.origin_ip in ip

@@ -49,6 +49,7 @@ class ProxyStatPipeline(BasePipeline):
         self.rpipe.hincrby(item['proxy'], 'success_count', item['success'])
         self.rpipe.hincrby(item['proxy'], 'total_seconds', item['seconds'])
         self.rpipe.hset(item['proxy'], 'last_fail', item['fail'])
-        self.rpipe.hset(item['proxy'], 'timestamp', int(time.time()))
+        if item['success'] != 0:
+            self.rpipe.hset(item['proxy'], 'timestamp', int(time.time()))
         self.rpipe.execute()
         return item

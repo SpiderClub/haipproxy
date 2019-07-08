@@ -251,31 +251,7 @@ CRAWLER_TASKS = [
     {
         # there are some problems using crawlspider, so we use basic spider
         'name': 'coderbusy.com', # SPIDER_AJAX_TASK
-        'resource': ['https://proxy.coderbusy.com/'] + [
-            'https://proxy.coderbusy.com/classical/https-ready.aspx?page=%s' %
-            i for i in range(1, 21)
-        ] + [
-            'https://proxy.coderbusy.com/classical/post-ready.aspx?page=%s' % i
-            for i in range(1, 21)
-        ] + [
-            'https://proxy.coderbusy.com/classical/anonymous-type/anonymous.aspx?page=%s'
-            % i for i in range(1, 6)
-        ] + [
-            'https://proxy.coderbusy.com/classical/anonymous-type/highanonymous.aspx?page=%s'
-            % i for i in range(1, 6)
-        ] + [
-            'https://proxy.coderbusy.com/classical/country/cn.aspx?page=%s' % i
-            for i in range(1, 21)
-        ] + [
-            'https://proxy.coderbusy.com/classical/country/us.aspx?page=%s' % i
-            for i in range(1, 11)
-        ] + [
-            'https://proxy.coderbusy.com/classical/country/id.aspx?page=%s' % i
-            for i in range(1, 6)
-        ] + [
-            'https://proxy.coderbusy.com/classical/country/ru.aspx?page=%s' % i
-            for i in range(1, 6)
-        ],
+        'resource': ['https://proxy.coderbusy.com/'],
         'parse_type': 'common',
         'parse_rule': {
             'pre_extract_method': 'xpath',

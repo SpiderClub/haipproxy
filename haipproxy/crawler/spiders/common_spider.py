@@ -19,6 +19,7 @@ class ProxySpider(scrapy.Spider):
         'ITEM_PIPELINES': {
             'haipproxy.crawler.pipelines.ProxyIPPipeline': 200,
         },
+        'AJAXCRAWL_ENABLED': True
     }
 
     def start_requests(self):
@@ -30,6 +31,8 @@ class ProxySpider(scrapy.Spider):
             'https://www.xroxy.com/free-proxy-lists/?port=&type=Not_transparent&ssl=&country=&latency=&reliability=2500',
         ]
         ajax_urls = []
+        # If test_urls is not empty, this spider will crawler test_urls ONLY
+        test_urls = []
         for url in urls:
             yield scrapy.Request(url=url, callback=self.parse)
         for url in ajax_urls:

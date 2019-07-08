@@ -11,7 +11,7 @@ from scrapy.crawler import CrawlerRunner
 from scrapy.utils.project import get_project_settings
 from twisted.internet import reactor
 
-from ..client import SquidClient
+from haipproxy.squid import SquidClient
 from ..config.rules import (CRAWLER_TASKS, CRAWLER_QUEUE_MAPS)
 from ..crawler.spiders import all_spiders
 from ..config.settings import (SPIDER_AJAX_Q, SPIDER_GFW_Q,

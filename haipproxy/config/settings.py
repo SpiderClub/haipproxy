@@ -46,6 +46,9 @@ REDIS_PORT = 6379
 REDIS_DB = 0
 REDIS_PIPE_BATCH_SIZE = 200
 
+ZSET_PROXY_HTTP = 'proxy:http'
+ZSET_PROXY_HTTPS = 'proxy:https'
+
 # scheduler settings
 # 定时任务调度器设置，表示其在Redis中的Key
 # 数据结构是一个hash表,存储了各个任务上次执行的时间
