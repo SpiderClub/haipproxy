@@ -16,9 +16,7 @@ from ..redis_spiders import RedisSpider
 from ..items import ProxyStatInc
 
 
-class HttpbinValidator(RedisSpider):
-    name = 'vhttpbin'
-
+class BaseValidator(RedisSpider):
     custom_settings = {
         'CONCURRENT_REQUESTS': 100,
         'CONCURRENT_REQUESTS_PER_DOMAIN': 100,
@@ -29,22 +27,10 @@ class HttpbinValidator(RedisSpider):
     }
     success_key = ''
 
-    def __init__(self):
-        super().__init__()
-        self.origin_ip = requests.get('http://httpbin.org/ip').json().get(
-            'origin')
-
     def start_requests(self):
         for proxy in self.redis_conn.scan_iter(match='*://*'):
             proxy = proxy.decode()
-            if proxy.startswith('https'):
-                url = 'https://httpbin.org/ip'
-            elif proxy.startswith('http'):
-                url = 'http://httpbin.org/ip'
-            else:
-                self.logger.warning(f'Unknown proxy: {proxy}')
-                continue
-            req = Request(url,
+            req = Request(self.get_url(proxy),
                           meta={'proxy': proxy},
                           callback=self.parse,
                           errback=self.parse_error)
@@ -59,6 +45,8 @@ class HttpbinValidator(RedisSpider):
             success = 0
             fail = 'transparent'
             self.logger.error(f'{proxy} is transparent')
+        if not self.is_ok(response):
+            self.logger.error(f'{proxy} got wrong content')
         else:
             self.logger.info(f'good ip {proxy}')
         yield ProxyStatInc(proxy=proxy,
@@ -89,11 +77,36 @@ class HttpbinValidator(RedisSpider):
     def is_ok(self, response):
         return self.success_key in response.text
 
+    def get_url(self, proxy=''):
+        raise NotImplementedError
+
     def is_transparent(self, response):
-        """filter transparent ip resources"""
+        """only for base HttpbinValidator"""
+        return False
+
+
+class HttpbinValidator(BaseValidator):
+    name = 'vhttpbin'
+
+    def __init__(self):
+        super().__init__()
+        self.origin_ip = requests.get('http://httpbin.org/ip').json().get(
+            'origin')
+
+    def get_url(self, proxy=''):
+        if proxy.startswith('https'):
+            return 'https://httpbin.org/ip'
+        elif proxy.startswith('http'):
+            return 'http://httpbin.org/ip'
+        else:
+            self.logger.warning(f'Unknown proxy: {proxy}')
+            return 'http://httpbin.org'
+
+    def is_transparent(self, response):
+        # example: 'http://198.211.121.46:80'
         try:
             ip = json.loads(response.text).get('origin')
-        except:
-            self.logger.error("Unexpected error:", sys.exc_info()[0])
+        except Exception as e:
+            self.logger.error(f'Unexpected error:{e}')
             return True
         return self.origin_ip in ip

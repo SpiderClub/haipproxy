@@ -11,12 +11,12 @@ from scrapy.crawler import CrawlerRunner
 from scrapy.utils.project import get_project_settings
 from twisted.internet import reactor
 
-from haipproxy.squid import SquidClient
-from ..config.rules import (CRAWLER_TASKS, CRAWLER_QUEUE_MAPS)
-from ..crawler.spiders import all_spiders
-from ..config.settings import (SPIDER_AJAX_Q, SPIDER_GFW_Q,
+from haipproxy.client import SquidClient
+from haipproxy.config.rules import (CRAWLER_TASKS, CRAWLER_QUEUE_MAPS)
+from haipproxy.crawler.spiders import all_spiders
+from haipproxy.config.settings import (SPIDER_AJAX_Q, SPIDER_GFW_Q,
                                SPIDER_AJAX_GFW_Q, TIMER_RECORDER)
-from ..utils import (get_redis_conn, acquire_lock, release_lock)
+from haipproxy.utils import (get_redis_conn, acquire_lock, release_lock)
 
 DEFAULT_CRAWLER_QS = [
     SPIDER_AJAX_Q, SPIDER_GFW_Q, SPIDER_AJAX_GFW_Q

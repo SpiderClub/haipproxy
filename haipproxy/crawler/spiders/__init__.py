@@ -43,12 +43,10 @@ https://proxy-list.org/english/index.php
 
 """
 # todo find why 504 happens when crawling proxydb.net
-from .ajax_gfw_spider import AjaxGFWSpider
-from .ajax_spider import AjaxSpider
+from .ajax_spider import AjaxSpider, AjaxGFWSpider, GFWSpider
 from .base import BaseSpider
 from .common_spider import ProxySpider
-from .gfw_spider import GFWSpider
-from .httpbin import HttpbinValidator
+from .validator import HttpbinValidator
 
 all_spiders = [
     ProxySpider,
