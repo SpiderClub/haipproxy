@@ -126,17 +126,3 @@ def crawler_start(tasks):
     d = runner.join()
     d.addBoth(lambda _: reactor.stop())
     reactor.run()
-
-
-@click.command()
-@click.option('--usage', default='https', help='Usage of squid')
-@click.option('--interval', help='Updating frenquency of squid conf.')
-def squid_conf_update(usage, interval):
-    """Timertask for updating proxies for squid config file"""
-    logger.info('the updating task is starting...')
-    client = SquidClient(usage)
-    client.update_conf()
-    schedule.every(interval).minutes.do(client.update_conf)
-    while True:
-        schedule.run_pending()
-        time.sleep(1)
