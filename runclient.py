@@ -19,7 +19,6 @@ if __name__ == "__main__":
     parser.add_argument("-s",
             "--squid",
             nargs='?',
-            default=60,
             type=int,
             metavar='interval',
             help= """ Update squid conf periodically.  If you belong to admin group, you can start the task using the following cmd: python squid_update.py The default usage value is 'https' and interval value is 1 hour, use the following cmd if you want a different usage and updating interval sudo python3 run_client.py -s 60""")

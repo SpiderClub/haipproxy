@@ -8,9 +8,9 @@ import scrapy
 from scrapy_splash.request import SplashRequest
 
 from haipproxy.config.rules import PARSE_MAP
-from ..redis_spiders import RedisSpider
-from ..items import ProxyUrlItem
+from haipproxy.crawler.items import ProxyUrlItem
 from .base import BaseSpider
+from .redis_spiders import RedisSpider
 
 
 class ProxySpider(scrapy.Spider):

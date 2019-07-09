@@ -1,7 +1,3 @@
-"""
-We use this validator to filter transparent ips, and give the ip resources an
-initial score.
-"""
 import json
 import requests
 import sys
@@ -12,8 +8,8 @@ from scrapy.spidermiddlewares.httperror import HttpError
 from twisted.internet.error import (DNSLookupError, ConnectionRefusedError,
                                     TimeoutError, TCPTimedOutError)
 
-from ..redis_spiders import RedisSpider
-from ..items import ProxyStatInc
+from .redis_spiders import RedisSpider
+from haipproxy.crawler.items import ProxyStatInc
 
 
 class BaseValidator(RedisSpider):
@@ -41,11 +37,9 @@ class BaseValidator(RedisSpider):
         seconds = int(response.meta.get('download_latency'))
         success = 1
         fail = ''
-        if self.is_transparent(response):
-            success = 0
-            fail = 'transparent'
-            self.logger.error(f'{proxy} is transparent')
         if not self.is_ok(response):
+            success = 0
+            fail = 'badcontent'
             self.logger.error(f'{proxy} got wrong content')
         else:
             self.logger.info(f'good ip {proxy}')
@@ -80,10 +74,6 @@ class BaseValidator(RedisSpider):
     def get_url(self, proxy=''):
         raise NotImplementedError
 
-    def is_transparent(self, response):
-        """only for base HttpbinValidator"""
-        return False
-
 
 class HttpbinValidator(BaseValidator):
     name = 'vhttpbin'
@@ -102,11 +92,15 @@ class HttpbinValidator(BaseValidator):
             self.logger.warning(f'Unknown proxy: {proxy}')
             return 'http://httpbin.org'
 
-    def is_transparent(self, response):
+    def is_ok(self, response):
         # example: 'http://198.211.121.46:80'
         try:
             ip = json.loads(response.text).get('origin')
         except Exception as e:
             self.logger.error(f'Unexpected error:{e}')
-            return True
-        return self.origin_ip in ip
+            return False
+        if self.origin_ip in ip:
+            self.logger.error(f'{proxy} is transparent')
+            return False
+        return True
+

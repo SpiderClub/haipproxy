@@ -5,7 +5,7 @@ import json
 import ipaddress
 
 from haipproxy.config.rules import CRAWLER_TASKS
-from ..items import ProxyUrlItem
+from haipproxy.crawler.items import ProxyUrlItem
 
 
 class BaseSpider:

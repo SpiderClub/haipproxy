@@ -29,7 +29,7 @@ SCORE_QUEUE_MAPS = {
 - 新建校验器爬虫文件`zhihu.py`,在其中添加校验具体逻辑
 ```
 # ValidatorRedisSpider提供了分布式父类爬虫
-from ..redis_spiders import ValidatorRedisSpider
+from .redis_spiders import ValidatorRedisSpider
 # BaseValidator提供了基本的请求错误处理，但是业务相关逻辑错误需要自己实现
 from .base import BaseValidator
 

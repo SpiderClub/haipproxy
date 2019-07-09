@@ -9,7 +9,7 @@ from scrapy.downloadermiddlewares.retry import RetryMiddleware
 from scrapy.utils.response import response_status_message
 from sentry_sdk import capture_message
 
-from ..exceptions import (HttpError, DownloadException)
+from haipproxy.exceptions import (HttpError, DownloadException)
 
 logger = logging.getLogger(__name__)
 

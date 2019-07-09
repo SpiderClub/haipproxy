@@ -91,11 +91,11 @@ class ProxyClient(object):
         # math.log(3600 * 24 * 30) = 14.78
         # math.log(3600 * 24) = 11.37
         # math.log(3600) = 8.19
-        return round(3 * float(success_count) / used_count +
-                     1 * success_count + 0.25 *
-                     (16.56 - math.log(time.time() - timestamp)) + 1 *
-                     (1 if last_fail == b'' else 0) + 0.25 *
-                     max(0, (15 - float(total_seconds) / success_count)))
+        return round(
+            2 * float(success_count) / used_count + 0.5 * success_count + 0.25 *
+            (16.56 - math.log(time.time() - timestamp)) + 1 *
+            (2 if last_fail == b'' else -1) +
+            0.20 * max(0, (15 - float(total_seconds) / success_count)), 2)
 
 
 class SquidClient(object):
@@ -114,8 +114,7 @@ class SquidClient(object):
         self.squid_path = r.decode().strip()
 
     def update_conf(self):
-        with open(self.tmp_path, 'r') as fr, open(self.conf_path,
-                                                       'w') as fw:
+        with open(self.tmp_path, 'r') as fr, open(self.conf_path, 'w') as fw:
             fw.write(fr.read())
             pc = ProxyClient()
             idx = 0

@@ -7,8 +7,8 @@ from scrapy.exceptions import DontCloseSpider
 from scrapy.spiders import Spider
 from scrapy_splash.request import SplashRequest
 
-from ..utils import get_redis_conn
-from ..config.settings import SPIDER_FEED_SIZE
+from haipproxy.utils import get_redis_conn
+from haipproxy.config.settings import SPIDER_FEED_SIZE
 
 
 class RedisSpider(Spider):

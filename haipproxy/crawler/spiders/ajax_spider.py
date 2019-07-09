@@ -2,10 +2,10 @@
 Ajax proxy ip crawler with scrapy-splash
 """
 from haipproxy.config.rules import CRAWLER_QUEUE_MAPS
-from ..redis_spiders import RedisAjaxSpider
-from ..items import ProxyUrlItem
+from haipproxy.crawler.items import ProxyUrlItem
 from .base import BaseSpider
 from .common_spider import CommonSpider
+from .redis_spiders import RedisAjaxSpider
 
 
 class AjaxSpider(BaseSpider, RedisAjaxSpider):
