@@ -6,7 +6,6 @@ from prometheus_client.core import (CounterMetricFamily, GaugeMetricFamily,
                                     REGISTRY)
 
 from haipproxy.config.settings import (
-    DATA_ALL,
     EXPORTER_LISTEN_HOST,
     EXPORTER_LISTEN_PORT,
 )
@@ -23,14 +22,14 @@ class CustomCollector:
         start_time = int(time.time()) - 2 * 60
 
         pipe = self.redis_conn.pipeline(False)
-        pipe.scard(DATA_ALL)
+        pipe.dbsize()
         r = pipe.execute()
 
         yield CounterMetricFamily('total_proxies', 'total proxies', r[0])
-        # yield GaugeMetricFamily('init_proxies', 'total init proxies', r[1])
+        # yield GaugeMetricFamily
 
 
-def exporter_start():
+def start_prometheus():
     logger.info('starting server http://{}:{}/metrics'.format(
         EXPORTER_LISTEN_HOST, EXPORTER_LISTEN_PORT))
     REGISTRY.register(CustomCollector())

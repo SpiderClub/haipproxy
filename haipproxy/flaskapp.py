@@ -25,7 +25,7 @@ def not_found(e):
 
 @app.route("/pool/get/<protocol>")
 def get_proxies(protocol):
-    return flask_jsonify({
+    return jsonify({
         'pool': [p for p in pc.next_proxy(protocol)],
         'resource': protocol,
         'status_code': 200

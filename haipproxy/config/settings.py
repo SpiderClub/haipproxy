@@ -100,5 +100,5 @@ sentry_sdk.init(
 # prometheus for monitoring, for more information see
 # https://github.com/prometheus/prometheus
 # you have to config prometheus first if you want to monitor haipproxy status
-EXPORTER_LISTEN_HOST = '0.0.0.0'
+EXPORTER_LISTEN_HOST = '127.0.0.1'
 EXPORTER_LISTEN_PORT = 7001

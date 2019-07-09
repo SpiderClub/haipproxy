@@ -30,9 +30,8 @@ class ProxyClient(object):
         nfail = 0
         for pkey in self.redis_conn.scan_iter(match='*://*'):
             total += 1
-            used_count, success_count = self.redis_conn.hmget(
-                pkey, 'used_count', 'success_count')
-            if used_count > b'1' and success_count == '0':
+            score = float(self.redis_conn.hget(pkey, 'score'))
+            if score <= -2:
                 self.rpipe.delete(pkey)
                 nfail += 1
         self.rpipe.execute()
@@ -92,8 +91,8 @@ class ProxyClient(object):
         # math.log(3600 * 24) = 11.37
         # math.log(3600) = 8.19
         return round(
-            2 * float(success_count) / used_count + 0.5 * success_count + 0.25 *
-            (16.56 - math.log(time.time() - timestamp)) + 1 *
+            2 * float(success_count) / used_count + 0.5 * success_count +
+            0.25 * (16.56 - math.log(time.time() - timestamp)) + 1 *
             (2 if last_fail == b'' else -1) +
             0.20 * max(0, (15 - float(total_seconds) / success_count)), 2)
 
