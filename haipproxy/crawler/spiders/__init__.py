@@ -46,12 +46,13 @@ https://proxy-list.org/english/index.php
 from .ajax_spider import AjaxSpider, AjaxGFWSpider, GFWSpider
 from .base import BaseSpider
 from .common_spider import ProxySpider
-from .validator import HttpbinValidator
+from .validator import CctvValidator, HttpbinValidator
 
 all_spiders = [
     ProxySpider,
     AjaxSpider,
     GFWSpider,
     AjaxGFWSpider,
-    HttpbinValidator
+    CctvValidator,
+    HttpbinValidator,
 ]

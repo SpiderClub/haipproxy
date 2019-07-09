@@ -104,3 +104,12 @@ class HttpbinValidator(BaseValidator):
             return False
         return True
 
+
+class CctvValidator(BaseValidator):
+    name = 'vcctv'
+
+    def __init__(self):
+        self.success_key = '中央电视台'
+
+    def get_url(self, proxy=''):
+        return 'http://www.cctv.com/'
