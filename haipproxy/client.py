@@ -6,10 +6,12 @@ import threading
 import time
 
 from haipproxy.utils import get_redis_conn
-from haipproxy.config.settings import (SQUID_BIN_PATH, SQUID_CONF_PATH,
-                                       SQUID_TEMPLATE_PATH,
-                                       LONGEST_RESPONSE_TIME, LOWEST_SCORE,
-                                       LOWEST_TOTAL_PROXIES)
+from haipproxy.config.settings import (
+    SQUID_BIN_PATH,
+    SQUID_CONF_PATH,
+    SQUID_TEMPLATE_PATH,
+    LOWEST_SCORE,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -31,7 +33,7 @@ class ProxyClient(object):
         for pkey in self.redis_conn.scan_iter(match='*://*'):
             total += 1
             score = float(self.redis_conn.hget(pkey, 'score'))
-            if score <= -2:
+            if score <= LOWEST_SCORE-2:
                 self.rpipe.delete(pkey)
                 nfail += 1
         self.rpipe.execute()
@@ -66,7 +68,7 @@ class ProxyClient(object):
             stat = self.redis_conn.hgetall(pkey)
             score = self.cal_score(stat)
             self.redis_conn.hset(pkey, 'score', score)
-            if score > 0:
+            if score > LOWEST_SCORE:
                 heapq.heappush(self.pheap, (score, pkey.decode()))
         logger.info(
             f'{len(self.pheap)} proxies loaded. {total} scanned totally')

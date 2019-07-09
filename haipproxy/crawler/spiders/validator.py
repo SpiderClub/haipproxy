@@ -13,6 +13,9 @@ from haipproxy.crawler.items import ProxyStatInc
 
 
 class BaseValidator(RedisSpider):
+    # per test, both http and https proxies respond https request equally,
+    # while https proxies don't response http request
+    # It's common that a proxy succeed on other sites but not on httpbin
     custom_settings = {
         'CONCURRENT_REQUESTS': 100,
         'CONCURRENT_REQUESTS_PER_DOMAIN': 100,
@@ -22,6 +25,7 @@ class BaseValidator(RedisSpider):
         }
     }
     success_key = ''
+    good_count = 0
 
     def start_requests(self):
         for proxy in self.redis_conn.scan_iter(match='*://*'):
@@ -40,9 +44,10 @@ class BaseValidator(RedisSpider):
         if not self.is_ok(response):
             success = 0
             fail = 'badcontent'
-            self.logger.error(f'{proxy} got wrong content')
+            self.logger.error(f'{proxy} got bad content')
         else:
-            self.logger.info(f'good ip {proxy}')
+            self.good_count += 1
+            self.logger.info(f'good ip {self.good_count} {proxy}  ####')
         yield ProxyStatInc(proxy=proxy,
                            success=success,
                            seconds=seconds,
@@ -69,6 +74,7 @@ class BaseValidator(RedisSpider):
         yield ProxyStatInc(proxy=proxy, success=0, seconds=0, fail=fail)
 
     def is_ok(self, response):
+        # TODO: check len(response.text)
         return self.success_key in response.text
 
     def get_url(self, proxy=''):
@@ -113,3 +119,13 @@ class CctvValidator(BaseValidator):
 
     def get_url(self, proxy=''):
         return 'http://www.cctv.com/'
+
+
+class UqerValidator(BaseValidator):
+    name = 'vuqer'
+
+    def __init__(self):
+        self.success_key = '优矿'
+
+    def get_url(self, proxy=''):
+        return 'https://uqer.io/'

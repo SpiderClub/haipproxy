@@ -8,17 +8,15 @@ BOT_NAME = 'googlebot'
 SPIDER_MODULES = ['haipproxy.crawler.spiders']
 
 # downloader settings
+# Cannot download if follow robots.txt
 ROBOTSTXT_OBEY = False
 COOKIES_ENABLED = False
-DOWNLOAD_TIMEOUT = 30
+DOWNLOAD_TIMEOUT = 60
 
 # to aviod infinite recursion
 DEPTH_LIMIT = 20
 CONCURRENT_REQUESTS = 30
 
-# don't filter anything, also can set dont_filter=True in Request objects
-DUPEFILTER_CLASS = 'scrapy.dupefilters.BaseDupeFilter'
-HTTPCACHE_ENABLED = False
 # 这是翻墙的URL，注意你如果用的是shadowsocks的话，需要将socks5其转为http协议，具体方法请阅读 https://rookiefly.cn/detail/201。请视具体情况修改 127.0.0.1
 GFW_PROXY = 'http://127.0.0.1:8123'
 
@@ -46,9 +44,6 @@ REDIS_PORT = 6379
 REDIS_DB = 0
 REDIS_PIPE_BATCH_SIZE = 200
 
-ZSET_PROXY_HTTP = 'proxy:http'
-ZSET_PROXY_HTTPS = 'proxy:https'
-
 # scheduler settings
 # 定时任务调度器设置，表示其在Redis中的Key
 # 数据结构是一个hash表,存储了各个任务上次执行的时间
@@ -63,9 +58,6 @@ SPIDER_AJAX_Q = 'haipproxy:spider:ajax'
 SPIDER_GFW_Q = 'haipproxy:spider:gfw'
 SPIDER_AJAX_GFW_Q = 'haipproxy:spider:ajax_gfw'
 
-# data_all is a set , it's a dupefilter
-DATA_ALL = 'haipproxy:all'
-
 #### client settings ####
 # 如果您需要使用squid作为二级代理，那么需要配置squid相关参数，以ubuntu为例
 # squid settings on linux os
@@ -76,15 +68,8 @@ SQUID_CONF_PATH = '/etc/squid/squid.conf'  # mac os '/usr/local/etc/squid.conf'
 # TEMPLATE file需要用户自己做拷贝
 SQUID_TEMPLATE_PATH = '/etc/squid/squid.conf.backup'  # mac os /usr/local/etc/squid.conf.backup
 
-# client picks proxies which's response time is between 0 and LONGEST_RESPONSE_TIME seconds
-LONGEST_RESPONSE_TIME = 10
-
-# client picks proxies which's score is not less than LOWEST_SCORE
-LOWEST_SCORE = 6
-
-# if the total num of proxies fetched is less than LOWES_TOTAL_PROXIES, haipproxy will fetch more
-# more proxies with lower quality
-LOWEST_TOTAL_PROXIES = 5
+# client picks proxies which's score is bigger than LOWEST_SCORE
+LOWEST_SCORE = 0
 
 #### monitor and bug trace ####
 # sentry for error tracking, for more information see

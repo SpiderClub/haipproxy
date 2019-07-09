@@ -1,7 +1,7 @@
 import argparse
 import logging
 
-from haipproxy.scheduler import crawler_start
+from haipproxy.scheduler import crawler_start, scheduler_start
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO)
