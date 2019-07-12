@@ -1,5 +1,5 @@
 from os import path as os_path
-from setuptools import setup
+from setuptools import setup, find_packages
 
 import haipproxy
 
@@ -21,6 +21,7 @@ def read_requirements(filename):
 
 setup(
     name='haipproxy',
+    version="0.1",
     python_requires='>=3.4.0',
     version=haipproxy.__version__,
     description="High aviariable proxy pool client for crawlers.",
@@ -29,13 +30,11 @@ setup(
     author="Resolvewang",
     author_email='resolvewang@foxmail.com',
     url='https://github.com/SpiderClub/haipproxy',
-    packages=[
-        'haipproxy', 'haipproxy.client', 'haipproxy.config', 'haipproxy.utils'
-    ],
+    packages=find_packages(),
     install_requires=read_requirements('requirements-cli.txt'),
     include_package_data=True,
     license="MIT",
-    keywords=['proxy', 'client', 'haipproxy'],
+    keywords=['proxy', 'haipproxy'],
     classifiers=[
         'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT License',

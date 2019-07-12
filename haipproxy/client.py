@@ -5,7 +5,7 @@ import subprocess
 import threading
 import time
 
-from haipproxy.utils import get_redis_conn
+from haipproxy.utils import get_redis_conn, is_valid_proxy
 from haipproxy.config.settings import (
     SQUID_BIN_PATH,
     SQUID_CONF_PATH,
@@ -33,7 +33,7 @@ class ProxyClient(object):
         for pkey in self.redis_conn.scan_iter(match='*://*'):
             total += 1
             score = float(self.redis_conn.hget(pkey, 'score'))
-            if score <= LOWEST_SCORE-2:
+            if score <= LOWEST_SCORE - 2:
                 self.rpipe.delete(pkey)
                 nfail += 1
         self.rpipe.execute()
@@ -97,6 +97,31 @@ class ProxyClient(object):
             0.25 * (16.56 - math.log(time.time() - timestamp)) + 1 *
             (2 if last_fail == b'' else -1) +
             0.20 * max(0, (15 - float(total_seconds) / success_count)), 2)
+
+    def load_file(self, fname):
+        with open(fname, 'r') as f:
+            redis_conn = get_redis_conn()
+            rpipe = redis_conn.pipeline()
+            total = 0
+            count = 0
+            for line in f.readlines():
+                total += 1
+                proxy = line.strip()
+                if not proxy or not is_valid_proxy(
+                        proxy=proxy) or redis_conn.exists(proxy):
+                    continue
+                rpipe.hmset(
+                    proxy, {
+                        'used_count': 0,
+                        'success_count': 0,
+                        'total_seconds': 0,
+                        'last_fail': '',
+                        'timestamp': 0,
+                        'score': 0
+                    })
+                count += 1
+            rpipe.execute()
+            logger.info(f'{count} proxies loaded with {total} lines')
 
 
 class SquidClient(object):

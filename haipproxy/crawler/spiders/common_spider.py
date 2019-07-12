@@ -9,6 +9,7 @@ from scrapy_splash.request import SplashRequest
 
 from haipproxy.config.rules import PARSE_MAP
 from haipproxy.crawler.items import ProxyUrlItem
+from haipproxy.utils import is_valid_proxy
 from .base import BaseSpider
 from .redis_spiders import RedisSpider
 
@@ -58,7 +59,7 @@ class ProxySpider(scrapy.Spider):
             port = cols[port_pos].xpath('text()').get()
             for protocol in self.get_protocols(
                     cols[protocal_pos].xpath('text()').get().lower()):
-                if self.is_valid_proxy(ip, port, protocol):
+                if is_valid_proxy(ip, port, protocol):
                     yield ProxyUrlItem(url=f'{protocol}://{ip}:{port}')
                 else:
                     self.logger.error(
@@ -73,15 +74,6 @@ class ProxySpider(scrapy.Spider):
             return ['http', 'https']
         else:
             return [protocol]
-
-    def is_valid_proxy(self, ip, port, protocol):
-        try:
-            ipaddress.ip_address(ip)
-        except:
-            return False
-        return 0 <= int(port) and int(port) <= 65535 and protocol in [
-            'http', 'https', 'sock4', 'sock5'
-        ]
 
 
 class CommonSpider(BaseSpider):

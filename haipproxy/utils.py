@@ -9,6 +9,7 @@ from haipproxy.config.settings import (REDIS_HOST, REDIS_PORT, REDIS_DB,
 REDIS_POOL = None
 
 
+#### redis ####
 def get_redis_conn():
     global REDIS_POOL
     if REDIS_POOL == None:
@@ -53,3 +54,21 @@ def release_lock(conn, lock_name, identifier):
             pass
 
     return False
+
+
+####
+def is_valid_proxy(ip=None, port=None, protocol=None, proxy=None):
+    if proxy:
+        try:
+            protocol, ip, port = proxy.split(':')
+            ip = ip.lstrip('//')
+        except:
+            return False
+    try:
+        ipaddress.ip_address(ip)
+        port = int(port)
+    except:
+        return False
+    return 0 <= port and port <= 65535 and protocol in [
+        'http', 'https', 'sock4', 'sock5'
+    ]

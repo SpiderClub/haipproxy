@@ -17,8 +17,8 @@ class BaseValidator(RedisSpider):
     # while https proxies don't response http request
     # It's common that a proxy succeed on other sites but not on httpbin
     custom_settings = {
-        'CONCURRENT_REQUESTS': 100,
-        'CONCURRENT_REQUESTS_PER_DOMAIN': 100,
+        'CONCURRENT_REQUESTS': 1000,
+        'CONCURRENT_REQUESTS_PER_DOMAIN': 1000,
         'RETRY_ENABLED': False,
         'ITEM_PIPELINES': {
             'haipproxy.crawler.pipelines.ProxyStatPipeline': 200,
@@ -31,6 +31,7 @@ class BaseValidator(RedisSpider):
         for proxy in self.redis_conn.scan_iter(match='*://*'):
             proxy = proxy.decode()
             req = Request(self.get_url(proxy),
+                          dont_filter=True,
                           meta={'proxy': proxy},
                           callback=self.parse,
                           errback=self.parse_error)

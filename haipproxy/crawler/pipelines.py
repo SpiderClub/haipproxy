@@ -23,11 +23,11 @@ class BasePipeline:
 
 class ProxyIPPipeline(BasePipeline):
     def process_item(self, item, spider):
-        url = item.get('url', None)
-        if not url or self.redis_conn.exists(url):
+        proxy = item.get('url', None)
+        if not proxy or self.redis_conn.exists(proxy):
             return item
         self.rpipe.hmset(
-            url, {
+            proxy, {
                 'used_count': 0,
                 'success_count': 0,
                 'total_seconds': 0,

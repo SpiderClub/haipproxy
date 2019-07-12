@@ -17,6 +17,8 @@ DOWNLOAD_TIMEOUT = 60
 DEPTH_LIMIT = 20
 CONCURRENT_REQUESTS = 30
 
+# don't filter anything, also can set dont_filter=True in Request objects
+DUPEFILTER_CLASS = 'scrapy.dupefilters.BaseDupeFilter'
 # 这是翻墙的URL，注意你如果用的是shadowsocks的话，需要将socks5其转为http协议，具体方法请阅读 https://rookiefly.cn/detail/201。请视具体情况修改 127.0.0.1
 GFW_PROXY = 'http://127.0.0.1:8123'
 
