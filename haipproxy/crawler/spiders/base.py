@@ -2,10 +2,10 @@
 Useful base class for all spiders.
 """
 import json
-import ipaddress
 
 from haipproxy.config.rules import CRAWLER_TASKS
 from haipproxy.crawler.items import ProxyUrlItem
+from haipproxy.utils import is_valid_proxy
 
 
 class BaseSpider:
@@ -93,7 +93,7 @@ class BaseSpider:
                 port = proxy_detail[port_pos].strip()
             else:
                 ip, port = proxy_detail[0].split(':')
-            if not self.proxy_check(ip, port):
+            if not is_valid_proxy(ip, port):
                 continue
 
             if protocols:
@@ -127,7 +127,7 @@ class BaseSpider:
         for info in infos:
             ip = info.get(ip_key)
             port = info.get(port_key)
-            if not self.proxy_check(ip, port):
+            if not is_valid_proxy(ip, port):
                 continue
 
             protocols = self.procotol_extractor(str(info))
@@ -168,7 +168,7 @@ class BaseSpider:
             if not ip or not port:
                 continue
 
-            if not self.proxy_check(ip, port):
+            if not is_valid_proxy(ip, port):
                 continue
 
             protocols = self.default_protocols if not protocols else protocols
@@ -191,22 +191,6 @@ class BaseSpider:
         else:
             protocols = self.default_protocols
         return protocols
-
-    def proxy_check(self, ip, port):
-        """
-        check whether the proxy ip and port are valid
-        :param ip: proxy ip value
-        :param port: proxy port value
-        :return: True or False
-        """
-        try:
-            ipaddress.ip_address(ip)
-            p = int(port)
-            if p > 65535 or p <= 0:
-                return False
-        except ValueError:
-            return False
-        return True
 
     def construct_proxy_url(self, scheme, ip, port):
         """construct proxy urls, so spiders can use them directly"""

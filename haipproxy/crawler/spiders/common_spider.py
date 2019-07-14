@@ -1,7 +1,6 @@
 """
 Basic proxy ip crawler.
 """
-import ipaddress
 from urllib.parse import urlparse
 
 import scrapy
@@ -22,6 +21,7 @@ class ProxySpider(scrapy.Spider):
         },
         'AJAXCRAWL_ENABLED': True
     }
+    default_protocols = ['http', 'https']
 
     def start_requests(self):
         urls = [
@@ -32,12 +32,15 @@ class ProxySpider(scrapy.Spider):
             'https://www.xroxy.com/free-proxy-lists/?port=&type=Not_transparent&ssl=&country=&latency=&reliability=2500',
         ]
         ajax_urls = []
+        text_urls = ['https://api.proxyscrape.com/?request=getproxies&proxytype=http']
         # If test_urls is not empty, this spider will crawler test_urls ONLY
         test_urls = []
-        for url in urls:
-            yield scrapy.Request(url=url, callback=self.parse)
-        for url in ajax_urls:
-            yield SplashRequest(url=url, callback=self.parse)
+        # for url in urls:
+        #     yield scrapy.Request(url=url, callback=self.parse)
+        # for url in ajax_urls:
+        #     yield SplashRequest(url=url, callback=self.parse)
+        for url in text_urls:
+            yield scrapy.Request(url=url, callback=self.parse_text)
 
     def parse(self, response):
         site = urlparse(response.url).hostname.split('.')[1]
@@ -64,6 +67,23 @@ class ProxySpider(scrapy.Spider):
                 else:
                     self.logger.error(
                         f'invalid proxy: {protocol}://{ip}:{port}')
+
+    def parse_text(self, response):
+        for line in response.text.split('\n'):
+            line = line.strip()
+            if not line:
+                continue
+            proxies = []
+            if line[0].isdigit():
+                for protocol in self.default_protocols:
+                    proxies.append(protocol + '://' + line)
+            elif line[0].lower == 'h':
+                proxies.append(line)
+            else:
+                logger.warning(f'Not http(s) proxy: {line}')
+            for p in proxies:
+                if is_valid_proxy(proxy=p):
+                    yield ProxyUrlItem(url=p)
 
     def get_protocols(self, protocol):
         if ',' in protocol:

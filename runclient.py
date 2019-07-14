@@ -37,12 +37,15 @@ if __name__ == "__main__":
     subparsers = parser.add_subparsers(dest='command')
     loadpar = subparsers.add_parser(
         'load',
-        help='Load proxies',
-        description='Load proxies from storages',
+        help='Load proxies from storages',
     )
     loadpar.add_argument('file',
                          type=str,
                          help='Load from file with 1 proxy per line')
+    statpar = subparsers.add_parser(
+        'stat',
+        help='Stat of redis',
+    )
 
     args = parser.parse_args()
     if args.command == 'load':

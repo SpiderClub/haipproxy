@@ -1,10 +1,14 @@
-import uuid
+import ipaddress
+import logging
 import time
+import uuid
 
 import redis
 
 from haipproxy.config.settings import (REDIS_HOST, REDIS_PORT, REDIS_DB,
                                        LOCKER_PREFIX)
+
+logger = logging.getLogger(__name__)
 
 REDIS_POOL = None
 
@@ -62,13 +66,15 @@ def is_valid_proxy(ip=None, port=None, protocol=None, proxy=None):
         try:
             protocol, ip, port = proxy.split(':')
             ip = ip.lstrip('//')
-        except:
+        except ValueError as e:
+            logger.warning(f'{proxy}: {e}')
             return False
     try:
         ipaddress.ip_address(ip)
         port = int(port)
-    except:
+    except ValueError as e:
+        logger.warning(f'{ip}:{port} {e}')
         return False
     return 0 <= port and port <= 65535 and protocol in [
-        'http', 'https', 'sock4', 'sock5'
+        'http', 'https', 'sock4', 'sock5', None
     ]
