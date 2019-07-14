@@ -116,32 +116,6 @@ CRAWLER_TASKS = [
         'enable': 1,
     },
     {
-        'name': 'ab57.ru',
-        'resource': ['http://ab57.ru/downloads/proxyold.txt'],
-        'parse_type': 'text',
-        'parse_rule': {
-            'pre_extract': None,
-            'delimiter': '\r\n',
-            'redundancy': None,
-            'protocols': None
-        },
-        'interval': 60,
-        'enable': 1,
-    },
-    {
-        'name': 'proxylists.net',
-        'resource': ['http://www.proxylists.net/http_highanon.txt'],
-        'parse_type': 'text',
-        'parse_rule': {
-            'pre_extract': None,
-            'delimiter': '\r\n',
-            'redundancy': None,
-            'protocols': None
-        },
-        'interval': 60,
-        'enable': 1,
-    },
-    {
         'name': 'my-proxy.com',
         'resource': [
             'https://www.my-proxy.com/free-elite-proxy.html',
@@ -230,19 +204,6 @@ CRAWLER_TASKS = [
             'port_pos': 1,
             'extract_protocol': True,
             'split_detail': True,
-            'protocols': None
-        },
-        'interval': 60,
-        'enable': 1,
-    },
-    {
-        'name': 'rmccurdy.com',
-        'resource': ['https://www.rmccurdy.com/scripts/proxy/good.txt'],
-        'parse_type': 'text',
-        'parse_rule': {
-            'pre_extract': None,
-            'delimiter': '\n',
-            'redundancy': None,
             'protocols': None
         },
         'interval': 60,

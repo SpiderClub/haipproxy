@@ -1,6 +1,7 @@
 """
 Basic proxy ip crawler.
 """
+import logging
 from urllib.parse import urlparse
 
 import scrapy
@@ -11,6 +12,8 @@ from haipproxy.crawler.items import ProxyUrlItem
 from haipproxy.utils import is_valid_proxy
 from .base import BaseSpider
 from .redis_spiders import RedisSpider
+
+logger = logging.getLogger(__name__)
 
 
 class ProxySpider(scrapy.Spider):
@@ -32,13 +35,22 @@ class ProxySpider(scrapy.Spider):
             'https://www.xroxy.com/free-proxy-lists/?port=&type=Not_transparent&ssl=&country=&latency=&reliability=2500',
         ]
         ajax_urls = []
-        text_urls = ['https://api.proxyscrape.com/?request=getproxies&proxytype=http']
+        text_urls = [
+            'https://api.proxyscrape.com/?request=getproxies&proxytype=http',
+            'https://www.rmccurdy.com/scripts/proxy/good.txt',
+            'http://ab57.ru/downloads/proxyold.txt',
+            'http://www.proxylists.net/http_highanon.txt',
+        ]
         # If test_urls is not empty, this spider will crawler test_urls ONLY
         test_urls = []
-        # for url in urls:
-        #     yield scrapy.Request(url=url, callback=self.parse)
-        # for url in ajax_urls:
-        #     yield SplashRequest(url=url, callback=self.parse)
+        if test_urls:
+            for url in test_urls:
+                yield scrapy.Request(url=url, callback=self.parse_text)
+            return
+        for url in urls:
+            yield scrapy.Request(url=url, callback=self.parse)
+        for url in ajax_urls:
+            yield SplashRequest(url=url, callback=self.parse)
         for url in text_urls:
             yield scrapy.Request(url=url, callback=self.parse_text)
 

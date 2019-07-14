@@ -7,7 +7,7 @@ from flask import Flask, jsonify
 
 from haipproxy.client import ProxyClient
 
-pc = ProxyClient()
+PC = None
 app = Flask(__name__)
 app.debug = bool(os.environ.get("DEBUG"))
 app.config["JSONIFY_PRETTYPRINT_REGULAR"] = True
@@ -23,10 +23,16 @@ def not_found(e):
     return jsonify({'reason': 'internal server error', 'status_code': 500})
 
 
-@app.route("/pool/get/<protocol>")
+@app.route("/<protocol>")
 def get_proxies(protocol):
+    global PC
+    if PC == None:
+        PC = ProxyClient()
     return jsonify({
-        'pool': [p for p in pc.next_proxy(protocol)],
-        'resource': protocol,
-        'status_code': 200
+        protocol: [p for p in PC.next_proxy(protocol)],
     })
+
+
+@app.route("/")
+def main():
+    return get_proxies('')
