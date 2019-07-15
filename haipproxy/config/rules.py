@@ -10,25 +10,6 @@ from haipproxy.config.settings import SPIDER_AJAX_Q, SPIDER_GFW_Q, SPIDER_AJAX_G
 # gfw(需要翻墙)和ajax_gfw(需要翻墙和ajax渲染)
 CRAWLER_TASKS = [
     {
-        'name': 'mrhinkydink.com',
-        'resource': ['http://www.mrhinkydink.com/proxies.htm'],
-        'parse_type': 'common',
-        'parse_rule': {
-            'pre_extract_method': 'css',
-            'pre_extract': '.text',
-            'infos_pos': 1,
-            'infos_end': None,
-            'detail_rule': 'td::text',
-            'ip_pos': 0,
-            'port_pos': 1,
-            'extract_protocol': True,
-            'split_detail': False,
-            'protocols': None
-        },
-        'interval': 2 * 60,
-        'enable': 1,
-    },
-    {
         'name': 'baizhongsou.com',
         'resource': ['http://ip.baizhongsou.com/'],
         'parse_type': 'common',
@@ -437,4 +418,9 @@ PARSE_MAP = {
     'goubanjia': {
         'row_xpath': '//table[@class="table table-hover"]/tbody/tr',
     },
+    'mrhinkydink': {
+        'row_xpath': '//table/tr[@class="text"]',
+        'protocal_pos': -1,
+    },
 }
+# 'http://tools.rosinstrument.com/raw_free_db.htm?0&t=1'

@@ -38,6 +38,7 @@ DOWNLOADER_MIDDLEWARES = {
 # scrapy log settings
 LOG_LEVEL = 'INFO'
 
+MIN_PROXY_LEN = 9
 #### Redis settings ####
 # If you use docker-compose, REDIS_HOST = 'redis'
 # if some value is empty, set like this: key = ''

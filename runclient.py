@@ -47,10 +47,23 @@ if __name__ == "__main__":
         help='Stat of redis',
     )
 
+    invokepar = subparsers.add_parser(
+        'invoke',
+        help='invoke 3rd party libs',
+    )
+    invokepar.add_argument('lib',
+                         type=str,
+                         help='3rd party library name')
+
     args = parser.parse_args()
     if args.command == 'load':
         pc = ProxyClient()
         pc.load_file(args.file)
+    elif args.command == 'invoke':
+        if args.lib == 'proxybroker':
+            pc = ProxyClient()
+            pc.grab_proxybroker()
+
     if args.delete:
         pc = ProxyClient()
         pc.del_all_fails()

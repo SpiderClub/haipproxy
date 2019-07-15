@@ -6,7 +6,7 @@ import uuid
 import redis
 
 from haipproxy.config.settings import (REDIS_HOST, REDIS_PORT, REDIS_DB,
-                                       LOCKER_PREFIX)
+                                       REDIS_PIPE_BATCH_SIZE, LOCKER_PREFIX)
 
 logger = logging.getLogger(__name__)
 
@@ -58,6 +58,45 @@ def release_lock(conn, lock_name, identifier):
             pass
 
     return False
+
+
+class RedisOps(object):
+    def __init__(self):
+        self.redis_conn = get_redis_conn()
+        self.rpipe = self.redis_conn.pipeline()
+        self.rpipe_size = 0
+
+    def flush(self):
+        self.rpipe.execute()
+        logger.info(f'{self.rpipe_size} redis commands executed')
+
+    def set_proxy(self, proxy):
+        if not proxy or not is_valid_proxy(
+                proxy=proxy) or self.redis_conn.exists(proxy):
+            return
+        self.rpipe.hmset(
+            proxy, {
+                'used_count': 0,
+                'success_count': 0,
+                'total_seconds': 0,
+                'last_fail': '',
+                'timestamp': 0,
+                'score': 0
+            })
+        self.rpipe_size += 1
+        if self.rpipe_size >= REDIS_PIPE_BATCH_SIZE:
+            self.rpipe.execute()
+            logger.info(f'{self.rpipe_size} redis commands executed')
+            self.rpipe_size = 0
+
+    def inc_stat(self, item):
+        self.rpipe.hincrby(item['proxy'], 'used_count')
+        self.rpipe.hincrby(item['proxy'], 'success_count', item['success'])
+        self.rpipe.hincrby(item['proxy'], 'total_seconds', item['seconds'])
+        self.rpipe.hset(item['proxy'], 'last_fail', item['fail'])
+        if item['success'] != 0:
+            self.rpipe.hset(item['proxy'], 'timestamp', int(time.time()))
+        self.rpipe.execute()
 
 
 ####

@@ -1,3 +1,4 @@
+import asyncio
 import heapq
 import logging
 import math
@@ -5,12 +6,15 @@ import subprocess
 import threading
 import time
 
-from haipproxy.utils import get_redis_conn, is_valid_proxy
+from proxybroker import Broker
+
+from haipproxy.utils import get_redis_conn, RedisOps
 from haipproxy.config.settings import (
     SQUID_BIN_PATH,
     SQUID_CONF_PATH,
     SQUID_TEMPLATE_PATH,
     LOWEST_SCORE,
+    MIN_PROXY_LEN,
 )
 
 logger = logging.getLogger(__name__)
@@ -20,9 +24,9 @@ class ProxyClient(object):
     def __init__(self):
         self.redis_conn = get_redis_conn()
         self.rpipe = self.redis_conn.pipeline()
-        self.pheap = []
-        self._fill_pool()
+        self.ppool = []
         self.idx = -1
+        self.ro = RedisOps()
         # t = threading.Thread(target=self._refresh_periodically)
         # t.setDaemon(True)
         # t.start()
@@ -30,7 +34,7 @@ class ProxyClient(object):
     def del_all_fails(self):
         total = 0
         nfail = 0
-        for pkey in self.redis_conn.scan_iter(match='*://*'):
+        for pkey in self.redis_conn.scan_iter(match='http*://*'):
             total += 1
             score = float(self.redis_conn.hget(pkey, 'score'))
             if score <= LOWEST_SCORE - 2:
@@ -42,36 +46,37 @@ class ProxyClient(object):
         )
 
     def next_proxy(self, protocol=''):
+        if not self.ppool:
+            self._fill_pool()
         self.protocol = protocol.lower()
         if self.protocol != '':
             self.protocol += ':'
-
         while 1:
             self.idx = self.idx + 1
-            if self.idx >= len(self.pheap):
+            if self.idx >= len(self.ppool):
                 self.idx = -1
                 raise StopIteration
-            if self.pheap[self.idx][1].startswith(self.protocol):
-                yield self.pheap[self.idx][1]
+            if self.ppool[self.idx][1].startswith(self.protocol):
+                yield self.ppool[self.idx][1]
 
     def _refresh_periodically(self):
         while True:
             # lock
-            self.pheap.clear()
+            self.ppool.clear()
             self._fill_pool()
             time.sleep(3600)
 
     def _fill_pool(self):
         total = 0
-        for pkey in self.redis_conn.scan_iter(match='*://*'):
+        for pkey in self.redis_conn.scan_iter(match='http*://*'):
             total += 1
             stat = self.redis_conn.hgetall(pkey)
             score = self.cal_score(stat)
             self.redis_conn.hset(pkey, 'score', score)
             if score > LOWEST_SCORE:
-                heapq.heappush(self.pheap, (score, pkey.decode()))
+                heapq.heappush(self.ppool, (score, pkey.decode()))
         logger.info(
-            f'{len(self.pheap)} proxies loaded. {total} scanned totally')
+            f'{len(self.ppool)} proxies loaded. {total} scanned totally')
 
     def cal_score(self, stat):
         used_count = int(stat[b'used_count'])
@@ -100,29 +105,38 @@ class ProxyClient(object):
 
     def load_file(self, fname):
         with open(fname, 'r') as f:
-            redis_conn = get_redis_conn()
-            rpipe = redis_conn.pipeline()
             total = 0
-            count = 0
             for line in f.readlines():
                 total += 1
                 proxy = line.strip()
-                if not proxy or not is_valid_proxy(
-                        proxy=proxy) or redis_conn.exists(proxy):
+                if len(proxy) < MIN_PROXY_LEN:
                     continue
-                rpipe.hmset(
-                    proxy, {
-                        'used_count': 0,
-                        'success_count': 0,
-                        'total_seconds': 0,
-                        'last_fail': '',
-                        'timestamp': 0,
-                        'score': 0
-                    })
-                count += 1
-            rpipe.execute()
-            logger.info(f'{count} proxies loaded with {total} lines')
+                self.ro.set_proxy(proxy)
+            logger.info(f'{total} lines')
 
+
+    async def _consume(self, aqu):
+        """Save proxies to redis"""
+        while True:
+            proxy = await aqu.get()
+            if proxy is None:
+                logging.info('got None from proxies queue')
+                break
+            for protocol in proxy.types or ['http', 'https']:
+                row = '%s://%s:%d' % (protocol, proxy.host, proxy.port)
+                self.ro.set_proxy(row)
+        self.ro.flush()
+
+
+    def grab_proxybroker(self):
+        aqu = asyncio.Queue()
+        producer = Broker(aqu)
+        tasks = asyncio.gather(
+            producer.grab(),
+            self._consume(aqu),
+        )
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(tasks)
 
 class SquidClient(object):
     default_conf_detail = "cache_peer {} parent {} 0 no-query weighted-round-robin weight=1 " \

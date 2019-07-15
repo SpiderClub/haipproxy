@@ -29,7 +29,6 @@ class BaseSpider:
         self.parser_maps = {
             'common': self.parse_common,
             'json': self.parse_json,
-            'text': self.parse_raw_text,
         }
 
     def parse(self, response):
@@ -136,47 +135,6 @@ class BaseSpider:
                     ProxyUrlItem(
                         url=self.construct_proxy_url(protocol, ip, port)))
 
-        return items
-
-    def parse_raw_text(self,
-                       response,
-                       pre_extract=None,
-                       delimiter='\r\n',
-                       redundancy=None,
-                       protocols=None):
-        """
-        Raw response parser
-        :param response: scrapy response
-        :param pre_extract: pre parsing rule for extracing all infos, css selector is used here
-        :param delimiter: split ip and port info from response
-        :param redundancy: remove redundancy from ip info
-        :param protocols: default procotols
-        :return: ip infos
-        """
-        items = list()
-        if pre_extract:
-            infos = response.css(pre_extract).extract()
-        else:
-            infos = response.text.split(delimiter)
-        for info in infos:
-            if ':' not in info:
-                continue
-            if redundancy:
-                info = info[:info.find(redundancy)]
-
-            ip, port = info.split(':')
-            if not ip or not port:
-                continue
-
-            if not is_valid_proxy(ip, port):
-                continue
-
-            protocols = self.default_protocols if not protocols else protocols
-
-            for protocol in protocols:
-                items.append(
-                    ProxyUrlItem(
-                        url=self.construct_proxy_url(protocol, ip, port)))
         return items
 
     def procotol_extractor(self, detail):
