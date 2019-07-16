@@ -30,7 +30,7 @@ CONCURRENT_REQUESTS = 64
 # See also autothrottle settings and docs
 #DOWNLOAD_DELAY = 3
 # The download delay setting will honor only one of:
-CONCURRENT_REQUESTS_PER_DOMAIN = 32
+CONCURRENT_REQUESTS_PER_DOMAIN = 1
 #CONCURRENT_REQUESTS_PER_IP = 16
 
 # Disable cookies (enabled by default)
@@ -68,12 +68,17 @@ DOWNLOADER_MIDDLEWARES = {
     'scrapy.downloadermiddlewares.useragent.UserAgentMiddleware': None,
     'scrapy.downloadermiddlewares.httpproxy.HttpProxyMiddleware': None,
     'haipproxy.crawler.middlewares.RandomUserAgentMiddleware': 400,
+    'rotating_proxies.middlewares.RotatingProxyMiddleware': 610,
+    'rotating_proxies.middlewares.BanDetectionMiddleware': 620,
 }
 # DOWNLOADER_MIDDLEWARES = {
 #     'scrapy.downloadermiddlewares.retry.RetryMiddleware': 90,
 #     'scrapy_proxies.RandomProxy': 100,
 #     'scrapy.downloadermiddlewares.httpproxy.HttpProxyMiddleware': 110,
 # }
+
+ROTATING_PROXY_LIST_PATH = 'proxies.txt'
+ROTATING_PROXY_PAGE_RETRY_TIMES = 10
 
 # Enable or disable extensions
 # See https://docs.scrapy.org/en/latest/topics/extensions.html
