@@ -5,6 +5,7 @@ Settings for global.
 # Scrapy settings of this project
 #####################################################################
 # scrapy basic info
+import os
 BOT_NAME = 'haiproxy'
 SPIDER_MODULES = ['haipproxy.crawler.spiders', 'haipproxy.crawler.validators']
 NEWSPIDER_MODULE = 'haipproxy.crawler'
@@ -25,6 +26,8 @@ GFW_PROXY = 'http://127.0.0.1:8123'
 
 # splash settings.If you use docker-compose,SPLASH_URL = 'http://splash:8050'
 SPLASH_URL = 'http://127.0.0.1:8050'
+if os.getenv("ISDOCKER"):
+    SPLASH_URL = 'http://splash:8050'
 
 # extension settings
 RETRY_ENABLED = False
@@ -58,6 +61,8 @@ LOG_LEVEL = 'DEBUG'
 # redis settings.If you use docker-compose, REDIS_HOST = 'redis'
 # if some value is empty, set like this: key = ''
 REDIS_HOST = '127.0.0.1'
+if os.getenv("ISDOCKER"):
+    REDIS_HOST = 'redis'
 REDIS_PORT = 6379
 REDIS_PASSWORD = '123456'
 REDIS_DB = 0

@@ -81,6 +81,7 @@ print(fetcher.get_proxies()) # or print(fetcher.pool)
 
 - Change`SPLASH_URL`and`REDIS_HOST`in [settings.py](config/settings.py)
   ```python3
+  # notice: if you use master code, this can be ignore
   SPLASH_URL = 'http://splash:8050'
   REDIS_HOST = 'redis'
   ```
