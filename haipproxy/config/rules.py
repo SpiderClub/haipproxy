@@ -404,16 +404,17 @@ PARSE_MAP = {
         'row_xpath': '//table/tr[@class]',
         'ip_pos': 1,
         'port_pos': 2,
-        'protocal_pos': 5
+        'protocal_pos': 5,
     },
     'kuaidaili': {
-        'protocal_pos': 3
+        'protocal_pos': 3,
     },
     'kxdaili': {
-        'protocal_pos': 3
+        'protocal_pos': 3,
     },
     'xroxy': {
         'row_xpath': '//table[@id="DataTables_Table_0"]/tbody/tr',
+        'protocal_pos': -1,
     },
     'goubanjia': {
         'row_xpath': '//table[@class="table table-hover"]/tbody/tr',

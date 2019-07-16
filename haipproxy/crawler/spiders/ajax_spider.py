@@ -14,7 +14,6 @@ class AjaxSpider(BaseSpider, RedisAjaxSpider):
     custom_settings = {
         'DOWNLOADER_MIDDLEWARES': {
             'haipproxy.crawler.middlewares.RandomUserAgentMiddleware': 543,
-            'haipproxy.crawler.middlewares.ProxyMiddleware': 543,
             'scrapy_splash.SplashCookiesMiddleware': 723,
             # it should be prior to HttpProxyMiddleware
             'scrapy_splash.SplashMiddleware': 725,

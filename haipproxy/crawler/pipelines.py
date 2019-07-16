@@ -4,7 +4,7 @@ scrapy pipelines for storing proxy ip infos.
 import logging
 import time
 
-from haipproxy.utils import get_redis_conn, RedisOps
+from haipproxy.utils import RedisOps
 
 logger = logging.getLogger(__name__)
 
