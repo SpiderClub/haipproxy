@@ -29,6 +29,8 @@ class BaseValidator(RedisSpider):
 
     def start_requests(self):
         for proxy in self.redis_conn.scan_iter(match='*://*'):
+            if self.redis_conn.hget(proxy, 'used_count') != b'0':
+                continue
             proxy = proxy.decode()
             req = Request(self.get_url(proxy),
                           dont_filter=True,

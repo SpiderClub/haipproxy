@@ -114,6 +114,10 @@ class ProxyClient(object):
                 self.ro.set_proxy(proxy)
             logger.info(f'{total} lines')
 
+    def dump_proxies(self, fname):
+        with open(fname, 'w') as f:
+            for p in self.next_proxy():
+                f.write(p + '\n')
 
     async def _consume(self, aqu):
         """Save proxies to redis"""
@@ -127,7 +131,6 @@ class ProxyClient(object):
                 self.ro.set_proxy(row)
         self.ro.flush()
 
-
     def grab_proxybroker(self):
         aqu = asyncio.Queue()
         producer = Broker(aqu)
@@ -137,6 +140,7 @@ class ProxyClient(object):
         )
         loop = asyncio.get_event_loop()
         loop.run_until_complete(tasks)
+
 
 class SquidClient(object):
     default_conf_detail = "cache_peer {} parent {} 0 no-query weighted-round-robin weight=1 " \
