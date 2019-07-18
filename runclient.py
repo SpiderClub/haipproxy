@@ -20,7 +20,7 @@ if __name__ == "__main__":
                           help="delete all failed proxies",
                           action="store_true")
     redispar.add_argument('-s',
-                          'stat',
+                          '--stat',
                           help='Stat of redis',
                           action="store_true")
 

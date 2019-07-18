@@ -6,7 +6,8 @@ from json.decoder import JSONDecodeError
 from scrapy.http import Request
 from scrapy.spidermiddlewares.httperror import HttpError
 from twisted.internet.error import (DNSLookupError, ConnectionRefusedError,
-                                    TimeoutError, TCPTimedOutError)
+                                    TimeoutError, TCPTimedOutError,
+                                    ConnectError)
 
 from .redis_spiders import RedisSpider
 from haipproxy.crawler.items import ProxyStatInc
@@ -20,16 +21,22 @@ class BaseValidator(RedisSpider):
         'CONCURRENT_REQUESTS': 100,
         'CONCURRENT_REQUESTS_PER_DOMAIN': 100,
         'RETRY_ENABLED': False,
+        'RETRY_TIMES': 0,
         'ITEM_PIPELINES': {
             'haipproxy.crawler.pipelines.ProxyStatPipeline': 200,
-        }
+        },
+        'DOWNLOADER_MIDDLEWARES': {
+            'scrapy.downloadermiddlewares.useragent.UserAgentMiddleware': None,
+            'scrapy.downloadermiddlewares.httpproxy.HttpProxyMiddleware': None,
+            'haipproxy.crawler.middlewares.RandomUserAgentMiddleware': 400,
+        },
     }
     success_key = ''
     good_count = 0
 
     def start_requests(self):
         for proxy in self.redis_conn.scan_iter(match='*://*'):
-            if self.redis_conn.hget(proxy, 'used_count') != b'0':
+            if self.redis_conn.hget(proxy, 'used_count') > b'1':
                 continue
             proxy = proxy.decode()
             req = Request(self.get_url(proxy),
@@ -74,6 +81,11 @@ class BaseValidator(RedisSpider):
             fail = 'TCPTimedOutError'
         elif failure.check(ConnectionRefusedError):
             fail = 'ConnectionRefusedError'
+        elif failure.check(ConnectError):
+            # port exhaustion: no more ports for connection
+            # netsh int ipv4 set dynamicport tcp start=10000 num=55535
+            import pdb; pdb.set_trace()
+            fail = 'ConnectError'
         yield ProxyStatInc(proxy=proxy, success=0, seconds=0, fail=fail)
 
     def is_ok(self, response):

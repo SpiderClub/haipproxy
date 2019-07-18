@@ -36,6 +36,10 @@ class ProxyClient(object):
         nfail = 0
         for pkey in self.redis_conn.scan_iter(match='http*://*'):
             total += 1
+            # if self.redis_conn.hget(pkey, 'fail') == b'badcontent':
+            #     print(pkey)
+            # else:
+            #     continue
             score = float(self.redis_conn.hget(pkey, 'score'))
             if score <= LOWEST_SCORE - 2:
                 self.rpipe.delete(pkey)
