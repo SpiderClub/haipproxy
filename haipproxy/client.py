@@ -1,5 +1,4 @@
 import asyncio
-import heapq
 import logging
 import math
 import subprocess
@@ -78,7 +77,8 @@ class ProxyClient(object):
             score = self.cal_score(stat)
             self.redis_conn.hset(pkey, 'score', score)
             if score > LOWEST_SCORE:
-                heapq.heappush(self.ppool, (score, pkey.decode()))
+                self.ppool.append((score, pkey.decode()))
+        self.ppool.sort(reverse=True)
         logger.info(
             f'{len(self.ppool)} proxies loaded. {total} scanned totally')
 

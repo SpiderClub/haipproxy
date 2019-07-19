@@ -43,7 +43,7 @@ DOWNLOAD_TIMEOUT = 60
 # RETRY_ENABLED = False
 
 # Retry many times since proxies often fail
-RETRY_TIMES = 10
+# RETRY_TIMES = 10
 
 # don't filter anything, also can set dont_filter=True in Request objects
 DUPEFILTER_CLASS = 'scrapy.dupefilters.BaseDupeFilter'
@@ -77,8 +77,11 @@ DOWNLOADER_MIDDLEWARES = {
 #     'scrapy.downloadermiddlewares.httpproxy.HttpProxyMiddleware': 110,
 # }
 
+ROTATING_PROXY_BACKOFF_BASE = 3600
+ROTATING_PROXY_BACKOFF_CAP = 3600 * 24 * 180
 ROTATING_PROXY_LIST_PATH = 'proxies.txt'
-ROTATING_PROXY_PAGE_RETRY_TIMES = 10
+ROTATING_PROXY_LOGSTATS_INTERVAL = 120
+ROTATING_PROXY_PAGE_RETRY_TIMES = 20
 
 # Enable or disable extensions
 # See https://docs.scrapy.org/en/latest/topics/extensions.html
