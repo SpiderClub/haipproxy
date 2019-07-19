@@ -5,9 +5,13 @@ import sys
 from json.decoder import JSONDecodeError
 from scrapy.http import Request
 from scrapy.spidermiddlewares.httperror import HttpError
-from twisted.internet.error import (DNSLookupError, ConnectionRefusedError,
-                                    TimeoutError, TCPTimedOutError,
-                                    ConnectError)
+from twisted.internet.error import (
+    DNSLookupError,
+    ConnectionRefusedError,
+    TimeoutError,
+    TCPTimedOutError,
+    ConnectError,
+)
 
 from .redis_spiders import RedisSpider
 from haipproxy.crawler.items import ProxyStatInc
@@ -18,129 +22,127 @@ class BaseValidator(RedisSpider):
     # while https proxies don't response http request
     # It's common that a proxy succeed on other sites but not on httpbin
     custom_settings = {
-        'CONCURRENT_REQUESTS': 100,
-        'CONCURRENT_REQUESTS_PER_DOMAIN': 100,
-        'RETRY_ENABLED': False,
-        'RETRY_TIMES': 0,
-        'ITEM_PIPELINES': {
-            'haipproxy.crawler.pipelines.ProxyStatPipeline': 200,
-        },
-        'DOWNLOADER_MIDDLEWARES': {
-            'scrapy.downloadermiddlewares.useragent.UserAgentMiddleware': None,
-            'scrapy.downloadermiddlewares.httpproxy.HttpProxyMiddleware': None,
-            'haipproxy.crawler.middlewares.RandomUserAgentMiddleware': 400,
+        "CONCURRENT_REQUESTS": 100,
+        "CONCURRENT_REQUESTS_PER_DOMAIN": 100,
+        "RETRY_ENABLED": False,
+        "RETRY_TIMES": 0,
+        "ITEM_PIPELINES": {"haipproxy.crawler.pipelines.ProxyStatPipeline": 200},
+        "DOWNLOADER_MIDDLEWARES": {
+            "scrapy.downloadermiddlewares.useragent.UserAgentMiddleware": None,
+            "scrapy.downloadermiddlewares.httpproxy.HttpProxyMiddleware": None,
+            "haipproxy.crawler.middlewares.RandomUserAgentMiddleware": 400,
         },
     }
-    success_key = ''
+    success_key = ""
     good_count = 0
 
     def start_requests(self):
-        for proxy in self.redis_conn.scan_iter(match='*://*'):
-            if self.redis_conn.hget(proxy, 'used_count') > b'1':
+        for proxy in self.redis_conn.scan_iter(match="*://*"):
+            if self.redis_conn.hget(proxy, "used_count") > b"1":
                 continue
             proxy = proxy.decode()
-            req = Request(self.get_url(proxy),
-                          dont_filter=True,
-                          meta={'proxy': proxy},
-                          callback=self.parse,
-                          errback=self.parse_error)
+            req = Request(
+                self.get_url(proxy),
+                dont_filter=True,
+                meta={"proxy": proxy},
+                callback=self.parse,
+                errback=self.parse_error,
+            )
             yield req
 
     def parse(self, response):
-        proxy = response.meta.get('proxy')
-        seconds = int(response.meta.get('download_latency'))
+        proxy = response.meta.get("proxy")
+        seconds = int(response.meta.get("download_latency"))
         success = 1
-        fail = ''
+        fail = ""
         if not self.is_ok(response):
             success = 0
-            fail = 'badcontent'
-            self.logger.error(f'{proxy} got bad content')
+            fail = "badcontent"
+            self.logger.error(f"{proxy} got bad content")
         else:
             self.good_count += 1
-            self.logger.info(f'good ip {self.good_count} {proxy}  ####')
-        yield ProxyStatInc(proxy=proxy,
-                           success=success,
-                           seconds=seconds,
-                           fail=fail)
+            self.logger.info(f"good ip {self.good_count} {proxy}  ####")
+        yield ProxyStatInc(proxy=proxy, success=success, seconds=seconds, fail=fail)
 
     def parse_error(self, failure):
         request = failure.request
-        proxy = request.meta.get('proxy')
-        self.logger.warning(f'proxy {proxy} has failed with:\n{repr(failure)}')
-        fail = 'unknown'
+        proxy = request.meta.get("proxy")
+        self.logger.warning(f"proxy {proxy} has failed with:\n{repr(failure)}")
+        fail = "unknown"
         if failure.check(HttpError):
-            fail = 'HttpError'
+            fail = "HttpError"
             # these exceptions come from HttpError spider middleware
             # you can get the non-200 response
         elif failure.check(DNSLookupError):
-            fail = 'DNSLookupError'
+            fail = "DNSLookupError"
             # this is the original request
         elif failure.check(TimeoutError):
-            fail = 'TimeoutError'
+            fail = "TimeoutError"
         elif failure.check(TCPTimedOutError):
-            fail = 'TCPTimedOutError'
+            fail = "TCPTimedOutError"
         elif failure.check(ConnectionRefusedError):
-            fail = 'ConnectionRefusedError'
+            fail = "ConnectionRefusedError"
         elif failure.check(ConnectError):
             # port exhaustion: no more ports for connection
             # netsh int ipv4 set dynamicport tcp start=10000 num=55535
-            import pdb; pdb.set_trace()
-            fail = 'ConnectError'
+            import pdb
+
+            pdb.set_trace()
+            fail = "ConnectError"
         yield ProxyStatInc(proxy=proxy, success=0, seconds=0, fail=fail)
 
     def is_ok(self, response):
         # TODO: check len(response.text)
         return self.success_key in response.text
 
-    def get_url(self, proxy=''):
+    def get_url(self, proxy=""):
         raise NotImplementedError
 
 
 class HttpbinValidator(BaseValidator):
-    name = 'vhttpbin'
+    name = "vhttpbin"
 
     def __init__(self):
         super().__init__()
-        self.origin_ip = requests.get('http://httpbin.org/ip').json().get(
-            'origin')
+        self.origin_ip = requests.get("http://httpbin.org/ip").json().get("origin")
 
-    def get_url(self, proxy=''):
-        if proxy.startswith('https'):
-            return 'https://httpbin.org/ip'
-        elif proxy.startswith('http'):
-            return 'http://httpbin.org/ip'
+    def get_url(self, proxy=""):
+        if proxy.startswith("https"):
+            return "https://httpbin.org/ip"
+        elif proxy.startswith("http"):
+            return "http://httpbin.org/ip"
         else:
-            self.logger.warning(f'Unknown proxy: {proxy}')
-            return 'http://httpbin.org'
+            self.logger.warning(f"Unknown proxy: {proxy}")
+            return "http://httpbin.org"
 
     def is_ok(self, response):
         # example: 'http://198.211.121.46:80'
         try:
-            ip = json.loads(response.text).get('origin')
+            ip = json.loads(response.text).get("origin")
         except Exception as e:
-            self.logger.error(f'Unexpected error:{e}')
+            self.logger.error(f"Unexpected error:{e}")
             return False
         if self.origin_ip in ip:
-            self.logger.error(f'{proxy} is transparent')
+            self.logger.error(f"{proxy} is transparent")
             return False
         return True
 
 
 class CctvValidator(BaseValidator):
-    name = 'vcctv'
+    name = "vcctv"
 
     def __init__(self):
-        self.success_key = '中央电视台'
+        self.success_key = "中央电视台"
 
-    def get_url(self, proxy=''):
-        return 'http://www.cctv.com/'
+    def get_url(self, proxy=""):
+        return "http://www.cctv.com/"
 
 
 class UqerValidator(BaseValidator):
-    name = 'vuqer'
+    name = "vuqer"
 
     def __init__(self):
-        self.success_key = '优矿'
+        self.success_key = "优矿"
 
-    def get_url(self, proxy=''):
-        return 'https://uqer.io/'
+    def get_url(self, proxy=""):
+        return "https://uqer.io/"

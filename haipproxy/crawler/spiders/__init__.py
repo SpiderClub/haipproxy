@@ -55,5 +55,5 @@ all_spiders = [
     AjaxGFWSpider,
     CctvValidator,
     HttpbinValidator,
-    UqerValidator
+    UqerValidator,
 ]

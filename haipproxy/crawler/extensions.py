@@ -16,8 +16,11 @@ class FailLogger(object):
         try:
             failure.raiseException()
         except:
-            message = 'error occurs when parsing {}'.format(response.url)
+            message = "error occurs when parsing {}".format(response.url)
             capture_message(message)
         else:
-            spider.logger.error("Error on {0}, traceback: {1}".format(
-                response.url, failure.getTraceback()))
+            spider.logger.error(
+                "Error on {0}, traceback: {1}".format(
+                    response.url, failure.getTraceback()
+                )
+            )

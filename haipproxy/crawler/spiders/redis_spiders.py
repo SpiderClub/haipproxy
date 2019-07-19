@@ -12,7 +12,7 @@ from haipproxy.config.settings import SPIDER_FEED_SIZE
 
 
 class RedisSpider(Spider):
-    keyword_encoding = 'utf-8'
+    keyword_encoding = "utf-8"
     proxy_mode = 0
     # if use_set=True, spider fetches data from set other than list
     use_set = False
@@ -41,8 +41,7 @@ class RedisSpider(Spider):
                 yield req
                 found += 1
 
-        self.logger.info('Read {} requests from {}'.format(
-            found, self.task_queue))
+        self.logger.info("Read {} requests from {}".format(found, self.task_queue))
 
     def schedule_next_requests(self):
         for req in self.next_requests():
@@ -68,16 +67,9 @@ class RedisAjaxSpider(RedisSpider):
             if not data:
                 break
             url = data.decode()
-            req = SplashRequest(
-                url,
-                args={
-                    'await': 2,
-                    'timeout': 90
-                },
-            )
+            req = SplashRequest(url, args={"await": 2, "timeout": 90})
             if req:
                 yield req
                 found += 1
 
-        self.logger.info('Read {} requests from {}'.format(
-            found, self.task_queue))
+        self.logger.info("Read {} requests from {}".format(found, self.task_queue))

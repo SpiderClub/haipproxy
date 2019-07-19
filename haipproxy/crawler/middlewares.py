@@ -12,7 +12,7 @@ from scrapy.utils.response import response_status_message
 from sentry_sdk import capture_message
 
 from haipproxy.client import ProxyClient
-from haipproxy.exceptions import (HttpError, DownloadException)
+from haipproxy.exceptions import HttpError, DownloadException
 
 logger = logging.getLogger(__name__)
 
@@ -22,14 +22,13 @@ class RandomUserAgentMiddleware(object):
         self.ua = UserAgent()
 
     def process_request(self, request, spider):
-        request.headers.setdefault('User-Agent', self.ua.random)
+        request.headers.setdefault("User-Agent", self.ua.random)
 
 
 class ErrorTraceMiddleware(object):
     def process_response(self, request, response, spider):
         if response.status >= 400:
-            reason = 'error http code {} for {}'.format(
-                response.status, request.url)
+            reason = "error http code {} for {}".format(response.status, request.url)
             self._faillog(request, HttpError, reason, spider)
         return response
 
@@ -41,7 +40,7 @@ class ErrorTraceMiddleware(object):
         try:
             raise exc
         except Exception:
-            message = 'error occurs when downloading {}'.format(request.url)
+            message = "error occurs when downloading {}".format(request.url)
             capture_message(message)
         else:
             logger.error(reason)

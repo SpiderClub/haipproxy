@@ -9,36 +9,29 @@ from haipproxy.utils import is_valid_proxy
 
 
 class BaseSpider:
-    default_protocols = ['http']
+    default_protocols = ["http"]
     # slow down each spider
     custom_settings = {
-        'CONCURRENT_REQUESTS_PER_DOMAIN': 5,
-        'DOWNLOAD_DELAY': 3,
-        'EXTENSIONS': {
-            'haipproxy.crawler.extensions.FailLogger': 500,
+        "CONCURRENT_REQUESTS_PER_DOMAIN": 5,
+        "DOWNLOAD_DELAY": 3,
+        "EXTENSIONS": {"haipproxy.crawler.extensions.FailLogger": 500},
+        "DOWNLOADER_MIDDLEWARES": {
+            "haipproxy.crawler.middlewares.ErrorTraceMiddleware": 200
         },
-        'DOWNLOADER_MIDDLEWARES': {
-            'haipproxy.crawler.middlewares.ErrorTraceMiddleware': 200,
-        },
-        'ITEM_PIPELINES': {
-            'haipproxy.crawler.pipelines.ProxyIPPipeline': 200,
-        }
+        "ITEM_PIPELINES": {"haipproxy.crawler.pipelines.ProxyIPPipeline": 200},
     }
 
     def __init__(self):
-        self.parser_maps = {
-            'common': self.parse_common,
-            'json': self.parse_json,
-        }
+        self.parser_maps = {"common": self.parse_common, "json": self.parse_json}
 
     def parse(self, response):
         url = response.url
         items = list()
         for task in CRAWLER_TASKS:
-            if self.exists(url, task['name']):
-                parse_type = task['parse_type']
+            if self.exists(url, task["name"]):
+                parse_type = task["parse_type"]
                 func = self.parser_maps.get(parse_type)
-                parse_rule = task.get('parse_rule')
+                parse_rule = task.get("parse_rule")
                 if parse_rule:
                     items = func(response, **parse_rule)
                 else:
@@ -47,18 +40,20 @@ class BaseSpider:
         for item in items:
             yield item
 
-    def parse_common(self,
-                     response,
-                     pre_extract_method='xpath',
-                     pre_extract='//tr',
-                     infos_pos=1,
-                     infos_end=None,
-                     detail_rule='td::text',
-                     ip_pos=0,
-                     port_pos=1,
-                     extract_protocol=True,
-                     split_detail=False,
-                     protocols=None):
+    def parse_common(
+        self,
+        response,
+        pre_extract_method="xpath",
+        pre_extract="//tr",
+        infos_pos=1,
+        infos_end=None,
+        detail_rule="td::text",
+        ip_pos=0,
+        port_pos=1,
+        extract_protocol=True,
+        split_detail=False,
+        protocols=None,
+    ):
         """
         Common response parser
         :param response: scrapy response
@@ -74,14 +69,14 @@ class BaseSpider:
         :param protocols: this value will be used for the ip's protocols
         :return: ip infos
         """
-        if pre_extract_method == 'xpath':
+        if pre_extract_method == "xpath":
             infos = response.xpath(pre_extract)[infos_pos:infos_end]
         else:
             infos = response.css(pre_extract)
         items = list()
         for info in infos:
             info_str = info.extract()
-            if '透明' in info_str or 'transparent' in info_str.lower():
+            if "透明" in info_str or "transparent" in info_str.lower():
                 continue
             proxy_detail = info.css(detail_rule).extract()
             if not proxy_detail:
@@ -91,7 +86,7 @@ class BaseSpider:
                 ip = proxy_detail[ip_pos].strip()
                 port = proxy_detail[port_pos].strip()
             else:
-                ip, port = proxy_detail[0].split(':')
+                ip, port = proxy_detail[0].split(":")
             if not is_valid_proxy(ip, port):
                 continue
 
@@ -104,12 +99,12 @@ class BaseSpider:
 
             for protocol in cur_protocols:
                 items.append(
-                    ProxyUrlItem(
-                        url=self.construct_proxy_url(protocol, ip, port)))
+                    ProxyUrlItem(url=self.construct_proxy_url(protocol, ip, port))
+                )
 
         return items
 
-    def parse_json(self, response, detail_rule, ip_key='ip', port_key='port'):
+    def parse_json(self, response, detail_rule, ip_key="ip", port_key="port"):
         """
         Json response parser
         :param response: scrapy response
@@ -118,7 +113,7 @@ class BaseSpider:
         :param port_key: port extractor
         :return: ip infos
         """
-        infos = json.loads(response.body.decode('utf-8'))
+        infos = json.loads(response.body.decode("utf-8"))
         items = list()
 
         for r in detail_rule:
@@ -132,27 +127,27 @@ class BaseSpider:
             protocols = self.procotol_extractor(str(info))
             for protocol in protocols:
                 items.append(
-                    ProxyUrlItem(
-                        url=self.construct_proxy_url(protocol, ip, port)))
+                    ProxyUrlItem(url=self.construct_proxy_url(protocol, ip, port))
+                )
 
         return items
 
     def procotol_extractor(self, detail):
         """extract http protocol,default value is http"""
         detail = detail.lower()
-        if 'socks5' in detail:
-            protocols = ['socks5']
-        elif 'socks4/5' in detail:
-            protocols = ['socks4', 'socks5']
-        elif 'socks4' in detail:
-            protocols = ['socks4']
+        if "socks5" in detail:
+            protocols = ["socks5"]
+        elif "socks4/5" in detail:
+            protocols = ["socks4", "socks5"]
+        elif "socks4" in detail:
+            protocols = ["socks4"]
         else:
             protocols = self.default_protocols
         return protocols
 
     def construct_proxy_url(self, scheme, ip, port):
         """construct proxy urls, so spiders can use them directly"""
-        return '{}://{}:{}'.format(scheme, ip, port)
+        return "{}://{}:{}".format(scheme, ip, port)
 
     def exists(self, url, *flags):
         """check whether the flag of the url is set or not"""
