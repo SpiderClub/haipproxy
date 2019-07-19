@@ -4,7 +4,6 @@ Ajax proxy ip crawler with scrapy-splash
 from haipproxy.config.rules import CRAWLER_QUEUE_MAPS
 from haipproxy.crawler.items import ProxyUrlItem
 from .base import BaseSpider
-from .common_spider import CommonSpider
 from .redis_spiders import RedisAjaxSpider
 
 
@@ -85,7 +84,7 @@ class AjaxGFWSpider(BaseSpider, RedisAjaxSpider):
         return items
 
 
-class GFWSpider(CommonSpider):
+class GFWSpider(BaseSpider):
     name = "gfw"
     proxy_mode = 2
     task_queue = CRAWLER_QUEUE_MAPS[name]

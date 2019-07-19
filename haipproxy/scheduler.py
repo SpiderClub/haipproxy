@@ -13,8 +13,8 @@ from twisted.internet import reactor
 
 from haipproxy.client import SquidClient
 from haipproxy.config.rules import CRAWLER_TASKS, CRAWLER_QUEUE_MAPS
-from haipproxy.crawler.spiders import all_spiders
-from haipproxy.config.settings import (
+from haipproxy.crawler.spiders import SPIDER_MAP
+from haipproxy.settings import (
     SPIDER_AJAX_Q,
     SPIDER_GFW_Q,
     SPIDER_AJAX_GFW_Q,
@@ -107,25 +107,11 @@ def scheduler_start(tasks):
 
 
 def crawler_start(tasks):
-    """
-    There are four kinds of spiders: common, ajax, gfw, ajax_gfw. If you don't assign any tasks, all these spiders will run.
-    """
-    if not tasks:
-        spiders = all_spiders
-    else:
-        spiders = list()
-        for task in tasks:
-            for spider in all_spiders:
-                if spider.name == task:
-                    spiders.append(spider)
-                    break
-    logger.info(f"{len(spiders)} spiders will starts up")
-    if not spiders:
-        return
     settings = get_project_settings()
     runner = CrawlerRunner(settings)
-    for spider in spiders:
-        runner.crawl(spider)
+    for task in tasks:
+        if task in SPIDER_MAP:
+            runner.crawl(SPIDER_MAP[task])
     d = runner.join()
     d.addBoth(lambda _: reactor.stop())
     reactor.run()

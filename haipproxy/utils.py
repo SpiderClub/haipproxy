@@ -5,7 +5,7 @@ import uuid
 
 import redis
 
-from haipproxy.config.settings import (
+from haipproxy.settings import (
     REDIS_HOST,
     REDIS_PORT,
     REDIS_DB,

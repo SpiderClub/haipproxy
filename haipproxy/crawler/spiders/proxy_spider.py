@@ -7,7 +7,7 @@ from urllib.parse import urlparse
 import scrapy
 from scrapy_splash.request import SplashRequest
 
-from haipproxy.config.settings import MIN_PROXY_LEN
+from haipproxy.settings import MIN_PROXY_LEN
 from haipproxy.crawler.items import ProxyUrlItem
 from haipproxy.utils import is_valid_proxy
 from .base import BaseSpider
@@ -16,6 +16,14 @@ from .redis_spiders import RedisSpider
 logger = logging.getLogger(__name__)
 
 PROXY_SITES = {
+    "free-proxy-list": {
+        "protocal_pos": -1,
+        "urls": [
+            "https://free-proxy-list.net/",
+            "https://free-proxy-list.net/uk-proxy.html",
+            "https://free-proxy-list.net/anonymous-proxy.html",
+        ],
+    },
     "ip3366": {
         "protocal_pos": 3,
         "urls": [f"http://www.ip3366.net/free/?stype=1&page={i}" for i in range(1, 8)],
@@ -40,6 +48,14 @@ PROXY_SITES = {
         "urls": ["http://www.mrhinkydink.com/proxies.htm"]
         + [f"http://www.mrhinkydink.com/proxies{i}.htm" for i in range(2, 4)],
     },
+    "proxylistplus": {
+        "protocal_pos": -1,
+        "urls": [
+            "https://list.proxylistplus.com/Fresh-HTTP-Proxy-List-1",
+            "https://list.proxylistplus.com/SSL-List-1",
+        ],
+    },
+    "sslproxies": {"protocal_pos": -1, "urls": ["https://www.sslproxies.org/"]},
     "us-proxy": {"protocal_pos": -1, "urls": ["https://www.us-proxy.org/"]},
     "xicidaili": {
         "row_xpath": "//table/tr[@class]",
@@ -76,7 +92,7 @@ class ProxySpider(scrapy.Spider):
             "https://www.rmccurdy.com/scripts/proxy/good.txt",
         ]
         # If test_urls is not empty, this spider will crawler test_urls ONLY
-        test_urls = []
+        test_urls = ["https://list.proxylistplus.com/SSL-List-1"]
         if test_urls:
             for url in test_urls:
                 yield scrapy.Request(url=url, callback=self.parse)
@@ -152,7 +168,3 @@ class ProxySpider(scrapy.Spider):
             return ["sock4", "sock5"]
         else:
             return [protocol]
-
-
-class CommonSpider(BaseSpider):
-    pass

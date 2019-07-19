@@ -1,4 +1,5 @@
 import json
+import pdb
 import requests
 import sys
 
@@ -85,8 +86,6 @@ class BaseValidator(RedisSpider):
         elif failure.check(ConnectError):
             # port exhaustion: no more ports for connection
             # netsh int ipv4 set dynamicport tcp start=10000 num=55535
-            import pdb
-
             pdb.set_trace()
             fail = "ConnectError"
         yield ProxyStatInc(proxy=proxy, success=0, seconds=0, fail=fail)

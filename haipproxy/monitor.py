@@ -4,7 +4,7 @@ import time
 from prometheus_client import start_http_server
 from prometheus_client.core import CounterMetricFamily, GaugeMetricFamily, REGISTRY
 
-from haipproxy.config.settings import EXPORTER_LISTEN_HOST, EXPORTER_LISTEN_PORT
+from haipproxy.settings import EXPORTER_LISTEN_HOST, EXPORTER_LISTEN_PORT
 from haipproxy.utils import get_redis_conn
 
 logger = logging.getLogger(__name__)

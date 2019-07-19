@@ -8,7 +8,7 @@ import time
 from proxybroker import Broker
 
 from haipproxy.utils import get_redis_conn, RedisOps
-from haipproxy.config.settings import (
+from haipproxy.settings import (
     SQUID_BIN_PATH,
     SQUID_CONF_PATH,
     SQUID_TEMPLATE_PATH,

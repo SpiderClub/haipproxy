@@ -8,7 +8,6 @@ from scrapy.spiders import Spider
 from scrapy_splash.request import SplashRequest
 
 from haipproxy.utils import get_redis_conn
-from haipproxy.config.settings import SPIDER_FEED_SIZE
 
 
 class RedisSpider(Spider):
@@ -24,7 +23,7 @@ class RedisSpider(Spider):
 
     def setup_redis(self, crawler):
         """send signals when the spider is free"""
-        self.redis_batch_size = SPIDER_FEED_SIZE
+        self.redis_batch_size = crawler.settings.get("SPIDER_FEED_SIZE", 5)
         self.redis_conn = get_redis_conn()
         # crawler.signals.connect(self.spider_idle, signal=signals.spider_idle)
 

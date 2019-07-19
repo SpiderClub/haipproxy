@@ -42,18 +42,16 @@ http://www.cnproxy.com/
 https://proxy-list.org/english/index.php
 
 """
-# todo find why 504 happens when crawling proxydb.net
 from .ajax_spider import AjaxSpider, AjaxGFWSpider, GFWSpider
-from .base import BaseSpider
-from .common_spider import ProxySpider
+from .proxy_spider import ProxySpider
 from .validator import CctvValidator, HttpbinValidator, UqerValidator
 
-all_spiders = [
-    ProxySpider,
-    AjaxSpider,
-    GFWSpider,
-    AjaxGFWSpider,
-    CctvValidator,
-    HttpbinValidator,
-    UqerValidator,
-]
+SPIDER_MAP = {
+    ProxySpider.name: ProxySpider,
+    AjaxSpider.name: AjaxSpider,
+    GFWSpider.name: GFWSpider,
+    AjaxGFWSpider.name: AjaxGFWSpider,
+    CctvValidator.name: CctvValidator,
+    HttpbinValidator.name: HttpbinValidator,
+    UqerValidator.name: UqerValidator,
+}
