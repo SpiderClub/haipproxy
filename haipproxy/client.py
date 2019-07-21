@@ -5,6 +5,8 @@ import subprocess
 import threading
 import time
 
+from scrapy.utils.misc import load_object
+from scrapy.utils.url import add_http_if_no_scheme
 from proxybroker import Broker
 
 from haipproxy.utils import get_redis_conn, RedisOps
@@ -24,11 +26,30 @@ class ProxyClient(object):
         self.redis_conn = get_redis_conn()
         self.rpipe = self.redis_conn.pipeline()
         self.ppool = []
+        self.good = set()
+        self.dead = set()
         self.idx = -1
         self.ro = RedisOps()
         # t = threading.Thread(target=self._refresh_periodically)
         # t.setDaemon(True)
-        # t.start()
+
+    def mark_dead(self, proxy):
+        """ Mark a proxy as dead """
+        if proxy in self.good:
+            self.good.discard(proxy)
+            logger.debug("GOOD proxy became DEAD: <%s>" % proxy)
+        self.dead.add(proxy)
+        # ProxyStatInc
+
+    def mark_good(self, proxy):
+        """ Mark a proxy as good """
+        self.good.add(proxy)
+        # ProxyStatInc
+
+    def set_stats(self, stats):
+        stats.set_value("proxies/unused", len(self.ppool) - self.idx)
+        stats.set_value("proxies/dead", len(self.dead))
+        stats.set_value("proxies/good", len(self.good))
 
     def del_all_fails(self):
         total = 0
@@ -48,7 +69,8 @@ class ProxyClient(object):
             f"{nfail} failed proxies deleted, {total} before, {total - nfail} now "
         )
 
-    def next_proxy(self, protocol=""):
+    def proxy_gen(self, protocol=""):
+        # todo: infinite. switch to good set
         if not self.ppool:
             self._fill_pool()
         self.protocol = protocol.lower()
@@ -115,14 +137,15 @@ class ProxyClient(object):
             for line in f.readlines():
                 total += 1
                 proxy = line.strip()
-                if len(proxy) < MIN_PROXY_LEN:
+                if len(proxy) < MIN_PROXY_LEN or proxy.startswith("#"):
                     continue
+                add_http_if_no_scheme(proxy)
                 self.ro.set_proxy(proxy)
             logger.info(f"{total} lines")
 
     def dump_proxies(self, fname):
         with open(fname, "w") as f:
-            for p in self.next_proxy():
+            for p in self.proxy_gen():
                 f.write(p + "\n")
 
     async def _consume(self, aqu):
@@ -168,7 +191,7 @@ class SquidClient(object):
             fw.write(fr.read())
             pc = ProxyClient()
             idx = 0
-            for proxy in pc.next_proxy():
+            for proxy in pc.proxy_gen():
                 _, ip_port = proxy.split("://")
                 ip, port = ip_port.split(":")
                 fw.write("\n")

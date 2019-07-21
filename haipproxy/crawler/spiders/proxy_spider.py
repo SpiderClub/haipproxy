@@ -10,7 +10,6 @@ from scrapy_splash.request import SplashRequest
 from haipproxy.settings import MIN_PROXY_LEN
 from haipproxy.crawler.items import ProxyUrlItem
 from haipproxy.utils import is_valid_proxy
-from .base import BaseSpider
 from .redis_spiders import RedisSpider
 
 logger = logging.getLogger(__name__)
@@ -19,9 +18,9 @@ PROXY_SITES = {
     "free-proxy-list": {
         "protocal_pos": -1,
         "urls": [
-            "https://free-proxy-list.net/",
-            "https://free-proxy-list.net/uk-proxy.html",
-            "https://free-proxy-list.net/anonymous-proxy.html",
+            "https://www.free-proxy-list.net/",
+            "https://www.free-proxy-list.net/uk-proxy.html",
+            "https://www.free-proxy-list.net/anonymous-proxy.html",
         ],
     },
     "ip3366": {
@@ -92,7 +91,7 @@ class ProxySpider(scrapy.Spider):
             "https://www.rmccurdy.com/scripts/proxy/good.txt",
         ]
         # If test_urls is not empty, this spider will crawler test_urls ONLY
-        test_urls = ["https://list.proxylistplus.com/SSL-List-1"]
+        test_urls = [""]
         if test_urls:
             for url in test_urls:
                 yield scrapy.Request(url=url, callback=self.parse)

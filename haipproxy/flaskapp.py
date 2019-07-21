@@ -28,7 +28,7 @@ def get_proxies(protocol):
     global PC
     if PC == None:
         PC = ProxyClient()
-    return jsonify({protocol: [p for p in PC.next_proxy(protocol)]})
+    return jsonify({protocol: [p for p in PC.proxy_gen(protocol)]})
 
 
 @app.route("/")

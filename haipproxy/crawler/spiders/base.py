@@ -14,7 +14,6 @@ class BaseSpider:
     custom_settings = {
         "CONCURRENT_REQUESTS_PER_DOMAIN": 5,
         "DOWNLOAD_DELAY": 3,
-        "EXTENSIONS": {"haipproxy.crawler.extensions.FailLogger": 500},
         "DOWNLOADER_MIDDLEWARES": {
             "haipproxy.crawler.middlewares.ErrorTraceMiddleware": 200
         },
