@@ -2,10 +2,12 @@ import json
 import pdb
 import requests
 import sys
-
 from json.decoder import JSONDecodeError
+
+import scrapy
 from scrapy.http import Request
 from scrapy.spidermiddlewares.httperror import HttpError
+
 from twisted.internet.error import (
     DNSLookupError,
     ConnectionRefusedError,
@@ -14,11 +16,11 @@ from twisted.internet.error import (
     ConnectError,
 )
 
-from .redis_spiders import RedisSpider
 from haipproxy.crawler.items import ProxyStatInc
+from haipproxy.utils import get_redis_conn
 
 
-class BaseValidator(RedisSpider):
+class BaseValidator(scrapy.Spider):
     # per test, both http and https proxies respond https request equally,
     # while https proxies don't response http request
     # It's common that a proxy succeed on other sites but not on httpbin
@@ -36,6 +38,7 @@ class BaseValidator(RedisSpider):
     }
     success_key = ""
     good_count = 0
+    redis_conn = get_redis_conn()
 
     def start_requests(self):
         for proxy in self.redis_conn.scan_iter(match="*://*"):
@@ -71,9 +74,9 @@ class BaseValidator(RedisSpider):
         self.logger.warning(f"proxy {proxy} has failed with:\n{repr(failure)}")
         fail = "unknown"
         if failure.check(HttpError):
-            fail = "HttpError"
             # these exceptions come from HttpError spider middleware
             # you can get the non-200 response
+            fail = "HttpError " + failure.response.status
         elif failure.check(DNSLookupError):
             fail = "DNSLookupError"
             # this is the original request

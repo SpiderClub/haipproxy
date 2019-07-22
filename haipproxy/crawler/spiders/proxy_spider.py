@@ -5,6 +5,7 @@ import logging
 from urllib.parse import urlparse
 
 import scrapy
+from scrapy.utils.url import add_http_if_no_scheme
 from scrapy_splash.request import SplashRequest
 
 from haipproxy.settings import MIN_PROXY_LEN
@@ -91,7 +92,7 @@ class ProxySpider(scrapy.Spider):
             "https://www.rmccurdy.com/scripts/proxy/good.txt",
         ]
         # If test_urls is not empty, this spider will crawler test_urls ONLY
-        test_urls = [""]
+        test_urls = []
         if test_urls:
             for url in test_urls:
                 yield scrapy.Request(url=url, callback=self.parse)
@@ -144,22 +145,14 @@ class ProxySpider(scrapy.Spider):
     def parse_text(self, response):
         for line in response.text.split("\n"):
             line = line.strip()
-            if len(line) < MIN_PROXY_LEN:
+            if len(line) < MIN_PROXY_LEN or line.startswith("#"):
                 continue
-            proxies = []
-            if line[0].isdigit():
-                for protocol in self.default_protocols:
-                    proxies.append(protocol + "://" + line)
-            elif line[0].lower == "h":
-                proxies.append(line)
-            else:
-                logger.warning(f"Not http(s) proxy: {line}")
-            for p in proxies:
-                if is_valid_proxy(proxy=p):
-                    yield ProxyUrlItem(url=p)
+            p = add_http_if_no_scheme(line)
+            if is_valid_proxy(proxy=p):
+                yield ProxyUrlItem(url=p)
 
     def get_protocols(self, protocol):
-        if not protocol or "" == protocol:
+        if not protocol:
             return self.default_protocols
         elif "," in protocol:
             return protocol.split(",")

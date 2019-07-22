@@ -85,13 +85,12 @@ class RotatingProxyMiddleware(object):
 
     @classmethod
     def from_crawler(cls, crawler):
-        mw = cls(
+        return cls(
             max_proxies_to_try=crawler.settings.getint(
                 "ROTATING_PROXY_PAGE_RETRY_TIMES", 10
             ),
             crawler=crawler,
         )
-        return mw
 
     def process_request(self, request, spider):
         if "proxy" in request.meta and not request.meta.get("_rotating_proxy"):

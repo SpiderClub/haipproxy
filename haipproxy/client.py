@@ -24,7 +24,6 @@ logger = logging.getLogger(__name__)
 class ProxyClient(object):
     def __init__(self):
         self.redis_conn = get_redis_conn()
-        self.rpipe = self.redis_conn.pipeline()
         self.ppool = []
         self.good = set()
         self.dead = set()
@@ -52,22 +51,10 @@ class ProxyClient(object):
         stats.set_value("proxies/good", len(self.good))
 
     def del_all_fails(self):
-        total = 0
-        nfail = 0
-        for pkey in self.redis_conn.scan_iter(match="http*://*"):
-            total += 1
-            # if self.redis_conn.hget(pkey, 'fail') == b'badcontent':
-            #     print(pkey)
-            # else:
-            #     continue
-            score = float(self.redis_conn.hget(pkey, "score"))
-            if score <= LOWEST_SCORE - 2:
-                self.rpipe.delete(pkey)
-                nfail += 1
-        self.rpipe.execute()
-        logger.info(
-            f"{nfail} failed proxies deleted, {total} before, {total - nfail} now "
-        )
+        def need_op(row):
+            return float(row[b"score"]) <= LOWEST_SCORE - 2
+
+        self.ro.map_all("delete", need_op, match="http*://*")
 
     def proxy_gen(self, protocol=""):
         # todo: infinite. switch to good set
@@ -139,7 +126,7 @@ class ProxyClient(object):
                 proxy = line.strip()
                 if len(proxy) < MIN_PROXY_LEN or proxy.startswith("#"):
                     continue
-                add_http_if_no_scheme(proxy)
+                proxy = add_http_if_no_scheme(proxy)
                 self.ro.set_proxy(proxy)
             logger.info(f"{total} lines")
 

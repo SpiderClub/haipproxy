@@ -69,9 +69,16 @@ class RedisOps(object):
         self.rpipe = self.redis_conn.pipeline()
         self.rpipe_size = 0
 
+    def _batch_exe(self, last=False):
+        if not last:
+            self.rpipe_size += 1
+        if self.rpipe_size >= REDIS_PIPE_BATCH_SIZE or last:
+            self.rpipe.execute()
+            logger.info(f"{self.rpipe_size} redis commands executed")
+            self.rpipe_size = 0
+
     def flush(self):
-        self.rpipe.execute()
-        logger.info(f"{self.rpipe_size} redis commands executed")
+        self._batch_exe(last=True)
 
     def set_proxy(self, proxy):
         if (
@@ -91,11 +98,7 @@ class RedisOps(object):
                 "score": 0,
             },
         )
-        self.rpipe_size += 1
-        if self.rpipe_size >= REDIS_PIPE_BATCH_SIZE:
-            self.rpipe.execute()
-            logger.info(f"{self.rpipe_size} redis commands executed")
-            self.rpipe_size = 0
+        self._batch_exe()
 
     def inc_stat(self, item):
         self.rpipe.hincrby(item["proxy"], "used_count")
@@ -105,6 +108,27 @@ class RedisOps(object):
         if item["success"] != 0:
             self.rpipe.hset(item["proxy"], "timestamp", int(time.time()))
         self.rpipe.execute()
+
+    def map_all(self, op, need_op, match="*", **kwargs):
+        # apply operation to each item
+        total = 0
+        nop = 0
+        ope = getattr(self.rpipe, op)
+        if not ope:
+            logger.warning(f"Invalid operation: {op}")
+            return
+        for pkey in self.redis_conn.scan_iter(match=match):
+            total += 1
+            # if self.redis_conn.hget(pkey, 'fail') == b'badcontent':
+            #     print(pkey)
+            # else:
+            #     continue
+            row = self.redis_conn.hgetall(pkey)
+            if need_op(row):
+                ope(pkey, **kwargs)
+                nop += 1
+        self.rpipe.execute()
+        logger.info(f"{op} operations to {nop} proxies, total {total} scanned")
 
 
 ####
