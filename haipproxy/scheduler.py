@@ -107,8 +107,7 @@ def scheduler_start(tasks):
 
 
 def crawler_start(tasks):
-    settings = get_project_settings()
-    runner = CrawlerRunner(settings)
+    runner = CrawlerRunner(get_project_settings())
     for task in tasks:
         if task in SPIDER_MAP:
             runner.crawl(SPIDER_MAP[task])
