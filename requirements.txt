@@ -8,3 +8,4 @@ Scrapy==1.5.0
 scrapy-splash==0.7.2
 prometheus-client==0.2.0
 click==6.7
+cryptography==2.8
